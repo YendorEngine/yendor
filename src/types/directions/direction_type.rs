@@ -1,1 +1,2 @@
-pub type DirectionType = u8;
+/// A type for defining [`Direction`]s
+pub(crate) type DirectionType = u8;
