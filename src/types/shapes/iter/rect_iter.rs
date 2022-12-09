@@ -1,16 +1,16 @@
 use crate::prelude::*;
 
 #[derive(Debug, Clone)]
-pub struct GridRectIter {
+pub struct GridRectIter<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> {
     offset: IVec2,
     max_offset: IVec2,
 
     /// The minimum corner point of the rect.
-    pub min: Position,
+    pub min: Position<GRID_WIDTH, GRID_HEIGHT>,
 }
 
-impl GridRectIter {
-    pub fn new(min: Position, max: Position) -> Self {
+impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> GridRectIter<GRID_WIDTH, GRID_HEIGHT> {
+    pub fn new(min: Position<GRID_WIDTH, GRID_HEIGHT>, max: Position<GRID_WIDTH, GRID_HEIGHT>) -> Self {
         let size = max.gridpoint() - min.gridpoint();
         Self {
             min,
@@ -20,8 +20,8 @@ impl GridRectIter {
     }
 }
 
-impl Iterator for GridRectIter {
-    type Item = Position;
+impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Iterator for GridRectIter<GRID_WIDTH, GRID_HEIGHT> {
+    type Item = Position<GRID_WIDTH, GRID_HEIGHT>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.offset.y > self.max_offset.y {

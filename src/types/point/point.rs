@@ -134,11 +134,11 @@ pub trait Point: Clone + Copy {
     #[inline]
     fn left(&self, amount: i32) -> IVec2 { IVec2::new(self.x() - amount, self.y()) }
 
+    /* TODO: Fix Direction Iterators
     ////////////////
     //  Iterator  //
     ////////////////
-    /// Returns an iterator over the 8 points adjacent to this one. (N, NE, E, SE, S, SW, W,
-    /// NW)
+    /// Returns an iterator over the 8 points adjacent to this one. (N, NE, E, SE, S, SW, W, NW)
     #[inline]
     fn neighbors_all(&self) -> AdjIterator { AdjIterator::new(*self, Direction::all().collect()) }
 
@@ -154,4 +154,5 @@ pub trait Point: Clone + Copy {
     fn neighbors_ordinal(&self) -> AdjIterator {
         AdjIterator::new(*self, OrdinalDirection::all().collect())
     }
+    */
 }

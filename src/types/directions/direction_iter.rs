@@ -3,12 +3,12 @@ use super::*;
 // TODO: This needs some love....
 
 pub struct DirectionIter {
-    directions: Vec<Direction>,
+    _directions: Vec<Direction>,
 }
 
 impl DirectionIter {
     pub fn all_2d() -> Self {
-        Self { directions: vec![
+        Self { _directions: vec![
             Direction::NORTH,
             Direction::NORTH_EAST,
             Direction::EAST,
@@ -21,7 +21,7 @@ impl DirectionIter {
     }
 
     pub fn all_3d() -> Self {
-        Self { directions: vec![
+        Self { _directions: vec![
             Direction::NORTH,
             Direction::NORTH_EAST,
             Direction::EAST,
@@ -52,7 +52,7 @@ impl DirectionIter {
     }
 
     pub fn cardinal() -> Self {
-        Self { directions: vec![
+        Self { _directions: vec![
             Direction::NORTH,
             Direction::EAST,
             Direction::SOUTH,
@@ -61,7 +61,7 @@ impl DirectionIter {
     }
     
     pub fn ordinal() -> Self {
-        Self { directions: vec![
+        Self { _directions: vec![
             Direction::NORTH_EAST,
             Direction::SOUTH_EAST,
             Direction::SOUTH_WEST,
@@ -70,7 +70,7 @@ impl DirectionIter {
     }
 
     pub fn vertical() -> Self {
-        Self { directions: vec![
+        Self { _directions: vec![
             Direction::UP,
             Direction::DOWN,
         ] }

@@ -82,46 +82,46 @@ impl Direction {
         let mut direction = Self::NONE;
 
         if coord.x > 0 {
-            *direction |= *Self::EAST;
+            direction += Self::EAST;
         } else if coord.y < 0 {
-            *direction |= *Self::WEST;
+            direction += Self::WEST;
         }
 
         if coord.y > 0 {
-            *direction |= *Self::NORTH;
+            direction += Self::NORTH;
         } else if coord.y < 0 {
-            *direction |= *Self::SOUTH;
+            direction += Self::SOUTH;
         }
 
         if coord.z > 0 {
-            *direction |= *Self::UP;
+            direction += Self::UP;
         } else if coord.z < 0 {
-            *direction |= *Self::DOWN;
+            direction += Self::DOWN;
         }
 
         direction
     }
 
-    pub const fn opposite(self) -> Self {
-        let x = if *self & *Self::EAST != 0 {
+    pub fn opposite(self) -> Self {
+        let x = if self.has_east() {
             -1
-        } else if *self & *Self::WEST != 0 {
+        } else if self.has_west() {
             1
         } else {
             0
         };
 
-        let y = if *self & *Self::NORTH != 0 {
+        let y = if self.has_north() {
             -1
-        } else if *self & *Self::SOUTH != 0 {
+        } else if self.has_south() {
             1
         } else {
             0
         };
 
-        let z = if *self & *Self::UP != 0 {
+        let z = if self.has_up() {
             -1
-        } else if *self & *Self::DOWN != 0 {
+        } else if self.has_down() {
             1
         } else {
             0
@@ -130,7 +130,7 @@ impl Direction {
         Self::from_ivec3(IVec3::new(x, y ,z))
     }
 
-    pub const fn left45(self) -> Self {
+    pub fn left45(self) -> Self {
         let z = if self.has_up() {
             1
         } else if self.has_down() {
@@ -166,7 +166,7 @@ impl Direction {
         Self::from_ivec3(IVec3::new(x, y, z))
     }
 
-    pub const fn left90(self) -> Self {
+    pub fn left90(self) -> Self {
         let z = if self.has_up() {
             1
         } else if self.has_down() {
@@ -203,47 +203,47 @@ impl Direction {
     }
 
     // OPTIMIZE: rewrite like `Self::left45()`
-    pub const fn left135(self) -> Self {
+    pub fn left135(self) -> Self {
         self.left90().left45()
     }
 
     // OPTIMIZE: rewrite like `Self::left45()`
-    pub const fn right45(self) -> Self {
+    pub fn right45(self) -> Self {
         self.right90().left45()
     }
 
     // OPTIMIZE: rewrite like `Self::left45()`
-    pub const fn right90(self) -> Self {
+    pub fn right90(self) -> Self {
         self.left90().left90().left90()
     }
 
     // OPTIMIZE: rewrite like `Self::left45()`
-    pub const fn right135(self) -> Self {
+    pub fn right135(self) -> Self {
         self.right90().right45()
     }
 
-    pub fn has_north(self) -> bool {
-        *self & *Self::NORTH != 0
+    pub const fn has_north(self) -> bool {
+        self.0 & Self::NORTH.0 != 0
     }
 
-    pub fn has_south(self) -> bool {
-        *self & *Self::SOUTH != 0
+    pub const fn has_south(self) -> bool {
+        self.0 & Self::SOUTH.0 != 0
     }
 
-    pub fn has_east(self) -> bool {
-        *self & *Self::EAST != 0
+    pub const fn has_east(self) -> bool {
+        self.0 & Self::EAST.0 != 0
     }
 
-    pub fn has_west(self) -> bool {
-        *self & *Self::WEST != 0
+    pub const fn has_west(self) -> bool {
+        self.0 & Self::WEST.0 != 0
     }
 
-    pub fn has_up(self) -> bool {
-        *self & *Self::UP != 0
+    pub const fn has_up(self) -> bool {
+        self.0 & Self::UP.0 != 0
     }
 
-    pub fn has_down(self) -> bool {
-        *self & *Self::DOWN != 0
+    pub const fn has_down(self) -> bool {
+        self.0 & Self::DOWN.0 != 0
     }
 
     /// Unaffected by Up / Down
@@ -256,8 +256,8 @@ impl Direction {
         (self.has_north() || self.has_south()) && (self.has_east() || self.has_west())
     }
 
-    pub const fn all() -> DirectionIter { DirectionIter::all_2d() }
-    pub const fn all_3d() -> DirectionIter { DirectionIter::all_3d() }
+    pub fn all() -> DirectionIter { DirectionIter::all_2d() }
+    pub fn all_3d() -> DirectionIter { DirectionIter::all_3d() }
 }
 
 impl Display for Direction {
@@ -300,7 +300,7 @@ impl Display for Direction {
 
         if self.has_down() {
             s = append(s, "DOWN", first);
-            first = false;
+            //first = false;
         }
 
 
@@ -313,7 +313,7 @@ impl Display for Direction {
 impl Add<Direction> for Direction {
     type Output = Self;
     fn add(self, rhs: Direction) -> Self::Output {
-        Self(*self | *rhs)
+        Self(self.0 | *rhs)
     }
 }
 
@@ -326,7 +326,7 @@ impl AddAssign<Direction> for Direction {
 impl Sub<Direction> for Direction {
     type Output = Self;
     fn sub(self, rhs: Direction) -> Self::Output {
-        Self(*self & !*rhs)
+        Self(self.0 & !*rhs)
     }
 }
 

@@ -21,23 +21,23 @@ impl LocalPosition {
     /// Getters
     ///////////////////////////////
     #[inline]
-    pub const fn x(&self) -> u32 { *self.x }
+    pub const fn x(&self) -> u32 { self.0.x }
 
     #[inline]
-    pub const fn y(&self) -> u32 { *self.y }
+    pub const fn y(&self) -> u32 { self.0.y }
 
     #[inline]
-    pub const fn gridpoint(&self) -> UVec2 { *self }
+    pub const fn gridpoint(&self) -> UVec2 { self.0 }
 
     #[inline(always)]
-    pub fn grid_index(&self, size: UVec2) -> Option<usize> { *self.as_index(size) }
+    pub fn grid_index(&self, size: UVec2) -> Option<usize> { (**self).as_index(size) }
 
     ///////////////////////////////
     /// Setters
     ///////////////////////////////
-    pub fn set_x(&mut self, value: u32) { *self.x = value; }
+    pub fn set_x(&mut self, value: u32) { self.x = value; }
 
-    pub fn set_y(&mut self, value: u32) { *self.y = value; }
+    pub fn set_y(&mut self, value: u32) { self.y = value; }
 
     pub fn set(&mut self, x: u32, y: u32) {
         self.set_x(x);

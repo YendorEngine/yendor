@@ -23,10 +23,12 @@ pub mod directions {
 pub use directions::*;
 
 pub mod point {
-    mod point;
-    pub use point::*;
+    mod point_impl;
+    pub use point_impl::*;
     mod point_iter;
     pub(crate) use point_iter::*;
+    mod point;
+    pub use point::*;
 }
 pub use point::*;
 

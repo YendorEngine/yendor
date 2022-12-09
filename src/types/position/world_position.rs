@@ -21,28 +21,28 @@ impl WorldPosition {
     /// Getters
     ///////////////////////////////
     #[inline]
-    pub const fn x(&self) -> i32 { *self.x }
+    pub const fn x(&self) -> i32 { self.0.x }
 
     #[inline]
-    pub const fn y(&self) -> i32 { *self.y }
+    pub const fn y(&self) -> i32 { self.0.y }
 
     #[inline]
-    pub const fn z(&self) -> i32 { *self.z }
+    pub const fn z(&self) -> i32 { self.0.z }
 
     #[inline]
     pub const fn xy(&self) -> IVec2 { IVec2::new(self.x(), self.y()) }
 
     #[inline]
-    pub const fn xyz(&self) -> IVec3 { *self }
+    pub const fn xyz(&self) -> IVec3 { self.0 }
 
     ///////////////////////////////
     /// Setters
     ///////////////////////////////
-    pub fn set_x(&mut self, value: i32) { *self.x = value; }
+    pub fn set_x(&mut self, value: i32) { self.x = value; }
 
-    pub fn set_y(&mut self, value: i32) { *self.y = value; }
+    pub fn set_y(&mut self, value: i32) { self.y = value; }
 
-    pub fn set_z(&mut self, value: i32) { *self.z = value; }
+    pub fn set_z(&mut self, value: i32) { self.z = value; }
 
     pub fn set_xy(&mut self, x: i32, y: i32) {
         self.set_x(x);

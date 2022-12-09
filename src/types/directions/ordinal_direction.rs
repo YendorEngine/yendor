@@ -8,5 +8,5 @@ impl OrdinalDirection {
     pub const SOUTH_WEST: Direction = Direction::SOUTH_WEST;
     pub const NORTH_WEST: Direction = Direction::NORTH_WEST;
 
-    pub const fn all() -> DirectionIter { DirectionIter::ordinal() }
+    pub fn all() -> DirectionIter { DirectionIter::ordinal() }
 }

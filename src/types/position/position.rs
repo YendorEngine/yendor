@@ -10,7 +10,7 @@ use crate::prelude::*;
 /// `use yendor::types::Position as YendorPosition`
 /// and then wrap it with your own type:
 /// `pub type Position = YendorPosition<GRID_WIDTH, GRID_HEIGHT>`
-#[derive(Default, Reflect, FromReflect, Clone, Copy, Debug)]
+#[derive(Default, Reflect, FromReflect, Clone, Copy)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct Position<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> {
     world_position: WorldPosition,
@@ -26,13 +26,25 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
         }
     }
 
-    #[inline(always)]
-    pub fn as_index(&self, size: impl Dimensions) -> Option<usize> { self.get_local_position().as_index(size) }
+    pub const fn new_grid_min(world_position: WorldPosition) -> Self {
+        Self {
+            world_position,
+            local_position: LocalPosition::new(0, 0),
+        }
+    }
+
+    pub const fn new_grid_max(world_position: WorldPosition) -> Self {
+        Self {
+            world_position,
+            local_position: LocalPosition::new(GRID_WIDTH, GRID_HEIGHT),
+        }
+    }
 
     #[inline(always)]
-    pub fn as_index_unchecked<I: TryInto<usize>>(&self, width: I) -> usize {
-        self.get_local_position().as_index_unchecked(width)
-    }
+    pub fn as_index(&self) -> usize { self.gridpoint().as_index_unchecked(GRID_WIDTH) }
+    
+    #[inline(always)]
+    pub fn as_index_for(&self, size: impl Dimensions) -> Option<usize> { self.gridpoint().as_index(size) }
 
     pub fn distance(&self, other: Self) -> u32 {
         let dist_x = self.distance_x(other);
@@ -108,6 +120,9 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
     #[inline]
     pub const fn y(&self) -> u32 { self.local_position.y() }
 
+    #[inline]
+    pub const fn gridpoint(&self) -> UVec2 { self.local_position.gridpoint() }
+
     pub fn set_x(&mut self, value: u32) { self.local_position.set_x(value); }
 
     pub fn add_x(&mut self, value: i32) { Self::add_assign(self, IVec2::new(value, 0)); }
@@ -120,15 +135,11 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
 
     pub fn sub_y(&mut self, value: i32) { Self::sub_assign(self, IVec2::new(0, value)); }
 
-    pub fn set_layer(&mut self, value: u32) { self.local_position.set_layer(value); }
-
-    pub fn set_xy(&mut self, value: UVec2) { self.local_position.set_xy(value.x, value.y); }
+    pub fn set_xy(&mut self, value: UVec2) { self.local_position.set(value.x, value.y); }
 
     pub fn add_xy(&mut self, x: i32, y: i32) { Self::add_assign(self, IVec2::new(x, y)); }
 
     pub fn sub_xy(&mut self, x: i32, y: i32) { Self::sub_assign(self, IVec2::new(x, y)); }
-
-    pub fn translation(&self) -> Vec3 { self.local_position.translation() }
 
     ///////////////////////////////
     /// WorldPosition
@@ -156,7 +167,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
 
     pub fn set_world_xy(&mut self, value: IVec2) { self.world_position.set_xy(value.x, value.y); }
 
-    pub fn set_world_xyz(&mut self, value: IVec3) { self.world_position.set_xyz(value.x, value.y, value.z); }
+    pub fn set_world_xyz(&mut self, value: IVec3) { self.world_position.set(value.x, value.y, value.z); }
 
     ///////////////////////////////
     /// Expert
