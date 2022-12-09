@@ -34,7 +34,10 @@ impl Noise {
 
         for _ in 0..params.octaves {
             // Sample `Noise` with reguards to amplitude and frequency
-            value += amplitude * self.perlin.get([x * frequency, y * frequency, z * frequency]);
+            value += amplitude
+                * self
+                    .perlin
+                    .get([x * frequency, y * frequency, z * frequency]);
 
             // Shift each axis to stop repeated features in future octaves
             x -= params.x_shift;
@@ -50,6 +53,7 @@ impl Noise {
     }
 
     /// Fractional Brown Motion
+    #[allow(clippy::too_many_arguments)]
     pub fn get_many<X: Into<f64>, Y: Into<f64>, Z: Into<f64>>(
         &mut self,
         start_x: X,
@@ -84,8 +88,8 @@ impl Noise {
 
             for _ in 0..params.octaves {
                 // Sample `Noise` with reguards to amplitude and frequency
-                value += amplitude *
-                    self.perlin.get([
+                value += amplitude
+                    * self.perlin.get([
                         current_x * frequency,
                         current_y * frequency,
                         current_z * frequency,
@@ -111,6 +115,7 @@ impl Noise {
     }
 
     /// Fractional Brown Motion
+    #[allow(clippy::too_many_arguments)]
     pub fn get_many_f32<X: Into<f32>, Y: Into<f32>, Z: Into<f32>>(
         &mut self,
         start_x: X,
@@ -145,8 +150,8 @@ impl Noise {
 
             for _ in 0..params.octaves {
                 // Sample `Noise` with reguards to amplitude and frequency
-                value += amplitude *
-                    self.perlin.get([
+                value += amplitude
+                    * self.perlin.get([
                         current_x * frequency,
                         current_y * frequency,
                         current_z * frequency,
@@ -172,6 +177,7 @@ impl Noise {
     }
 
     /// Fractional Brown Motion
+    #[allow(clippy::too_many_arguments)]
     pub fn get_many_f32_normalized<
         X: Into<f32>,
         Y: Into<f32>,
@@ -218,8 +224,8 @@ impl Noise {
 
             for _ in 0..params.octaves {
                 // Sample `Noise` with reguards to amplitude and frequency
-                value += amplitude *
-                    self.perlin.get([
+                value += amplitude
+                    * self.perlin.get([
                         current_x * frequency,
                         current_y * frequency,
                         current_z * frequency,
@@ -258,7 +264,9 @@ impl Noise {
 #[cfg(feature = "serialize")]
 impl Serialize for Noise {
     fn serialize<S>(&self, serializer: S) -> core::result::Result<S::Ok, S::Error>
-    where S: serde::Serializer {
+    where
+        S: serde::Serializer,
+    {
         let mut state = serializer.serialize_struct("Noise", 1)?;
         state.serialize_field("seed", &self.seed)?;
         state.end()
@@ -268,7 +276,9 @@ impl Serialize for Noise {
 #[cfg(feature = "serialize")]
 impl<'de> Deserialize<'de> for Noise {
     fn deserialize<D>(deserializer: D) -> core::result::Result<Self, D::Error>
-    where D: Deserializer<'de> {
+    where
+        D: Deserializer<'de>,
+    {
         #[derive(Deserialize)]
         #[serde(field_identifier, rename_all = "lowercase")]
         enum Field {
@@ -283,13 +293,19 @@ impl<'de> Deserialize<'de> for Noise {
             }
 
             fn visit_seq<A>(self, mut seq: A) -> core::result::Result<Self::Value, A::Error>
-            where A: SeqAccess<'de> {
-                let seed = seq.next_element()?.ok_or_else(|| de::Error::invalid_length(0, &self))?;
+            where
+                A: SeqAccess<'de>,
+            {
+                let seed = seq
+                    .next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(0, &self))?;
                 Ok(Noise::new(seed))
             }
 
             fn visit_map<A>(self, mut map: A) -> core::result::Result<Self::Value, A::Error>
-            where A: MapAccess<'de> {
+            where
+                A: MapAccess<'de>,
+            {
                 let mut seed = None;
                 while let Some(key) = map.next_key()? {
                     match key {
@@ -298,7 +314,7 @@ impl<'de> Deserialize<'de> for Noise {
                                 return Err(de::Error::duplicate_field("seed"));
                             }
                             seed = Some(map.next_value()?);
-                        },
+                        }
                     }
                 }
                 let seed = seed.ok_or_else(|| de::Error::missing_field("seed"))?;

@@ -22,6 +22,20 @@ pub mod directions {
 }
 pub use directions::*;
 
+mod distance {
+    mod distance_algorithm;
+    pub use distance_algorithm::*;
+    mod chebyshev;
+    pub use chebyshev::*;
+    mod diagonal;
+    pub use diagonal::*;
+    mod manhattan;
+    pub use manhattan::*;
+    mod pythagoras;
+    pub use pythagoras::*;
+}
+pub use distance::*;
+
 pub mod point {
     mod point_impl;
     pub use point_impl::*;
