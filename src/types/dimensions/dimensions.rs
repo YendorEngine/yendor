@@ -59,10 +59,8 @@ pub trait Dimensions: Clone + Copy {
     /// Returns true if the point is valid within the size.
     #[inline]
     fn contains(&self, point: impl Point) -> bool {
-        point.x() >= 0 &&
-            point.y() >= 0 &&
-            (point.x() as u32) < self.width() &&
-            (point.y() as u32) < self.height()
+            (point.x_uint32()) < self.width() &&
+            (point.y_uint32()) < self.height()
     }
 
     /// Returns an iterator over all points within the size.

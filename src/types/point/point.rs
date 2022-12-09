@@ -8,26 +8,32 @@ pub trait Point: Clone + Copy {
     /// Construct a IVec2
     fn new(x: i32, y: i32) -> IVec2 { IVec2::new(x, y) }
 
-    /// Returns x position.
-    fn x(&self) -> i32;
+    fn x_int32(&self) -> i32;
 
-    /// Returns y position.
-    fn y(&self) -> i32;
+    fn y_int32(&self) -> i32;
+
+    fn x_uint32(&self) -> u32;
+
+    fn y_uint32(&self) -> u32;
+
+    fn x_float32(&self) -> f32;
+
+    fn y_float32(&self) -> f32;
 
     /// Returns the grid point offset by the given amount.
     fn offset(&self, xy: impl Point) -> IVec2 { self.add(xy) }
 
     /// Convert point to `IVec2` (i32).
     #[inline]
-    fn as_ivec2(&self) -> IVec2 { IVec2::new(self.x(), self.y()) }
+    fn as_ivec2(&self) -> IVec2 { IVec2::new(self.x_int32(), self.y_int32()) }
 
     /// Convert point to `UVec2` (u32).
     #[inline]
-    fn as_uvec2(&self) -> UVec2 { self.as_ivec2().as_uvec2() }
+    fn as_uvec2(&self) -> UVec2 { UVec2::new(self.x_uint32(), self.y_uint32()) }
 
     /// Convert point to `Vec2` (f32).
     #[inline]
-    fn as_vec2(&self) -> Vec2 { self.as_ivec2().as_vec2() }
+    fn as_vec2(&self) -> Vec2 { Vec2::new(self.x_float32(), self.y_float32()) }
 
     /// Convert point to `[i32; 2]`.
     #[inline]
@@ -37,7 +43,7 @@ pub trait Point: Clone + Copy {
     #[inline(always)]
     fn as_index_unchecked<I: TryInto<usize>>(&self, width: I) -> usize {
         let width = width.try_into().unwrap_or_else(|_v| panic!("Something went wrong!"));
-        self.y() as usize * width + self.x() as usize
+        self.y_int32() as usize * width + self.x_int32() as usize
     }
 
     #[inline(always)]
@@ -52,8 +58,8 @@ pub trait Point: Clone + Copy {
     /// Returns true if the point is valid for the given size.
     #[inline]
     fn is_valid(&self, size: impl Dimensions) -> bool {
-        let x = self.x();
-        let y = self.y();
+        let x = self.x_int32();
+        let y = self.y_int32();
         x >= 0 && y >= 0 && (x as u32) < size.width() && (y as u32) < size.height()
     }
 
@@ -62,7 +68,7 @@ pub trait Point: Clone + Copy {
     ////////////////
     /// Adds two points together.
     #[inline]
-    fn add(&self, other: impl Point) -> IVec2 { IVec2::new(self.x() + other.x(), self.y() + other.y()) }
+    fn add(&self, other: impl Point) -> IVec2 { IVec2::new(self.x_int32() + other.x_int32(), self.y_int32() + other.y_int32()) }
 
     /// Returns distance from another `Point`.
     #[inline]
@@ -90,49 +96,49 @@ pub trait Point: Clone + Copy {
         let rads = degrees.to_radians();
         let x = (distance * rads.cos()).floor() as i32; // .round() ??
         let y = (distance * rads.sin()).floor() as i32;
-        IVec2::new(center.x() + x, center.y() + y)
+        IVec2::new(center.x_int32() + x, center.y_int32() + y)
     }
 
     #[inline]
     fn angle_to(&self, point: impl Point) -> f32 {
-        let x = (point.x() - self.x()) as f32;
-        let y = (point.y() - self.y()) as f32;
+        let x = (point.x_int32() - self.x_int32()) as f32;
+        let y = (point.y_int32() - self.y_int32()) as f32;
         y.atan2(x).to_degrees()
     }
 
     #[inline]
     fn mid_point(&self, point: impl Point) -> IVec2 {
         IVec2 {
-            x: (self.x() + point.x()) / 2,
-            y: (self.y() + point.y()) / 2,
+            x: (self.x_int32() + point.x_int32()) / 2,
+            y: (self.y_int32() + point.y_int32()) / 2,
         }
     }
 
     /// Returns the `Cross Product` between two points.
     #[inline]
-    fn cross_product(&self, point: impl Point) -> i32 { self.x() * point.y() - self.y() * point.x() }
+    fn cross_product(&self, point: impl Point) -> i32 { self.x_int32() * point.y_int32() - self.y_int32() * point.x_int32() }
 
     /// Returns the `Dot Product` between two points.
     #[inline]
-    fn dot_product(&self, point: impl Point) -> i32 { self.x() * point.x() + self.y() * point.y() }
+    fn dot_product(&self, point: impl Point) -> i32 { self.x_int32() * point.x_int32() + self.y_int32() * point.y_int32() }
 
     /// Returns the grid point the given number of spaces above this one.
     #[inline]
-    fn up(&self, amount: i32) -> IVec2 { IVec2::new(self.x(), self.y() + amount) }
+    fn up(&self, amount: i32) -> IVec2 { IVec2::new(self.x_int32(), self.y_int32() + amount) }
 
     /// Returns the grid point the given number of spaces below this one.
     #[inline]
-    fn down(&self, amount: i32) -> IVec2 { IVec2::new(self.x(), self.y() - amount) }
+    fn down(&self, amount: i32) -> IVec2 { IVec2::new(self.x_int32(), self.y_int32() - amount) }
 
     /// Returns the grid point the given number of spaces to the right of
     /// this one.
     #[inline]
-    fn right(&self, amount: i32) -> IVec2 { IVec2::new(self.x() + amount, self.y()) }
+    fn right(&self, amount: i32) -> IVec2 { IVec2::new(self.x_int32() + amount, self.y_int32()) }
 
     /// Returns the grid point the given number of spaces to the left of
     /// this one.
     #[inline]
-    fn left(&self, amount: i32) -> IVec2 { IVec2::new(self.x() - amount, self.y()) }
+    fn left(&self, amount: i32) -> IVec2 { IVec2::new(self.x_int32() - amount, self.y_int32()) }
 
     /* TODO: Fix Direction Iterators
     ////////////////
