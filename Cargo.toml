@@ -1,8 +1,84 @@
+#################################
+#########       Package
+#################################
 [package]
-name = "yendor"
-version = "0.1.0"
-edition = "2021"
+authors     = ["Laocoon <laocoon7@gmail.com>", "BigBanana <lecoqjacob@gmail.com>"]
+description = "A roguelike toolkit plugin for bevy"
+edition     = "2021"
+homepage    = "https://github.com/YendorEngine/yendor"
+license     = "BlueOak-1.0.0"
+#license-file = "LICENSE"
+name        = "yendor"
+readme      = "README.md"
+repository  = "https://github.com/YendorEngine/yendor"
+version     = "0.1.0"
+categories = ["games"]
+exclude    = ["assets/", "tools/", ".github/", "crates/"]
+keywords   = ["game", "ascii", "roguelike", "grid"]
+resolver   = "2"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+# TODO: Check this I'm not sure what all it does
+################################
+#########       Optimizations
+################################
+[profile.dev]
+opt-level = 1
 
-[dependencies]
+[profile.dev.package."*"]
+opt-level = 3
+
+# Optimizations for WASM
+[profile.release]
+codegen-units = 1
+lto           = true
+opt-level     = 'z'
+panic         = 'abort'
+
+#################################
+#########       Workspaces
+#################################
+[workspace]
+
+#################################
+#########       Features
+#################################
+[features]
+default = [
+    "random",
+]
+
+debug = [
+
+]
+
+random = [
+    "noise",
+    "rand",
+    "xxhash-rust",
+]
+
+######################################
+#########       Bevy
+######################################
+[dependencies.bevy]
+default-features = false
+features = [
+    
+]
+version = "0.9"
+
+######################################
+#########       Random
+######################################
+[dependencies.noise]
+optional = true
+version = "0.8"
+
+[dependencies.rand]
+optional = true
+version = "0.8"
+
+[dependencies.xxhash-rust]
+features = ["xxh3", "const_xxh3"]
+optional = true
+version  = "0.8"
