@@ -45,6 +45,7 @@ panic         = 'abort'
 [features]
 default = [
     "random",
+    "serialize",
 ]
 
 debug = [
@@ -55,6 +56,10 @@ random = [
     "noise",
     "rand",
     "xxhash-rust",
+]
+
+serialize = [
+    "serde",
 ]
 
 ######################################
@@ -82,3 +87,11 @@ version = "0.8"
 features = ["xxh3", "const_xxh3"]
 optional = true
 version  = "0.8"
+
+######################################
+#########       Serialize
+######################################
+[dependencies.serde]
+optional = true
+features = ["derive"]
+version = "1"

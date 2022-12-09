@@ -1,14 +1,9 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+pub mod types;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+mod imports;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+pub mod prelude {
+    pub(crate) use crate::imports::*;
+
+    pub use crate::types::*;
 }
