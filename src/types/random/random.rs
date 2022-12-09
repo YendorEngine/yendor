@@ -3,9 +3,9 @@ use crate::prelude::*;
 // TODO: Generic the HashTable
 // TODO: Generic the Noise
 pub struct Random<Rng: RngCore + SeedableRng> {
-    pub prng: Prng<Rng>,
-    pub prht: Prht,
-    pub noise: Noise,
+    prng: Prng<Rng>,
+    prht: Prht,
+    noise: Noise,
 }
 
 impl<Rng: RngCore + SeedableRng> Random<Rng> {
