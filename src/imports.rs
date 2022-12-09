@@ -5,5 +5,23 @@ pub use bevy::{
     utils::{HashMap, HashSet},
 };
 
+#[cfg(feature = "random")]
+pub use ::noise::{NoiseFn, Perlin as PerlinNoise};
+
+#[cfg(feature = "random")]
+pub use rand::{
+    distributions::{Distribution, Standard},
+    prelude::*,
+    Rng as RandRng,
+    SeedableRng,
+};
+
+#[cfg(feature = "random")]
+pub use xxhash_rust::xxh3::{Xxh3, Xxh3Builder};
+
 #[cfg(feature = "serialize")]
-pub use serde::{Serialize, Deserialize};
+pub use serde::{
+    de::{self, Deserializer, MapAccess, SeqAccess, Visitor},
+    ser::SerializeStruct,
+    Serialize, Deserialize
+};
