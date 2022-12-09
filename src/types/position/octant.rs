@@ -3,7 +3,7 @@ use crate::prelude::*;
 #[derive(Debug, Clone)]
 pub struct Octant<const GRID_WIDTH: u32, const GRID_HEIGHT: u32>(pub u8);
 
-impl<const GRID_WIDTH:u32, const GRID_HEIGHT: u32> Octant<GRID_WIDTH, GRID_HEIGHT> {
+impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Octant<GRID_WIDTH, GRID_HEIGHT> {
     /// adapted from <http://codereview.stackexchange.com/a/95551>
     /// converts a `Position` into a coordinate relative `Octant(0)` offset
 

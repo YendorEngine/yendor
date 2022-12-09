@@ -1,7 +1,7 @@
 pub use bevy::{
     math::{IVec2, IVec3, UVec2, UVec3, Vec2, Vec3},
     prelude::{Deref, DerefMut},
-    reflect::{Reflect, FromReflect},
+    reflect::{FromReflect, Reflect},
     utils::{HashMap, HashSet},
 };
 
@@ -12,8 +12,7 @@ pub use ::noise::{NoiseFn, Perlin as PerlinNoise};
 pub use rand::{
     distributions::{Distribution, Standard},
     prelude::*,
-    Rng as RandRng,
-    SeedableRng,
+    Rng as RandRng, SeedableRng,
 };
 
 #[cfg(feature = "random")]
@@ -23,5 +22,5 @@ pub use xxhash_rust::xxh3::{Xxh3, Xxh3Builder};
 pub use serde::{
     de::{self, Deserializer, MapAccess, SeqAccess, Visitor},
     ser::SerializeStruct,
-    Serialize, Deserialize
+    Deserialize, Serialize,
 };

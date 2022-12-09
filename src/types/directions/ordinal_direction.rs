@@ -1,7 +1,7 @@
 use super::*;
 
 /// Cardinal Directions Include (`NorthEast`, `SouthEast`, `SouthWest`, `NorthWest`)
-pub struct  OrdinalDirection;
+pub struct OrdinalDirection;
 
 impl OrdinalDirection {
     /// Returns a [`Direction`] representing `NorthEast`
@@ -14,5 +14,7 @@ impl OrdinalDirection {
     pub const NORTH_WEST: Direction = Direction::NORTH_WEST;
 
     /// Returns an iterator over the [`Direction`]s (`NorthEast`, `SouthEast`, `SouthWest`, `NorthWest`)
-    pub fn all() -> DirectionIter { DirectionIter::ordinal() }
+    pub fn all() -> DirectionIter {
+        DirectionIter::ordinal()
+    }
 }

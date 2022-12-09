@@ -14,13 +14,13 @@ use super::*;
 /// Direction::NORTH
 /// ```
 /// where `NORTH` is the direction you want. You may limit the list available by using `YYYDirection::XXX` where `YYY` is one of: `Cardinal / Ordinal / Vertical`
-/// 
+///
 /// `Direction`s may also be composed by `Add`ing or `Sub`tracting the values:
 /// ```
 /// let some_direction = Direction::NORTH + Direction::EAST;
 /// assert_eq(some_direction, Direction::NORTH_EAST);
 /// ```
-/// 
+///
 /// Otherwise invalid directions may be created this way as well; allowing for code such as:
 /// ```
 /// let mut input_direction = Direction::None;
@@ -29,7 +29,7 @@ use super::*;
 /// if Input::pressed(a) { input_direction += Direction::West }
 /// if Input::pressed(d) { input_direction += Direction::East }
 /// ```
-/// 
+///
 /// NOTE: These functions gives preference to `North`, `East`, and `Up` on the source when using `Invalid` [`Direction`]s
 #[derive(Deref, DerefMut, Clone, Copy, PartialEq, Eq, Hash, Debug)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
@@ -47,33 +47,41 @@ impl Direction {
     pub const NORTH_WEST: Self = Self(DirectionFlags::NORTH | DirectionFlags::WEST);
     pub const UP: Self = Self(DirectionFlags::UP);
     pub const UP_NORTH: Self = Self(DirectionFlags::UP | DirectionFlags::NORTH);
-    pub const UP_NORTH_EAST: Self = Self(DirectionFlags::UP | DirectionFlags::NORTH | DirectionFlags::EAST);
+    pub const UP_NORTH_EAST: Self =
+        Self(DirectionFlags::UP | DirectionFlags::NORTH | DirectionFlags::EAST);
     pub const UP_EAST: Self = Self(DirectionFlags::UP | DirectionFlags::EAST);
-    pub const UP_SOUTH_EAST: Self = Self(DirectionFlags::UP | DirectionFlags::SOUTH | DirectionFlags::EAST);
+    pub const UP_SOUTH_EAST: Self =
+        Self(DirectionFlags::UP | DirectionFlags::SOUTH | DirectionFlags::EAST);
     pub const UP_SOUTH: Self = Self(DirectionFlags::UP | DirectionFlags::SOUTH);
-    pub const UP_SOUTH_WEST: Self = Self(DirectionFlags::UP | DirectionFlags::SOUTH | DirectionFlags::WEST);
+    pub const UP_SOUTH_WEST: Self =
+        Self(DirectionFlags::UP | DirectionFlags::SOUTH | DirectionFlags::WEST);
     pub const UP_WEST: Self = Self(DirectionFlags::UP | DirectionFlags::WEST);
-    pub const UP_NORTH_WEST: Self = Self(DirectionFlags::UP | DirectionFlags::NORTH | DirectionFlags::WEST);
+    pub const UP_NORTH_WEST: Self =
+        Self(DirectionFlags::UP | DirectionFlags::NORTH | DirectionFlags::WEST);
     pub const DOWN: Self = Self(DirectionFlags::DOWN);
     pub const DOWN_NORTH: Self = Self(DirectionFlags::DOWN | DirectionFlags::NORTH);
-    pub const DOWN_NORTH_EAST: Self = Self(DirectionFlags::DOWN | DirectionFlags::NORTH | DirectionFlags::EAST);
+    pub const DOWN_NORTH_EAST: Self =
+        Self(DirectionFlags::DOWN | DirectionFlags::NORTH | DirectionFlags::EAST);
     pub const DOWN_EAST: Self = Self(DirectionFlags::DOWN | DirectionFlags::EAST);
-    pub const DOWN_SOUTH_EAST: Self = Self(DirectionFlags::DOWN | DirectionFlags::SOUTH | DirectionFlags::EAST);
+    pub const DOWN_SOUTH_EAST: Self =
+        Self(DirectionFlags::DOWN | DirectionFlags::SOUTH | DirectionFlags::EAST);
     pub const DOWN_SOUTH: Self = Self(DirectionFlags::DOWN | DirectionFlags::SOUTH);
-    pub const DOWN_SOUTH_WEST: Self = Self(DirectionFlags::DOWN | DirectionFlags::SOUTH | DirectionFlags::WEST);
+    pub const DOWN_SOUTH_WEST: Self =
+        Self(DirectionFlags::DOWN | DirectionFlags::SOUTH | DirectionFlags::WEST);
     pub const DOWN_WEST: Self = Self(DirectionFlags::DOWN | DirectionFlags::WEST);
-    pub const DOWN_NORTH_WEST: Self = Self(DirectionFlags::DOWN | DirectionFlags::NORTH | DirectionFlags::WEST);
+    pub const DOWN_NORTH_WEST: Self =
+        Self(DirectionFlags::DOWN | DirectionFlags::NORTH | DirectionFlags::WEST);
 }
 
 impl Direction {
     /// Retrieves the 2d coordinate value from the [`Direction`] where:
-    /// 
+    ///
     /// `East` = `1` on the `X` axis
-    /// 
+    ///
     /// `West` = `-1` on the `X` axis
-    /// 
+    ///
     /// `North` = `1` on the `Y` axis
-    /// 
+    ///
     /// `South` = `-1` on the `Y` axis
     pub const fn coord(self) -> IVec2 {
         let x = if self.has_east() {
@@ -96,17 +104,17 @@ impl Direction {
     }
 
     /// Retrieves the 3d coordinate value from the [`Direction`] where:
-    /// 
+    ///
     /// `East` = `1` on the `X` axis
-    /// 
+    ///
     /// `West` = `-1` on the `X` axis
-    /// 
+    ///
     /// `North` = `1` on the `Y` axis
-    /// 
+    ///
     /// `South` = `-1` on the `Y` axis
-    /// 
+    ///
     /// `Up` = `1` on the `Z` axis
-    /// 
+    ///
     /// `Down` = `-1` on the `Z` axis
     pub const fn coord3d(self) -> IVec3 {
         let z = if self.has_up() {
@@ -121,13 +129,13 @@ impl Direction {
     }
 
     /// Retrieves the [`Direction`] from a 2d coordinate value where:
-    /// 
+    ///
     /// `East` = `1` on the `X` axis
-    /// 
+    ///
     /// `West` = `-1` on the `X` axis
-    /// 
+    ///
     /// `North` = `1` on the `Y` axis
-    /// 
+    ///
     /// `South` = `-1` on the `Y` axis
     pub fn from_coord(coord: impl Point) -> Self {
         Self::from_ivec3(coord.as_ivec2().extend(0))
@@ -135,17 +143,17 @@ impl Direction {
 
     // TODO: Point3d
     /// Retrieves the [`Direction`] from a 3d coordinate value where:
-    /// 
+    ///
     /// `East` = `1` on the `X` axis
-    /// 
+    ///
     /// `West` = `-1` on the `X` axis
-    /// 
+    ///
     /// `North` = `1` on the `Y` axis
-    /// 
+    ///
     /// `South` = `-1` on the `Y` axis
-    /// 
+    ///
     /// `Up` = `1` on the `Z` axis
-    /// 
+    ///
     /// `Down` = `-1` on the `Z` axis
     pub fn from_ivec3(coord: IVec3) -> Self {
         let mut direction = Self::NONE;
@@ -174,11 +182,11 @@ impl Direction {
     }
 
     /// Rotates a [`Direction`] counter clockwise by one step:
-    /// 
+    ///
     /// `NorthEast` becomes `North`
-    /// 
+    ///
     /// `North` becomes `NorthWest`
-    /// 
+    ///
     /// etc...
     pub fn left45(self) -> Self {
         let z = if self.has_up() {
@@ -217,11 +225,11 @@ impl Direction {
     }
 
     /// Rotates a [`Direction`] counter clockwise by two steps:
-    /// 
+    ///
     /// `NorthEast` becomes `NorthWest`
-    /// 
+    ///
     /// `North` becomes `West`
-    /// 
+    ///
     /// etc...
     pub fn left90(self) -> Self {
         let z = if self.has_up() {
@@ -261,22 +269,22 @@ impl Direction {
 
     // OPTIMIZE: rewrite like `Self::left45()`
     /// Rotates a [`Direction`] counter clockwise by three steps:
-    /// 
+    ///
     /// `NorthEast` becomes `West`
-    /// 
+    ///
     /// `North` becomes `SouthWest`
-    /// 
+    ///
     /// etc...
     pub fn left135(self) -> Self {
         self.left90().left45()
     }
 
     /// Retrieves the opposite (rotated by four steps) [`Direction`] from another [`Direction`] where:
-    /// 
+    ///
     /// `North` and `South` are opposite:
-    /// 
+    ///
     /// `East` and `West` are opposite:
-    /// 
+    ///
     /// `Up` and `Down` are opposite:
     pub fn opposite(self) -> Self {
         let x = if self.has_east() {
@@ -302,23 +310,23 @@ impl Direction {
 
     // OPTIMIZE: rewrite like `Self::left45()`
     /// Rotates a [`Direction`] clockwise by three steps:
-    /// 
+    ///
     /// `NorthEast` becomes `South`
-    /// 
+    ///
     /// `North` becomes `SouthEast`
-    /// 
+    ///
     /// etc...
     pub fn right135(self) -> Self {
         self.right90().right45()
     }
-    
+
     // OPTIMIZE: rewrite like `Self::left45()`
     /// Rotates a [`Direction`] clockwise by two steps:
-    /// 
+    ///
     /// `NorthEast` becomes `SouthEast`
-    /// 
+    ///
     /// `North` becomes `East`
-    /// 
+    ///
     /// etc...
     pub fn right90(self) -> Self {
         self.left90().left90().left90()
@@ -326,69 +334,69 @@ impl Direction {
 
     // OPTIMIZE: rewrite like `Self::left45()`
     /// Rotates a [`Direction`] clockwise by one step:
-    /// 
+    ///
     /// `NorthEast` becomes `East`
-    /// 
+    ///
     /// `North` becomes `NorthEast`
-    /// 
+    ///
     /// etc...
     pub fn right45(self) -> Self {
         self.right90().left45()
     }
 
     /// Checks a [`Position`] to determine if it is marked as `North`
-    /// 
+    ///
     /// Returns: `true` if [`Position`] is marked `North`
     pub const fn has_north(self) -> bool {
         self.0 & Self::NORTH.0 != 0
     }
 
     /// Checks a [`Position`] to determine if it is marked as `South`
-    /// 
+    ///
     /// Returns: `true` if [`Position`] is marked `South`
     pub const fn has_south(self) -> bool {
         self.0 & Self::SOUTH.0 != 0
     }
 
     /// Checks a [`Position`] to determine if it is marked as `East`
-    /// 
+    ///
     /// Returns: `true` if [`Position`] is marked `East`
     pub const fn has_east(self) -> bool {
         self.0 & Self::EAST.0 != 0
     }
 
     /// Checks a [`Position`] to determine if it is marked as `West`
-    /// 
+    ///
     /// Returns: `true` if [`Position`] is marked `West`
     pub const fn has_west(self) -> bool {
         self.0 & Self::WEST.0 != 0
     }
 
     /// Checks a [`Position`] to determine if it is marked as `Up`
-    /// 
+    ///
     /// Returns: `true` if [`Position`] is marked `Up`
     pub const fn has_up(self) -> bool {
         self.0 & Self::UP.0 != 0
     }
 
     /// Checks a [`Position`] to determine if it is marked as `Down`
-    /// 
+    ///
     /// Returns: `true` if [`Position`] is marked `Down`
     pub const fn has_down(self) -> bool {
         self.0 & Self::DOWN.0 != 0
     }
 
     /// Checks a [`Position`] to determine if it is a [`CardinalDirection`]
-    /// 
+    ///
     /// Returns: `true` if [`Position`] contains a [`CardinalDirection`]
     /// NOTE: This function has no reguard for `Up` or `Down` therefore `Direction::UP_NORTH` will return `true`
     pub const fn is_cardinal(self) -> bool {
-        (self.has_north() || self.has_south()) && !(self.has_east() || self.has_west()) ||
-        (self.has_east() || self.has_west()) && !(self.has_north() || self.has_south())
+        (self.has_north() || self.has_south()) && !(self.has_east() || self.has_west())
+            || (self.has_east() || self.has_west()) && !(self.has_north() || self.has_south())
     }
 
     /// Checks a [`Position`] to determine if it is a [`OrdinalDirection`]
-    /// 
+    ///
     /// Returns: `true` if [`Position`] contains a [`OrdinalDirection`]
     /// NOTE: This function has no reguard for `Up` or `Down` therefore `Direction::UP_NORTH_EAST` will return `true`
     pub const fn is_ordinal(self) -> bool {

@@ -1,4 +1,4 @@
-use std::fmt::{Display, Debug};
+use std::fmt::{Debug, Display};
 
 use crate::prelude::*;
 
@@ -11,33 +11,49 @@ impl LocalPosition {
     pub const ZERO: Self = Self::splat(0);
 
     #[inline(always)]
-    pub const fn new(x: u32, y: u32) -> Self { Self(UVec2::new(x, y)) }
+    pub const fn new(x: u32, y: u32) -> Self {
+        Self(UVec2::new(x, y))
+    }
 
     /// Creates a `LocalPostion` with `x` and `y` set to `v`.
     #[inline]
-    pub const fn splat(v: u32) -> Self { Self(UVec2::splat(v)) }
+    pub const fn splat(v: u32) -> Self {
+        Self(UVec2::splat(v))
+    }
 
     ///////////////////////////////
     /// Getters
     ///////////////////////////////
     #[inline]
-    pub const fn x(&self) -> u32 { self.0.x }
+    pub const fn x(&self) -> u32 {
+        self.0.x
+    }
 
     #[inline]
-    pub const fn y(&self) -> u32 { self.0.y }
+    pub const fn y(&self) -> u32 {
+        self.0.y
+    }
 
     #[inline]
-    pub const fn gridpoint(&self) -> UVec2 { self.0 }
+    pub const fn gridpoint(&self) -> UVec2 {
+        self.0
+    }
 
     #[inline(always)]
-    pub fn grid_index(&self, size: UVec2) -> Option<usize> { (**self).as_index(size) }
+    pub fn grid_index(&self, size: UVec2) -> Option<usize> {
+        (**self).as_index(size)
+    }
 
     ///////////////////////////////
     /// Setters
     ///////////////////////////////
-    pub fn set_x(&mut self, value: u32) { self.x = value; }
+    pub fn set_x(&mut self, value: u32) {
+        self.x = value;
+    }
 
-    pub fn set_y(&mut self, value: u32) { self.y = value; }
+    pub fn set_y(&mut self, value: u32) {
+        self.y = value;
+    }
 
     pub fn set(&mut self, x: u32, y: u32) {
         self.set_x(x);

@@ -1,7 +1,7 @@
 use super::DirectionType;
 
 /// The raw `data` behind a Direction is defined here.
-pub(crate) struct  DirectionFlags;
+pub(crate) struct DirectionFlags;
 
 #[rustfmt::skip]
 impl DirectionFlags {

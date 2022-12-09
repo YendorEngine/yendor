@@ -10,7 +10,10 @@ pub struct GridRectIter<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> {
 }
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> GridRectIter<GRID_WIDTH, GRID_HEIGHT> {
-    pub fn new(min: Position<GRID_WIDTH, GRID_HEIGHT>, max: Position<GRID_WIDTH, GRID_HEIGHT>) -> Self {
+    pub fn new(
+        min: Position<GRID_WIDTH, GRID_HEIGHT>,
+        max: Position<GRID_WIDTH, GRID_HEIGHT>,
+    ) -> Self {
         let size = max.gridpoint() - min.gridpoint();
         Self {
             min,
@@ -20,7 +23,9 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> GridRectIter<GRID_WIDTH, GRI
     }
 }
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Iterator for GridRectIter<GRID_WIDTH, GRID_HEIGHT> {
+impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Iterator
+    for GridRectIter<GRID_WIDTH, GRID_HEIGHT>
+{
     type Item = Position<GRID_WIDTH, GRID_HEIGHT>;
 
     fn next(&mut self) -> Option<Self::Item> {
