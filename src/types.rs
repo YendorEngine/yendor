@@ -11,8 +11,10 @@ pub mod directions {
     pub(crate) use direction_flags::*;
     mod direction_iter;
     pub(crate) use direction_iter::*;
+    mod direction_table;
+    pub(crate) use direction_table::*;
     mod direction_type;
-    pub use direction_type::*;
+    pub(crate) use direction_type::*;
     mod direction;
     pub use direction::*;
     mod ordinal_direction;
