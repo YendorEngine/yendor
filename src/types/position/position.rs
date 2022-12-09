@@ -5,10 +5,14 @@ use std::{
 };
 
 use crate::prelude::*;
-
+/// `Position` is a type used to locate objects across multiple grid-like maps. The [`WorldPosition`] part is automatically updated using any of the `Add` or `Sub` functions. This allows `distance` and other things to also be performed across multiple `grid`s.
+/// 
 /// Suggested to import this object like:
+/// 
 /// `use yendor::types::Position as YendorPosition`
+/// 
 /// and then wrap it with your own type:
+/// 
 /// `pub type Position = YendorPosition<GRID_WIDTH, GRID_HEIGHT>`
 #[derive(Default, Reflect, FromReflect, Clone, Copy)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
@@ -313,6 +317,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Debug for Position<GRID_WIDT
     }
 }
 
+// TODO: Fix IVec2 > GRID_WIDTH, GRID_HEIGHT
 // Add offset to LocalPosition
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Add<IVec2>
     for Position<GRID_WIDTH, GRID_HEIGHT>
@@ -350,6 +355,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Add<IVec2>
     }
 }
 
+// TODO: Fix IVec2 > GRID_WIDTH, GRID_HEIGHT
 // Add offset to LocalPosition
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> AddAssign<IVec2>
     for Position<GRID_WIDTH, GRID_HEIGHT>
@@ -392,6 +398,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Add<Direction>
     }
 }
 
+// TODO: Fix IVec2 > GRID_WIDTH, GRID_HEIGHT
 // Sub offset to LocalPosition
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Sub<IVec2>
     for Position<GRID_WIDTH, GRID_HEIGHT>
@@ -428,6 +435,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Sub<IVec2>
     }
 }
 
+// TODO: Fix IVec2 > GRID_WIDTH, GRID_HEIGHT
 // Sub offset to LocalPosition
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> SubAssign<IVec2>
     for Position<GRID_WIDTH, GRID_HEIGHT>
