@@ -1,12 +1,25 @@
 use crate::prelude::*;
 
+/// [`Octant`] represents which octant a [`Position`] is relative to another [`Position`].
+/// 
+/// `East` is considered 0deg. The octants are:
+/// ```
+/// 1: 0..=45
+/// 2: 45..=90
+/// 3: 90..=135
+/// 4: 135..=180
+/// 5: 180..=225
+/// 6: 225..=270
+/// 7: 270..=315
+/// 8: 315..=359
+/// ```
 #[derive(Debug, Clone)]
 pub struct Octant<const GRID_WIDTH: u32, const GRID_HEIGHT: u32>(pub u8);
+// adapted from <http://codereview.stackexchange.com/a/95551>
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Octant<GRID_WIDTH, GRID_HEIGHT> {
-    /// adapted from <http://codereview.stackexchange.com/a/95551>
+    
     /// converts a `Position` into a coordinate relative `Octant(0)` offset
-
     #[inline]
     pub fn to_offset(&self, position: Position<GRID_WIDTH, GRID_HEIGHT>) -> (i64, i64) {
         let offset = position.absolute_position();
