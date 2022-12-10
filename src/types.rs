@@ -95,31 +95,9 @@ pub mod position {
 pub use position::*;
 
 #[cfg(feature = "random")]
-pub mod random_rewrite {
-    mod random;
-    pub use random::*;
-}
-
-#[cfg(feature = "random")]
 pub mod random {
-    mod noise;
-    pub use self::noise::*;
-    mod prht;
-    pub use prht::*;
-    mod prng;
-    pub use prng::*;
     mod random;
     pub use random::*;
-
-    #[cfg(feature = "serialize")]
-    pub mod serializable {
-        mod prng;
-        pub use prng::*;
-        mod random;
-        pub use random::*;
-    }
-    #[cfg(feature = "serialize")]
-    pub use serializable::*;
 }
 #[cfg(feature = "random")]
 pub use random::*;
