@@ -96,7 +96,8 @@ pub use position::*;
 
 #[cfg(feature = "random")]
 pub mod random_rewrite {
-    mod noise;
+    mod random;
+    pub use random::*;
 }
 
 #[cfg(feature = "random")]

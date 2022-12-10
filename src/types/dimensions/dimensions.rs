@@ -13,7 +13,7 @@ pub trait Dimensions: Clone + Copy {
     fn height(&self) -> u32;
 
     #[inline]
-    fn len(&self) -> usize { (self.width() * self.height()) as usize }
+    fn size(&self) -> usize { (self.width() * self.height()) as usize }
 
     /// Convert dimensions to UVec2 (u32).
     #[inline]

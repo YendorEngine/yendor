@@ -21,7 +21,7 @@ impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS
     #[inline(always)]
     fn new_clone(value: bool) -> Self
     where bool: Clone {
-        let count = DIMENSIONS.len();
+        let count = DIMENSIONS.size();
         let mut cells = BitVec::with_capacity(count);
         cells.resize(count, value);
         Self { cells }
@@ -34,7 +34,7 @@ impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS
             let x = coord.x_uint32();
             let y = coord.y_uint32();
             if let Some(val) = source.get((x + from.x_uint32(), y + from.y_uint32())) {
-                self.set((x + to.x_uint32(), y + to.y_uint32()), val.clone());
+                self.set((x + to.x_uint32(), y + to.y_uint32()), *val);
             }
         });
     }
@@ -42,7 +42,7 @@ impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS
     #[inline(always)]
     fn new_copy(value: bool) -> Self
     where bool: Copy {
-        let count = DIMENSIONS.len();
+        let count = DIMENSIONS.size();
         let mut cells = BitVec::with_capacity(count);
         cells.resize_with(count, |_| value);
         Self { cells }
@@ -63,13 +63,13 @@ impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS
     #[inline(always)]
     fn new_default() -> Self {
         Self {
-            cells: bitvec![0_usize; DIMENSIONS.len()],
+            cells: bitvec![0_usize; DIMENSIONS.size()],
         }
     }
 
     #[inline(always)]
     fn new_fn(f: impl Fn(IVec2) -> bool) -> Self {
-        let count = DIMENSIONS.len();
+        let count = DIMENSIONS.size();
         let mut cells = BitVec::with_capacity(count);
         DIMENSIONS.iter().for_each(|coord| cells.push(f(coord)));
         Self { cells }
@@ -193,7 +193,7 @@ impl<const DIMENSIONS: UVec2> GridIterable<bool> for BitGrid<DIMENSIONS> {
 
     #[inline]
     fn iter_column(&self, x: usize) -> Option<GridIterCol<Self::IterReturn<'_>>> {
-        if x < DIMENSIONS.len() {
+        if x < DIMENSIONS.size() {
             let w = self.width() as usize;
             return Some(self.cells[x..].iter().step_by(w));
         } else {

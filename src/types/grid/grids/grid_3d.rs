@@ -47,7 +47,7 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
     }
 
     pub fn new_fn(f: impl Fn((usize, IVec2)) -> T) -> Self {
-        let count = DIMENSIONS.len();
+        let count = DIMENSIONS.size();
         let mut layers = Vec::new();
         for index in 0..LAYER_COUNT {
             let mut cells = Vec::with_capacity(count);
@@ -295,7 +295,7 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> GridIterab
 
     #[inline]
     fn iter_column(&self, x: usize) -> Option<GridIterCol<Self::IterReturn<'_>>> {
-        if x < DIMENSIONS.len() {
+        if x < DIMENSIONS.size() {
             let w = self.width() as usize;
             return Some(self.layers[x..].iter().step_by(w));
         } else {

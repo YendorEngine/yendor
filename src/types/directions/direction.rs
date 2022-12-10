@@ -406,7 +406,7 @@ impl Display for Direction {
             if first {
                 next.to_string()
             } else {
-                format!("{}, {}", old_string, next)
+                format!("{old_string}, {next}")
             }
         }
 
@@ -443,7 +443,7 @@ impl Display for Direction {
             // first = false;
         }
 
-        write!(f, "Direction({})", s)
+        write!(f, "Direction({s})")
     }
 }
 

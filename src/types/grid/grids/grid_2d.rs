@@ -20,7 +20,7 @@ impl<T: GridParam, const DIMENSIONS: UVec2> GridLayer<T, DIMENSIONS> for Grid<T,
     #[inline(always)]
     fn new_clone(value: T) -> Self
     where T: Clone {
-        let count = DIMENSIONS.len();
+        let count = DIMENSIONS.size();
         let mut cells = Vec::with_capacity(count);
         cells.resize(count, value);
         Self { cells }
@@ -41,7 +41,7 @@ impl<T: GridParam, const DIMENSIONS: UVec2> GridLayer<T, DIMENSIONS> for Grid<T,
     #[inline(always)]
     fn new_copy(value: T) -> Self
     where T: Copy {
-        let count = DIMENSIONS.len();
+        let count = DIMENSIONS.size();
         let mut cells = Vec::with_capacity(count);
         cells.resize_with(count, || value);
         Self { cells }
@@ -62,7 +62,7 @@ impl<T: GridParam, const DIMENSIONS: UVec2> GridLayer<T, DIMENSIONS> for Grid<T,
     #[inline(always)]
     fn new_default() -> Self
     where T: Default {
-        let count = DIMENSIONS.len();
+        let count = DIMENSIONS.size();
         let mut cells = Vec::new();
         cells.resize_with(count, Default::default);
         Self { cells }
@@ -70,7 +70,7 @@ impl<T: GridParam, const DIMENSIONS: UVec2> GridLayer<T, DIMENSIONS> for Grid<T,
 
     #[inline(always)]
     fn new_fn(f: impl Fn(IVec2) -> T) -> Self {
-        let count = DIMENSIONS.len();
+        let count = DIMENSIONS.size();
         let mut cells = Vec::with_capacity(count);
         DIMENSIONS.iter().for_each(|coord| cells.push(f(coord)));
         Self { cells }
@@ -193,7 +193,7 @@ impl<T: GridParam, const DIMENSIONS: UVec2> GridIterable<T> for Grid<T, DIMENSIO
 
     #[inline]
     fn iter_column(&self, x: usize) -> Option<GridIterCol<Self::IterReturn<'_>>> {
-        if x < DIMENSIONS.len() {
+        if x < DIMENSIONS.size() {
             let w = self.width() as usize;
             return Some(self.cells[x..].iter().step_by(w));
         } else {
