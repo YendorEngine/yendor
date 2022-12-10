@@ -33,7 +33,7 @@ use super::*;
 /// NOTE: These functions gives preference to `North`, `East`, and `Up` on the source when using `Invalid` [`Direction`]s
 #[derive(Deref, DerefMut, Clone, Copy, PartialEq, Eq, Hash, Debug)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
-pub struct Direction(DirectionType);
+pub struct Direction(pub(crate) DirectionType);
 
 impl Direction {
     pub const NONE: Self = Self(0);

@@ -21,6 +21,12 @@ pub mod directions {
     pub use ordinal_direction::*;
     mod vertical_direction;
     pub use vertical_direction::*;
+
+    mod my_attempt {
+        mod direction_iter;
+        pub(crate) use direction_iter::*;
+    }
+    pub use my_attempt::*;
 }
 pub use directions::*;
 
