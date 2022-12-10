@@ -37,31 +37,33 @@ impl Iterator for PointIterRowMajor {
 ////////////////////////////////////////////////////////////
 // Adjacent Iter
 ////////////////////////////////////////////////////////////
-#[derive(Debug)]
-pub struct AdjIterator<'a> {
+pub struct AdjIterator {
     i: usize,
     p: IVec2,
-    arr: &'a [Direction],
+    count: usize,
+    dir_iter: DirectionIter,
 }
 
-impl<'a> AdjIterator<'a> {
-    pub fn new(p: impl Point, arr: &'a [Direction]) -> Self {
+impl AdjIterator {
+    pub fn new(p: impl Point, dir_iter: DirectionIter) -> Self {
         Self {
             i: 0,
+            dir_iter,
             p: p.as_ivec2(),
-            arr,
+            count: dir_iter.count(),
         }
     }
 }
 
-impl<'a> Iterator for AdjIterator<'a> {
+impl Iterator for AdjIterator {
     type Item = IVec2;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.i >= self.arr.len() {
+        if self.i >= self.count {
             return None;
         };
-        let p = self.p + self.arr[self.i].coord();
+
+        let p = self.p + self.dir_iter.next().unwrap().coord();
         self.i += 1;
         Some(p)
     }

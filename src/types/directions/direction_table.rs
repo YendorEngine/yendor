@@ -1,16 +1,17 @@
+// Include Private
 use super::*;
 
-pub(crate) const DirectionTable: &[Direction; 27] = &[
-    Direction::NONE,
+pub(crate) const DIRECTION_TABLE: &[Direction; 26] = &[
     Direction::NORTH,
-    Direction::NORTH_EAST,
     Direction::EAST,
-    Direction::SOUTH_EAST,
     Direction::SOUTH,
-    Direction::SOUTH_WEST,
     Direction::WEST,
+    Direction::NORTH_EAST,
+    Direction::SOUTH_EAST,
+    Direction::SOUTH_WEST,
     Direction::NORTH_WEST,
     Direction::UP,
+    Direction::DOWN,
     Direction::UP_NORTH,
     Direction::UP_NORTH_EAST,
     Direction::UP_EAST,
@@ -19,7 +20,6 @@ pub(crate) const DirectionTable: &[Direction; 27] = &[
     Direction::UP_SOUTH_WEST,
     Direction::UP_WEST,
     Direction::UP_NORTH_WEST,
-    Direction::DOWN,
     Direction::DOWN_NORTH,
     Direction::DOWN_NORTH_EAST,
     Direction::DOWN_EAST,

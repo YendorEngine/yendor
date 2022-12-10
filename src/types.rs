@@ -1,3 +1,5 @@
+#![allow(clippy::module_inception)]
+
 pub mod dimensions {
     mod dimensions;
     pub use dimensions::*;

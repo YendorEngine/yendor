@@ -173,25 +173,25 @@ pub trait Point: Clone + Copy {
         IVec2::new(self.x_int32() - amount, self.y_int32())
     }
 
-    /* TODO: Fix Direction Iterators
     ////////////////
     //  Iterator  //
     ////////////////
     /// Returns an iterator over the 8 points adjacent to this one. (N, NE, E, SE, S, SW, W, NW)
     #[inline]
-    fn neighbors_all(&self) -> AdjIterator { AdjIterator::new(*self, Direction::all().collect()) }
+    fn neighbors_all(&self) -> AdjIterator {
+        AdjIterator::new(*self, DirectionIter::all_2d())
+    }
 
     /// Returns an iterator over the 4 points cardinal - adjacent to this one. (N, E, S, W)
     #[inline]
     fn neighbors_cardinal(&self) -> AdjIterator {
-        AdjIterator::new(*self, CardinalDirection::all().collect())
+        AdjIterator::new(*self, DirectionIter::cardinal())
     }
 
     /// Returns an iterator over the 4 points ordinal - adjacent to this one. (NE, SE, SW,
     /// NW)
     #[inline]
     fn neighbors_ordinal(&self) -> AdjIterator {
-        AdjIterator::new(*self, OrdinalDirection::all().collect())
+        AdjIterator::new(*self, DirectionIter::ordinal())
     }
-    */
 }
