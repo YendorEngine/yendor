@@ -52,6 +52,34 @@ mod distance {
 }
 pub use distance::*;
 
+mod fov {
+    mod shadowcast {
+        mod shadowcast;
+        pub use shadowcast::*;
+        mod quadrant;
+        mod row;
+    }
+    pub(crate) use shadowcast::*;
+
+    mod shared {
+        mod fov_algorithm;
+        pub use fov_algorithm::*;
+        mod slope;
+        pub use slope::*;
+    }
+    pub(crate) use shared::*;
+
+    mod fov;
+    pub use fov::*;
+    mod fov_provider;
+    pub use fov_provider::*;
+    mod fov_receiver;
+    pub use fov_receiver::*;
+    mod visibility_map;
+    pub use visibility_map::*;
+}
+pub use fov::*;
+
 mod grid {
     mod grids {
         mod bitgrid;
