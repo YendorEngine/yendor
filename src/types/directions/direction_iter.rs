@@ -7,8 +7,11 @@ pub struct DirectionIter {
 }
 
 impl DirectionIter {
+    /// Returns an iterator over the [`Direction`]s (`North`, `East`, `South`, `West`,
+    /// `NorthEast`, `SouthEast`, `SouthWest`, `NorthWest`)
     pub fn all_2d() -> Self { Self { current: 0, end: 8 } }
 
+    /// Returns an iterator over all [`Direction`]s
     pub fn all_3d() -> Self {
         Self {
             end: 26,
@@ -16,14 +19,25 @@ impl DirectionIter {
         }
     }
 
+    /// Returns an iterator over the [`Direction`]s (`North`, `East`, `South`, `West`)
     pub fn cardinal() -> Self { Self { current: 0, end: 4 } }
 
+    /// Returns an iterator over the [`Direction`]s (`NorthEast`, `SouthEast`, `SouthWest`,
+    /// `NorthWest`)
     pub fn ordinal() -> Self { Self { current: 4, end: 8 } }
 
+    /// Returns an iterator over the [`Direction`]s (`Left`, `Right`)
     pub fn vertical() -> Self {
         Self {
             end: 10,
             current: 8,
+        }
+    }
+
+    pub fn horizontal() -> Self {
+        Self {
+            end: 12,
+            current: 10,
         }
     }
 }

@@ -51,7 +51,7 @@ random = ["noise", "rand", "xxhash-rust"]
 
 reflect = []
 
-serialize = ["serde"]
+serialize = ["serde", "bitvec/serde"]
 
 ######################################
 #########       Bevy
@@ -66,7 +66,8 @@ version          = "0.9"
 ######################################
 [dependencies.noise]
 optional = true
-version  = "0.8"
+# version  = "0.8"
+git = "https://github.com/YendorEngine/noise-rs"
 
 [dependencies.rand]
 optional = true
@@ -83,4 +84,11 @@ version  = "0.8"
 [dependencies.serde]
 features = ["derive"]
 optional = true
+version  = "1"
+
+######################################
+#########       Utility
+######################################
+[dependencies.bitvec]
+optional = false
 version  = "1"
