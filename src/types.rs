@@ -31,6 +31,8 @@ mod distance {
     pub use chebyshev::*;
     mod diagonal;
     pub use diagonal::*;
+    mod distance;
+    pub use distance::*;
     mod manhattan;
     pub use manhattan::*;
     mod pythagoras;
@@ -59,6 +61,11 @@ pub mod position {
     pub use world_position::*;
 }
 pub use position::*;
+
+#[cfg(feature = "random")]
+pub mod random_rewrite {
+    mod noise;
+}
 
 #[cfg(feature = "random")]
 pub mod random {
