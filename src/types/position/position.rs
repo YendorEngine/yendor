@@ -17,7 +17,8 @@ use crate::prelude::*;
 /// and then wrap it with your own type:
 ///
 /// `pub type Position = YendorPosition<GRID_WIDTH, GRID_HEIGHT>`
-#[derive(Default, Reflect, FromReflect, Clone, Copy)]
+#[derive(Default, Clone, Copy)]
+#[cfg_attr(feature = "reflect", derive(Reflect, FromReflect))]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct Position<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> {
     world_position: WorldPosition,

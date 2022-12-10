@@ -4,7 +4,8 @@ use crate::prelude::*;
 
 /// [`WorldPosition`] is used as an identifier for which `grid` or `chunk` an object belongs
 /// to.
-#[derive(Default, Reflect, FromReflect, Deref, DerefMut, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Default, Deref, DerefMut, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "reflect", derive(Reflect, FromReflect))]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct WorldPosition(IVec3);
 
