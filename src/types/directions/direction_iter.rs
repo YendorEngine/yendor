@@ -1,5 +1,6 @@
 use super::*;
 
+#[derive(Debug, Clone, Copy)]
 pub struct DirectionIter {
     end: usize,
     current: usize,
