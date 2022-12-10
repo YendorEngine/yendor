@@ -68,7 +68,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
     ///
     /// NOTE: If you can guarantee both [`Position`]s have the same [`WorldPosition`], it may
     /// be cheaper to compute the distance between the [`LocalPosition`]s. ```
-    /// let distance = self.get_local_position().distance(other.get_local_position()); 
+    /// let distance = self.get_local_position().distance(other.get_local_position());
     /// ```
     pub fn distance(&self, other: Self) -> u32 {
         let dist_x = self.distance_x(other);
@@ -81,7 +81,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
     ///
     /// NOTE: If you can guarantee both [`Position`]s have the same [`WorldPosition`], it may
     /// be cheaper to compute the distance between the [`LocalPosition`]'s `X` value. ```
-    /// let distance = (other.get_local_position().x() - self.get_local_position().x()).abs(); 
+    /// let distance = (other.get_local_position().x() - self.get_local_position().x()).abs();
     /// ```
     pub const fn distance_x(&self, other: Self) -> u32 {
         ((other.world_x() as i64 * GRID_WIDTH as i64 + other.x() as i64) -
@@ -93,7 +93,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
     ///
     /// NOTE: If you can guarantee both [`Position`]s have the same [`WorldPosition`], it may
     /// be cheaper to compute the distance between the [`LocalPosition`]'s `Y` value. ```
-    /// let distance = (other.get_local_position().y() - self.get_local_position().y()).abs(); 
+    /// let distance = (other.get_local_position().y() - self.get_local_position().y()).abs();
     /// ```
     pub const fn distance_y(&self, other: Self) -> u32 {
         ((other.world_y() as i64 * GRID_HEIGHT as i64 + other.y() as i64) -

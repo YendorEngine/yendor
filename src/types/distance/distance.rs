@@ -1,7 +1,7 @@
 // Include public
-use crate::prelude::*;
 // Include Private
 use super::*;
+use crate::prelude::*;
 
 /// Enumeration of available 2D/3D Distance algorithms
 pub enum Distance {
