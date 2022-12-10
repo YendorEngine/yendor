@@ -1,7 +1,7 @@
 // Include public
-use crate::prelude::*;
 // Include Private
 use super::*;
+use crate::prelude::*;
 
 /// Calculates a Pythagoras distance between two points.
 pub struct Pythagoras;

@@ -42,6 +42,22 @@ mod distance {
 }
 pub use distance::*;
 
+mod grid {
+    mod grids {
+        mod grid_2d;
+        pub use grid_2d::*;
+    }
+    pub use grids::*;
+
+    mod grid_iterable;
+    pub use grid_iterable::*;
+    mod grid_layer;
+    pub use grid_layer::*;
+    mod grid_param;
+    pub use grid_param::*;
+}
+pub use grid::*;
+
 pub mod point {
     mod point_impl;
     pub use point_impl::*;

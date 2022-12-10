@@ -7,9 +7,7 @@ pub struct DirectionIter {
 }
 
 impl DirectionIter {
-    pub fn all_2d() -> Self {
-        Self { current: 0, end: 8 }
-    }
+    pub fn all_2d() -> Self { Self { current: 0, end: 8 } }
 
     pub fn all_3d() -> Self {
         Self {
@@ -18,13 +16,9 @@ impl DirectionIter {
         }
     }
 
-    pub fn cardinal() -> Self {
-        Self { current: 0, end: 4 }
-    }
+    pub fn cardinal() -> Self { Self { current: 0, end: 4 } }
 
-    pub fn ordinal() -> Self {
-        Self { current: 4, end: 8 }
-    }
+    pub fn ordinal() -> Self { Self { current: 4, end: 8 } }
 
     pub fn vertical() -> Self {
         Self {

@@ -1,7 +1,6 @@
 use crate::prelude::*;
 
-pub type BoxedShape<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> =
-    Box<dyn Shape<GRID_WIDTH, GRID_HEIGHT>>;
+pub type BoxedShape<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> = Box<dyn Shape<GRID_WIDTH, GRID_HEIGHT>>;
 pub type BoxedShapeIter<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> =
     Box<dyn Iterator<Item = Position<GRID_WIDTH, GRID_HEIGHT>>>;
 

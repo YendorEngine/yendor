@@ -5,7 +5,6 @@ use crate::prelude::*;
 ////////////////////////////////////////////////////////////
 
 /// A trait for types representing a 2d dimension.
-#[allow(clippy::new_ret_no_self)]
 pub trait Dimensions: Clone + Copy {
     /// Returns width value.
     fn width(&self) -> u32;
@@ -14,21 +13,15 @@ pub trait Dimensions: Clone + Copy {
     fn height(&self) -> u32;
 
     #[inline]
-    fn len(&self) -> usize {
-        (self.width() * self.height()) as usize
-    }
+    fn len(&self) -> usize { (self.width() * self.height()) as usize }
 
     /// Convert dimensions to UVec2 (u32).
     #[inline]
-    fn as_uvec2(&self) -> UVec2 {
-        UVec2::new(self.width(), self.height())
-    }
+    fn as_uvec2(&self) -> UVec2 { UVec2::new(self.width(), self.height()) }
 
     /// Convert dimensions to `[i32;2]`.
     #[inline]
-    fn as_array(&self) -> [u32; 2] {
-        self.as_uvec2().to_array()
-    }
+    fn as_array(&self) -> [u32; 2] { self.as_uvec2().to_array() }
 
     /// Returns true if the point is valid within the size.
     #[inline]
@@ -37,22 +30,16 @@ pub trait Dimensions: Clone + Copy {
     }
 
     /// Returns an iterator over all points within the size.
-    fn iter(self) -> PointIterRowMajor {
-        PointIterRowMajor::new(self)
-    }
+    fn iter(self) -> PointIterRowMajor { PointIterRowMajor::new(self) }
 }
 
 #[macro_export]
 macro_rules! impl_size2d_array {
     ($type:ty) => {
         impl Dimensions for $type {
-            fn width(&self) -> u32 {
-                self[0] as u32
-            }
+            fn width(&self) -> u32 { self[0] as u32 }
 
-            fn height(&self) -> u32 {
-                self[1] as u32
-            }
+            fn height(&self) -> u32 { self[1] as u32 }
         }
     };
 }
@@ -61,13 +48,9 @@ macro_rules! impl_size2d_array {
 macro_rules! impl_size2d_tuple {
     ($type:ty) => {
         impl Dimensions for $type {
-            fn width(&self) -> u32 {
-                self.0 as u32
-            }
+            fn width(&self) -> u32 { self.0 as u32 }
 
-            fn height(&self) -> u32 {
-                self.1 as u32
-            }
+            fn height(&self) -> u32 { self.1 as u32 }
         }
     };
 }

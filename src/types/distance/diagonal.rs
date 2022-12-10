@@ -1,9 +1,9 @@
 use std::{f32::consts::SQRT_2, ops::Sub};
 
-// Include public
-use crate::prelude::*;
 // Include Private
 use super::*;
+// Include public
+use crate::prelude::*;
 
 const CARDINAL_COST: f32 = 1.0;
 pub const DIAGONAL_COST: f32 = SQRT_2;

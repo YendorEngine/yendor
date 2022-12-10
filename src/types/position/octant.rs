@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 /// [`Octant`] represents which octant a [`Position`] is relative to another [`Position`].
-/// 
+///
 /// `East` is considered 0deg. The octants are:
 /// ```
 /// 1: 0..=45
@@ -18,7 +18,6 @@ pub struct Octant<const GRID_WIDTH: u32, const GRID_HEIGHT: u32>(pub u8);
 // adapted from <http://codereview.stackexchange.com/a/95551>
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Octant<GRID_WIDTH, GRID_HEIGHT> {
-    
     /// converts a `Position` into a coordinate relative `Octant(0)` offset
     #[inline]
     pub fn to_offset(&self, position: Position<GRID_WIDTH, GRID_HEIGHT>) -> (i64, i64) {
@@ -55,7 +54,5 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Octant<GRID_WIDTH, GRID_HEIG
     }
 
     #[inline]
-    pub fn octant(&self) -> u8 {
-        self.0
-    }
+    pub fn octant(&self) -> u8 { self.0 }
 }

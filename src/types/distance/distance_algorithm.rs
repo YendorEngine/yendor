@@ -8,4 +8,3 @@ pub trait DistanceAlgorithm {
     /// Provides a 3D distance between points, using the specified algorithm.
     fn distance3d(self, start: impl Point, end: impl Point) -> f32;
 }
-

@@ -1,11 +1,8 @@
 use std::ops::{Add, Bound::*, Div, Mul, RangeBounds, Sub};
 
 fn map_range<T: Copy>(source_value: T, from_range: (T, T), to_range: (T, T)) -> T
-where
-    T: Add<T, Output = T> + Sub<T, Output = T> + Mul<T, Output = T> + Div<T, Output = T>,
-{
-    to_range.0
-        + (source_value - from_range.0) * (to_range.1 - to_range.0) / (from_range.1 - from_range.0)
+where T: Add<T, Output = T> + Sub<T, Output = T> + Mul<T, Output = T> + Div<T, Output = T> {
+    to_range.0 + (source_value - from_range.0) * (to_range.1 - to_range.0) / (from_range.1 - from_range.0)
 }
 
 pub fn map_range_u32(source_value: u32, from_range: (u32, u32), to_range: (u32, u32)) -> u32 {

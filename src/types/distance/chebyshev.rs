@@ -1,9 +1,9 @@
 use std::ops::Sub;
 
-// Include public
-use crate::prelude::*;
 // Include Private
 use super::*;
+// Include public
+use crate::prelude::*;
 
 /// Calculates a Chebyshev distance between two points.
 pub struct Chebyshev;

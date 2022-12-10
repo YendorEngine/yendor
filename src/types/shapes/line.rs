@@ -30,9 +30,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Shape<GRID_WIDTH, GRID_HEIGH
     for Line<GRID_WIDTH, GRID_HEIGHT>
 {
     #[inline]
-    fn get_count(&self) -> u32 {
-        self.start.distance(self.end)
-    }
+    fn get_count(&self) -> u32 { self.start.distance(self.end) }
 
     #[inline]
     fn contains(&self, position: Position<GRID_WIDTH, GRID_HEIGHT>) -> bool {
@@ -40,14 +38,10 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Shape<GRID_WIDTH, GRID_HEIGH
     }
 
     #[inline]
-    fn get_positions(&self) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> {
-        self.iter().collect()
-    }
+    fn get_positions(&self) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> { self.iter().collect() }
 
     #[inline]
-    fn boxed_iter(&self) -> BoxedShapeIter<GRID_WIDTH, GRID_HEIGHT> {
-        Box::new(self.into_iter())
-    }
+    fn boxed_iter(&self) -> BoxedShapeIter<GRID_WIDTH, GRID_HEIGHT> { Box::new(self.into_iter()) }
 }
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> ShapeIter<GRID_WIDTH, GRID_HEIGHT>
@@ -56,9 +50,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> ShapeIter<GRID_WIDTH, GRID_H
     type Iterator = BresenhamLineInclusiveIter<GRID_WIDTH, GRID_HEIGHT>;
 
     #[inline]
-    fn iter(&self) -> Self::Iterator {
-        self.into_iter()
-    }
+    fn iter(&self) -> Self::Iterator { self.into_iter() }
 }
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> IntoIterator for Line<GRID_WIDTH, GRID_HEIGHT> {
@@ -66,9 +58,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> IntoIterator for Line<GRID_W
     type Item = Position<GRID_WIDTH, GRID_HEIGHT>;
 
     #[inline]
-    fn into_iter(self) -> Self::IntoIter {
-        BresenhamLineInclusiveIter::new(self.start, self.end)
-    }
+    fn into_iter(self) -> Self::IntoIter { BresenhamLineInclusiveIter::new(self.start, self.end) }
 }
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Display for Line<GRID_WIDTH, GRID_HEIGHT> {
@@ -80,7 +70,5 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Display for Line<GRID_WIDTH,
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> From<Line<GRID_WIDTH, GRID_HEIGHT>>
     for BoxedShape<GRID_WIDTH, GRID_HEIGHT>
 {
-    fn from(value: Line<GRID_WIDTH, GRID_HEIGHT>) -> Self {
-        Box::new(value)
-    }
+    fn from(value: Line<GRID_WIDTH, GRID_HEIGHT>) -> Self { Box::new(value) }
 }

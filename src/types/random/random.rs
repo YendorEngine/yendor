@@ -16,25 +16,17 @@ impl<Rng: RngCore + SeedableRng> Random<Rng> {
         Self { prng, prht, noise }
     }
 
-    pub fn from_entropy() -> Self {
-        Self::new(Prng::<Rng>::entropy_u64())
-    }
+    pub fn from_entropy() -> Self { Self::new(Prng::<Rng>::entropy_u64()) }
 
-    pub fn get_prng(&mut self) -> &mut Prng<Rng> {
-        &mut self.prng
-    }
-    pub fn get_prht(&mut self) -> &mut Prht {
-        &mut self.prht
-    }
-    pub fn get_noise(&mut self) -> &mut Noise {
-        &mut self.noise
-    }
+    pub fn get_prng(&mut self) -> &mut Prng<Rng> { &mut self.prng }
+
+    pub fn get_prht(&mut self) -> &mut Prht { &mut self.prht }
+
+    pub fn get_noise(&mut self) -> &mut Noise { &mut self.noise }
 }
 
 impl<Rng: RngCore + SeedableRng> Default for Random<Rng> {
-    fn default() -> Self {
-        Self::from_entropy()
-    }
+    fn default() -> Self { Self::from_entropy() }
 }
 
 impl<Rng: RngCore + SeedableRng> std::fmt::Debug for Random<Rng> {

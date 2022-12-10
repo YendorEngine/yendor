@@ -2,7 +2,8 @@ use std::fmt::{Debug, Display};
 
 use crate::prelude::*;
 
-/// [`WorldPosition`] is used as an identifier for which `grid` or `chunk` an object belongs to.
+/// [`WorldPosition`] is used as an identifier for which `grid` or `chunk` an object belongs
+/// to.
 #[derive(Default, Reflect, FromReflect, Deref, DerefMut, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct WorldPosition(IVec3);
@@ -13,15 +14,11 @@ impl WorldPosition {
 
     /// Creates a new [`WorldPosition`] from `x`, `y`, and `z`.
     #[inline(always)]
-    pub const fn new(x: i32, y: i32, z: i32) -> Self {
-        Self(IVec3::new(x, y, z))
-    }
+    pub const fn new(x: i32, y: i32, z: i32) -> Self { Self(IVec3::new(x, y, z)) }
 
     /// Creates a new [`WorldPosition`] with all elements set to `value`.
     #[inline]
-    pub const fn splat(value: i32) -> Self {
-        Self(IVec3::splat(value))
-    }
+    pub const fn splat(value: i32) -> Self { Self(IVec3::splat(value)) }
 
     //#############################
     // Getters
@@ -29,52 +26,36 @@ impl WorldPosition {
 
     /// Returns the current `X` value.
     #[inline]
-    pub const fn x(&self) -> i32 {
-        self.0.x
-    }
+    pub const fn x(&self) -> i32 { self.0.x }
 
     /// Returns the current `Y` value.
     #[inline]
-    pub const fn y(&self) -> i32 {
-        self.0.y
-    }
+    pub const fn y(&self) -> i32 { self.0.y }
 
     /// Returns the current `Z` value.
     #[inline]
-    pub const fn z(&self) -> i32 {
-        self.0.z
-    }
+    pub const fn z(&self) -> i32 { self.0.z }
 
     /// Returns the current `X` and `Y` value as an [`IVec2`].
     #[inline]
-    pub const fn xy(&self) -> IVec2 {
-        IVec2::new(self.x(), self.y())
-    }
+    pub const fn xy(&self) -> IVec2 { IVec2::new(self.x(), self.y()) }
 
     /// Returns the current `X`, `Y`, and `Z` value as an [`IVec3`].
     #[inline]
-    pub const fn xyz(&self) -> IVec3 {
-        self.0
-    }
+    pub const fn xyz(&self) -> IVec3 { self.0 }
 
     //#############################
     // Setters
     //#############################
 
     /// Sets the current `X` value.
-    pub fn set_x(&mut self, value: i32) {
-        self.x = value;
-    }
+    pub fn set_x(&mut self, value: i32) { self.x = value; }
 
     /// Sets the current `Y` value.
-    pub fn set_y(&mut self, value: i32) {
-        self.y = value;
-    }
+    pub fn set_y(&mut self, value: i32) { self.y = value; }
 
     /// Sets the current `Z` value.
-    pub fn set_z(&mut self, value: i32) {
-        self.z = value;
-    }
+    pub fn set_z(&mut self, value: i32) { self.z = value; }
 
     /// Sets the current `X` and `Y` value.
     pub fn set_xy(&mut self, x: i32, y: i32) {

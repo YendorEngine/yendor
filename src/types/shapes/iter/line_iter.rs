@@ -21,10 +21,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> BresenhamLineIter<GRID_WIDTH
     /// Creates a new iterator.Yields intermediate points between `start`
     /// and `end`. Does include `start` but not `end`.
     #[inline]
-    pub fn new(
-        start: Position<GRID_WIDTH, GRID_HEIGHT>,
-        end: Position<GRID_WIDTH, GRID_HEIGHT>,
-    ) -> Self {
+    pub fn new(start: Position<GRID_WIDTH, GRID_HEIGHT>, end: Position<GRID_WIDTH, GRID_HEIGHT>) -> Self {
         // figure out which octant `end` is relative to `start`
         let octant = start.octant_to(end);
 
@@ -68,9 +65,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> BresenhamLineIter<GRID_WIDTH
     }
 }
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Iterator
-    for BresenhamLineIter<GRID_WIDTH, GRID_HEIGHT>
-{
+impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Iterator for BresenhamLineIter<GRID_WIDTH, GRID_HEIGHT> {
     type Item = Position<GRID_WIDTH, GRID_HEIGHT>;
 
     #[inline]
@@ -92,23 +87,16 @@ pub struct BresenhamLineInclusiveIter<const GRID_WIDTH: u32, const GRID_HEIGHT: 
     BresenhamLineIter<GRID_WIDTH, GRID_HEIGHT>,
 );
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32>
-    BresenhamLineInclusiveIter<GRID_WIDTH, GRID_HEIGHT>
-{
+impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> BresenhamLineInclusiveIter<GRID_WIDTH, GRID_HEIGHT> {
     /// Creates a new iterator. Yields points `start..=end`.
     #[inline]
-    pub fn new(
-        start: Position<GRID_WIDTH, GRID_HEIGHT>,
-        end: Position<GRID_WIDTH, GRID_HEIGHT>,
-    ) -> Self {
+    pub fn new(start: Position<GRID_WIDTH, GRID_HEIGHT>, end: Position<GRID_WIDTH, GRID_HEIGHT>) -> Self {
         Self(BresenhamLineIter::new(start, end))
     }
 
     /// Return the next point without checking if we are past `end`.
     #[inline]
-    pub fn advance(&mut self) -> Position<GRID_WIDTH, GRID_HEIGHT> {
-        self.0.advance()
-    }
+    pub fn advance(&mut self) -> Position<GRID_WIDTH, GRID_HEIGHT> { self.0.advance() }
 }
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Iterator

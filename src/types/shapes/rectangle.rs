@@ -12,10 +12,7 @@ pub struct GridRectangle<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> {
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> GridRectangle<GRID_WIDTH, GRID_HEIGHT> {
     #[inline]
-    pub fn new(
-        min: Position<GRID_WIDTH, GRID_HEIGHT>,
-        max: Position<GRID_WIDTH, GRID_HEIGHT>,
-    ) -> Self {
+    pub fn new(min: Position<GRID_WIDTH, GRID_HEIGHT>, max: Position<GRID_WIDTH, GRID_HEIGHT>) -> Self {
         let (min, max) = Self::find_min_max(min, max);
         Self { min, max }
     }
@@ -48,36 +45,24 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> GridRectangle<GRID_WIDTH, GR
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> GridRectangle<GRID_WIDTH, GRID_HEIGHT> {
     #[inline]
-    pub const fn width(&self) -> u32 {
-        self.max.x() - self.min.x()
-    }
+    pub const fn width(&self) -> u32 { self.max.x() - self.min.x() }
 
     #[inline]
-    pub const fn height(&self) -> u32 {
-        self.max.y() - self.min.y()
-    }
+    pub const fn height(&self) -> u32 { self.max.y() - self.min.y() }
 
     #[inline]
-    pub const fn min(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> {
-        self.min
-    }
+    pub const fn min(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> { self.min }
 
     #[inline]
-    pub const fn max(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> {
-        self.max
-    }
+    pub const fn max(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> { self.max }
 
     #[inline]
-    pub const fn is_square(&self) -> bool {
-        self.width() == self.height()
-    }
+    pub const fn is_square(&self) -> bool { self.width() == self.height() }
 }
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> GridRectangle<GRID_WIDTH, GRID_HEIGHT> {
     #[inline]
-    fn center(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> {
-        self.min.lerp(self.max, 0.5)
-    }
+    fn center(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> { self.min.lerp(self.max, 0.5) }
 
     #[inline]
     fn left(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> {
@@ -113,9 +98,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> GridRectangle<GRID_WIDTH, GR
 
     /// Calls a function for each x/y point in the rectangle
     pub fn for_each<F>(&self, f: F)
-    where
-        F: FnMut(Position<GRID_WIDTH, GRID_HEIGHT>),
-    {
+    where F: FnMut(Position<GRID_WIDTH, GRID_HEIGHT>) {
         self.into_iter().for_each(f)
     }
 }
@@ -124,9 +107,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Shape<GRID_WIDTH, GRID_HEIGH
     for GridRectangle<GRID_WIDTH, GRID_HEIGHT>
 {
     #[inline]
-    fn get_count(&self) -> u32 {
-        self.width() * self.height()
-    }
+    fn get_count(&self) -> u32 { self.width() * self.height() }
 
     #[inline]
     fn contains(&self, position: Position<GRID_WIDTH, GRID_HEIGHT>) -> bool {
@@ -139,26 +120,18 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Shape<GRID_WIDTH, GRID_HEIGH
 
     /// returns an iterator over all of the points
     #[inline]
-    fn get_positions(&self) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> {
-        self.iter().collect()
-    }
+    fn get_positions(&self) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> { self.iter().collect() }
 
     #[inline]
-    fn boxed_iter(&self) -> BoxedShapeIter<GRID_WIDTH, GRID_HEIGHT> {
-        Box::new(self.into_iter())
-    }
+    fn boxed_iter(&self) -> BoxedShapeIter<GRID_WIDTH, GRID_HEIGHT> { Box::new(self.into_iter()) }
 }
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> IntoIterator
-    for GridRectangle<GRID_WIDTH, GRID_HEIGHT>
-{
+impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> IntoIterator for GridRectangle<GRID_WIDTH, GRID_HEIGHT> {
     type IntoIter = GridRectIter<GRID_WIDTH, GRID_HEIGHT>;
     type Item = Position<GRID_WIDTH, GRID_HEIGHT>;
 
     #[inline]
-    fn into_iter(self) -> Self::IntoIter {
-        GridRectIter::new(self.min, self.max)
-    }
+    fn into_iter(self) -> Self::IntoIter { GridRectIter::new(self.min, self.max) }
 }
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> ShapeIter<GRID_WIDTH, GRID_HEIGHT>
@@ -167,15 +140,11 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> ShapeIter<GRID_WIDTH, GRID_H
     type Iterator = GridRectIter<GRID_WIDTH, GRID_HEIGHT>;
 
     #[inline]
-    fn iter(&self) -> Self::Iterator {
-        self.into_iter()
-    }
+    fn iter(&self) -> Self::Iterator { self.into_iter() }
 }
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> From<GridRectangle<GRID_WIDTH, GRID_HEIGHT>>
     for BoxedShape<GRID_WIDTH, GRID_HEIGHT>
 {
-    fn from(value: GridRectangle<GRID_WIDTH, GRID_HEIGHT>) -> Self {
-        Box::new(value)
-    }
+    fn from(value: GridRectangle<GRID_WIDTH, GRID_HEIGHT>) -> Self { Box::new(value) }
 }

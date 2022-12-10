@@ -19,9 +19,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Circle<GRID_WIDTH, GRID_HEIG
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Circle<GRID_WIDTH, GRID_HEIGHT> {
     #[inline]
-    pub const fn center(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> {
-        self.center
-    }
+    pub const fn center(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> { self.center }
 
     #[inline]
     pub fn left(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> {
@@ -34,9 +32,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Circle<GRID_WIDTH, GRID_HEIG
     }
 
     #[inline]
-    pub fn top(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> {
-        self.center + IVec2::new(0, self.radius as i32)
-    }
+    pub fn top(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> { self.center + IVec2::new(0, self.radius as i32) }
 
     #[inline]
     pub fn bottom(&self) -> Position<GRID_WIDTH, GRID_HEIGHT> {
@@ -44,14 +40,10 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Circle<GRID_WIDTH, GRID_HEIG
     }
 
     #[inline]
-    pub fn as_horizontal_line(&self) -> Line<GRID_WIDTH, GRID_HEIGHT> {
-        Line::new(self.left(), self.right())
-    }
+    pub fn as_horizontal_line(&self) -> Line<GRID_WIDTH, GRID_HEIGHT> { Line::new(self.left(), self.right()) }
 
     #[inline]
-    pub fn as_vertical_line(&self) -> Line<GRID_WIDTH, GRID_HEIGHT> {
-        Line::new(self.bottom(), self.top())
-    }
+    pub fn as_vertical_line(&self) -> Line<GRID_WIDTH, GRID_HEIGHT> { Line::new(self.bottom(), self.top()) }
 }
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Shape<GRID_WIDTH, GRID_HEIGHT>
@@ -59,9 +51,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Shape<GRID_WIDTH, GRID_HEIGH
 {
     #[inline]
     // FIX: PERF??
-    fn get_count(&self) -> u32 {
-        self.get_positions().len() as u32
-    }
+    fn get_count(&self) -> u32 { self.get_positions().len() as u32 }
 
     #[inline]
     fn contains(&self, position: Position<GRID_WIDTH, GRID_HEIGHT>) -> bool {
@@ -134,9 +124,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Shape<GRID_WIDTH, GRID_HEIGH
     }
 
     #[inline]
-    fn boxed_iter(&self) -> BoxedShapeIter<GRID_WIDTH, GRID_HEIGHT> {
-        Box::new(self.into_iter())
-    }
+    fn boxed_iter(&self) -> BoxedShapeIter<GRID_WIDTH, GRID_HEIGHT> { Box::new(self.into_iter()) }
 }
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> ShapeIter<GRID_WIDTH, GRID_HEIGHT>
@@ -145,27 +133,19 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> ShapeIter<GRID_WIDTH, GRID_H
     type Iterator = bevy::utils::hashbrown::hash_set::IntoIter<Position<GRID_WIDTH, GRID_HEIGHT>>;
 
     #[inline]
-    fn iter(&self) -> Self::Iterator {
-        self.get_positions().into_iter()
-    }
+    fn iter(&self) -> Self::Iterator { self.get_positions().into_iter() }
 }
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> IntoIterator
-    for Circle<GRID_WIDTH, GRID_HEIGHT>
-{
+impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> IntoIterator for Circle<GRID_WIDTH, GRID_HEIGHT> {
     type IntoIter = bevy::utils::hashbrown::hash_set::IntoIter<Position<GRID_WIDTH, GRID_HEIGHT>>;
     type Item = Position<GRID_WIDTH, GRID_HEIGHT>;
 
     #[inline]
-    fn into_iter(self) -> Self::IntoIter {
-        self.get_positions().into_iter()
-    }
+    fn into_iter(self) -> Self::IntoIter { self.get_positions().into_iter() }
 }
 
 impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> From<Circle<GRID_WIDTH, GRID_HEIGHT>>
     for BoxedShape<GRID_WIDTH, GRID_HEIGHT>
 {
-    fn from(value: Circle<GRID_WIDTH, GRID_HEIGHT>) -> Self {
-        Box::new(value)
-    }
+    fn from(value: Circle<GRID_WIDTH, GRID_HEIGHT>) -> Self { Box::new(value) }
 }
