@@ -1,5 +1,11 @@
 #![allow(clippy::module_inception)]
 
+mod axis {
+    mod axis;
+    pub use axis::*;
+}
+pub use axis::*;
+
 pub mod dimensions {
     mod dimensions;
     pub use dimensions::*;
@@ -13,6 +19,8 @@ pub mod directions {
     pub(crate) use direction_flags::*;
     mod direction_iter;
     pub(crate) use direction_iter::*;
+    mod direction_iterator;
+    pub(crate) use direction_iterator::*;
     mod direction_table;
     pub(crate) use direction_table::*;
     mod direction_type;
@@ -23,6 +31,8 @@ pub mod directions {
     pub use ordinal_direction::*;
     mod vertical_direction;
     pub use vertical_direction::*;
+    mod horizontal_direction;
+    pub use horizontal_direction::*;
 }
 pub use directions::*;
 
@@ -44,8 +54,12 @@ pub use distance::*;
 
 mod grid {
     mod grids {
+        mod bitgrid;
+        pub use bitgrid::*;
         mod grid_2d;
         pub use grid_2d::*;
+        mod grid_3d;
+        pub use grid_3d::*;
     }
     pub use grids::*;
 

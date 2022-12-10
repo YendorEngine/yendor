@@ -60,10 +60,12 @@ impl Direction {
         Self(DirectionFlags::DOWN | DirectionFlags::SOUTH | DirectionFlags::WEST);
     pub const DOWN_WEST: Self = Self(DirectionFlags::DOWN | DirectionFlags::WEST);
     pub const EAST: Self = Self(DirectionFlags::EAST);
+    pub const LEFT: Self = Self(DirectionFlags::LEFT);
     pub const NONE: Self = Self(0);
     pub const NORTH: Self = Self(DirectionFlags::NORTH);
     pub const NORTH_EAST: Self = Self(DirectionFlags::NORTH | DirectionFlags::EAST);
     pub const NORTH_WEST: Self = Self(DirectionFlags::NORTH | DirectionFlags::WEST);
+    pub const RIGHT: Self = Self(DirectionFlags::RIGHT);
     pub const SOUTH: Self = Self(DirectionFlags::SOUTH);
     pub const SOUTH_EAST: Self = Self(DirectionFlags::SOUTH | DirectionFlags::EAST);
     pub const SOUTH_WEST: Self = Self(DirectionFlags::SOUTH | DirectionFlags::WEST);
@@ -378,12 +380,24 @@ impl Direction {
         (self.has_north() || self.has_south()) && (self.has_east() || self.has_west())
     }
 
-    /// Creates an iterator over all `CardinalDirection`s and `OridinalDirection`s
-    pub fn all() -> DirectionIter { DirectionIter::all_2d() }
-
     /// Creates an iterator over all `CardinalDirection`s, `OrdinalDirection`s, and
     /// `VerticalDirection`s
     pub fn all_3d() -> DirectionIter { DirectionIter::all_3d() }
+
+    pub const fn axis(self) -> Option<GridAxis> {
+        match self {
+            Self::NORTH | Self::SOUTH => Some(GridAxis::Y),
+            Self::EAST | Self::WEST => Some(GridAxis::X),
+            Self::UP | Self::DOWN => Some(GridAxis::X),
+            Self::LEFT | Self::RIGHT => Some(GridAxis::Y),
+            _ => None,
+        }
+    }
+}
+
+impl DirectionIterator for Direction {
+    /// Creates an iterator over all `CardinalDirection`s and `OridinalDirection`s
+    fn all() -> DirectionIter { DirectionIter::all_2d() }
 }
 
 impl Display for Direction {
