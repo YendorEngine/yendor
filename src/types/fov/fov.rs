@@ -15,14 +15,14 @@ impl<T> Fov<T> {
     ) {
         let range = range.into();
         match self {
-            Self::Shadowcast(pass_through_data) => Shadowcast::compute_fov(
+            Self::Shadowcast(&pass_through_data) => Shadowcast::compute_fov(
                 origin,
                 range,
                 provider,
                 receiver,
                 pass_through_data,
             ),
-            Self::ShadowcastDirection(direction, pass_through_data) => Shadowcast::compute_direction(
+            Self::ShadowcastDirection(direction, &pass_through_data) => Shadowcast::compute_direction(
                 origin,
                 range,
                 provider,

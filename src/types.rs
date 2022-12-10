@@ -53,6 +53,14 @@ mod distance {
 pub use distance::*;
 
 mod fov {
+    mod shadowcast {
+        mod shadowcast;
+        pub use shadowcast::*;
+        mod quadrant;
+        mod row;
+    }
+    pub(crate) use shadowcast::*;
+
     mod fov_algorithm;
     pub use fov_algorithm::*;
     mod fov_provider;
