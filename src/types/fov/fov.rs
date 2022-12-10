@@ -1,38 +1,34 @@
 use crate::prelude::*;
 
-pub enum Fov {
-    Shadowcast,
-    ShadowcastDirection(CardinalDirection),
+pub enum Fov<T> {
+    Shadowcast(T),
+    ShadowcastDirection(CardinalDirection, T),
 }
 
-impl Fov {
-    pub fn compute<FovRange: Into<u32>>(
+impl<T> Fov<T> {
+    pub fn compute<FovRange: Into<u32>, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>(
         &self,
-        origin: Position,
-        vision_type: u8,
+        origin: Position<GRID_WIDTH, GRID_HEIGHT>,
         range: FovRange,
         provider: &mut impl FovProvider,
-        q_blocks_vision: &Query<&'static BlocksVision>,
         receiver: &mut impl FovReceiver,
     ) {
         let range = range.into();
         match self {
-            Self::Shadowcast => Shadowcast::compute_fov(
+            Self::Shadowcast(pass_through_data) => Shadowcast::compute_fov(
                 origin,
-                vision_type,
                 range,
                 provider,
-                q_blocks_vision,
                 receiver,
+                pass_through_data,
             ),
-            Self::ShadowcastDirection(direction) => Shadowcast::compute_direction(
+            Self::ShadowcastDirection(direction, pass_through_data) => Shadowcast::compute_direction(
                 origin,
-                vision_type,
                 range,
                 provider,
-                q_blocks_vision,
                 receiver,
                 *direction,
+                pass_through_data,
             ),
         }
     }
