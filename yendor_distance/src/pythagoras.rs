@@ -11,8 +11,9 @@ impl DistanceAlgorithm for Pythagoras {
     }
 
     // Calculates a Pythagoras distance between two 3D points.
-    fn distance3d(self, _start: impl Point, _end: impl Point) -> f32 {
-        unimplemented!("Pythagoras distance3d not implemented")
+    fn distance3d(self, start: impl Point, end: impl Point) -> f32 {
+        let distance_squared = PythagorasSquared.distance3d(start, end);
+        f32::sqrt(distance_squared)
     }
 }
 
