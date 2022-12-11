@@ -1,5 +1,12 @@
 use crate::prelude::*;
 
+// TODO: Add more Fov Algorithms: http://www.adammil.net/blog/v125_Roguelike_Vision_Algorithms.html
+// TODO: Adam
+// TODO: Ray casting
+// TODO: Diamond walls (point-to-tile or point-to-point)
+// TODO: Half-width walls (point-to-tile or point-to-point)
+// TODO: Permissive field of view (tile-to-tile)
+// TODO: Digital field of view (diamond-to-diamond)
 pub enum Fov {
     Shadowcast,
     ShadowcastDirection(Direction),
@@ -31,7 +38,7 @@ mod tests {
 
     struct Provider;
     impl FovProvider<(), 10, 10> for Provider {
-        fn is_opaque(&mut self, position: Position<10, 10>, pass_through_data: &()) -> bool { false }
+        fn is_opaque(&mut self, _position: Position<10, 10>, _pass_through_data: &()) -> bool { false }
     }
 
     #[test]
