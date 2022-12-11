@@ -15,7 +15,7 @@ impl PathAlgorithm for IDAstar {
                 let neighbors = provider.get_neighbors(p, &mut pass_through_data);
                 let mut successors = Vec::with_capacity(neighbors.len());
                 for neighbor in neighbors {
-                    successors.push((neighbor, provider.cost(neighbor, &mut pass_through_data)));
+                    successors.push((neighbor, provider.cost(p, neighbor, &mut pass_through_data)));
                 }
                 successors
             },

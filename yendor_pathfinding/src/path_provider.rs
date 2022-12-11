@@ -6,7 +6,7 @@ pub trait PathProvider<T, const DIMENSIONS: UVec2> {
         pass_through_data: &mut T,
     ) -> Vec<Position<DIMENSIONS>>;
 
-    fn cost(&self, position: Position<DIMENSIONS>, pass_through_data: &mut T) -> u32;
+    fn cost(&self, from_position: Position<DIMENSIONS>, to_position: Position<DIMENSIONS>, pass_through_data: &mut T) -> u32;
 
     fn distance(&self, origin: Position<DIMENSIONS>, destination: Position<DIMENSIONS>) -> u32 {
         origin.distance(destination)

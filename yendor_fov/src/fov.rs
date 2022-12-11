@@ -34,14 +34,16 @@ impl Fov {
 mod tests {
     use crate::prelude::*;
 
+    const DIM: UVec2 = UVec2 {x:10, y:10};
+
     struct Provider;
-    impl FovProvider<(), 10, 10> for Provider {
-        fn is_opaque(&mut self, _position: Position<10, 10>, _pass_through_data: &()) -> bool { false }
+    impl FovProvider<(), DIM> for Provider {
+        fn is_opaque(&mut self, _position: Position<DIM>, _pass_through_data: &mut ()) -> bool { false }
     }
 
     #[test]
     fn fov_test() {
-        let pos: Position<10, 10> = Position::default();
+        let pos: Position<DIM> = Position::default();
         let data = ();
         let visible_sets = Fov::Shadowcast.compute(pos, 1_u32, &mut Provider, data);
         visible_sets.iter().for_each(|pos| {
