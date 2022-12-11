@@ -1,5 +1,3 @@
-#[cfg(feature = "random")]
-pub use ::noise::{NoiseFn, Perlin as PerlinNoise};
 #[cfg(feature = "reflect")]
 pub use bevy::reflect::{FromReflect, Reflect};
 pub use bevy::{
@@ -8,17 +6,26 @@ pub use bevy::{
     prelude::{Deref, DerefMut},
     utils::{HashMap, HashSet},
 };
+
+#[cfg(feature = "pathfinding")]
+pub use ::pathfinding::prelude::*;
+
+#[cfg(feature = "random")]
+pub use ::noise::{NoiseFn, Perlin as PerlinNoise};
+
 #[cfg(feature = "random")]
 pub use rand::{
     distributions::{Distribution, Standard},
     prelude::*,
     Rng as RandRng, SeedableRng,
 };
+
 #[cfg(feature = "serialize")]
 pub use serde::{
     de::{self, Deserializer, MapAccess, SeqAccess, Visitor},
     ser::SerializeStruct,
     Deserialize, Serialize,
 };
+
 #[cfg(feature = "random")]
 pub use xxhash_rust::xxh3::{Xxh3, Xxh3Builder};
