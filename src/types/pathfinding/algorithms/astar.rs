@@ -7,11 +7,11 @@ impl PathAlgorithm for AStar {
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
         destination: Position<GRID_WIDTH, GRID_HEIGHT>,
         provider: &mut impl PathProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-        pass_through_data: &T,
+        mut pass_through_data: T,
     ) -> Vec<Position<GRID_WIDTH, GRID_HEIGHT>> {
         let result = astar(
             &origin,
-            |&p| provider.get_neighbors(p, pass_through_data),
+            |&p| provider.get_neighbors(p, &mut pass_through_data),
             |&p| provider.distance(p, destination),
             |p| *p == destination,
         );

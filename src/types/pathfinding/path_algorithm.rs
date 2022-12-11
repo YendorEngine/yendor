@@ -4,6 +4,6 @@ pub trait PathAlgorithm {
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
         destination: Position<GRID_WIDTH, GRID_HEIGHT>,
         provider: &mut impl PathProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-        pass_through_data: &T,
+        pass_through_data: T,
     ) -> Vec<Position<GRID_WIDTH, GRID_HEIGHT>>;
 }

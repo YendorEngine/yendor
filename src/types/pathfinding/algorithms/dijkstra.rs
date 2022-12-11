@@ -7,11 +7,11 @@ impl Dijkstras {
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
         destination: Position<GRID_WIDTH, GRID_HEIGHT>,
         provider: &mut impl PathProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-        pass_through_data: &T,
+        mut pass_through_data: T,
     ) -> Vec<Position<GRID_WIDTH, GRID_HEIGHT>> {
         let (paths, _) = dijkstra_partial(
             &origin,
-            |&p| provider.get_neighbors(p, pass_through_data),
+            |&p| provider.get_neighbors(p, &mut pass_through_data),
             |&p| p == destination,
         );
 
@@ -34,11 +34,11 @@ impl PathAlgorithm for Dijkstras {
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
         destination: Position<GRID_WIDTH, GRID_HEIGHT>,
         provider: &mut impl PathProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-        pass_through_data: &T,
+        mut pass_through_data: T,
     ) -> Vec<Position<GRID_WIDTH, GRID_HEIGHT>> {
         let dijkstra_path = dijkstra(
             &origin,
-            |&p| provider.get_neighbors(p, pass_through_data),
+            |&p| provider.get_neighbors(p, &mut pass_through_data),
             |&p| p == destination,
         );
 

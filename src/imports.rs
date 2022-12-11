@@ -1,7 +1,14 @@
 #[cfg(feature = "random")]
 pub use ::noise::{NoiseFn, Perlin as PerlinNoise};
+
 #[cfg(feature = "pathfinding")]
-pub use ::pathfinding::prelude::*;
+pub use ::pathfinding::prelude::{
+    astar,
+    dijkstra,
+    dijkstra_partial,
+    build_path,
+};
+
 #[cfg(feature = "reflect")]
 pub use bevy::reflect::{FromReflect, Reflect};
 pub use bevy::{
