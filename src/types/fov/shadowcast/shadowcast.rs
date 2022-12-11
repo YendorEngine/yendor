@@ -3,63 +3,55 @@
 use super::{quadrant::*, row::*};
 use crate::prelude::*;
 
-pub struct Shadowcast<T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32> {
-    _phantom: std::marker::PhantomData<T>,
-}
+pub struct Shadowcast;
 
-impl<'w, 's, T: Component, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>
-    FovAlgorithm<'w, 's, T, GRID_WIDTH, GRID_HEIGHT> for Shadowcast<T, GRID_WIDTH, GRID_HEIGHT>
-{
-    fn compute_fov(
+impl FovAlgorithm for Shadowcast {
+    fn compute_fov<T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>(
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
-        vision_type: u8,
         range: u32,
         provider: &mut impl FovProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-        q_blocks_vision: &Query<'w, 's, &'static T>,
-        receiver: &mut impl FovReceiver<GRID_WIDTH, GRID_HEIGHT>,
-    ) {
-        receiver.set_visible(origin);
+        pass_through_data: &'_ T,
+    ) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> {
+        let mut visible_points: HashSet<Position<_, _>> =
+            HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
+
+        visible_points.insert(origin);
+
         CardinalDirection::all().enumerate().for_each(|(_index, direction)| {
-            let mut quadrant = Quadrant::new(
-                direction,
-                origin,
-                vision_type,
-                provider,
-                q_blocks_vision,
-                receiver,
-            );
+            let mut quadrant = Quadrant::new(direction, origin, provider, pass_through_data);
             let mut first_row = Row::new(1, Slope::new(-1, 1), Slope::new(1, 1));
-            Self::scan_recursive(range, &mut quadrant, &mut first_row);
+            Self::scan_recursive(range, &mut quadrant, &mut first_row, &mut visible_points);
         });
+
+        visible_points
     }
 }
 
-impl<'w, 's, T: Component, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>
-    Shadowcast<T, GRID_WIDTH, GRID_HEIGHT>
-{
-    pub fn compute_direction(
+impl Shadowcast {
+    pub fn compute_direction<T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>(
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
-        vision_type: u8,
         range: u32,
         provider: &mut impl FovProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-        q_blocks_vision: &Query<'w, 's, &'static T>,
-        receiver: &mut impl FovReceiver<GRID_WIDTH, GRID_HEIGHT>,
-        direction: CardinalDirection,
-    ) {
-        receiver.set_visible(origin);
-        let mut quadrant = Quadrant::new(
-            direction,
-            origin,
-            vision_type,
-            provider,
-            q_blocks_vision,
-            receiver,
-        );
+        direction: Direction,
+        pass_through_data: &'_ T,
+    ) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> {
+        let mut visible_points: HashSet<Position<_, _>> =
+            HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
+        visible_points.insert(origin);
+
+        let mut quadrant = Quadrant::new(direction, origin, provider, pass_through_data);
         let mut first_row = Row::new(1, Slope::new(-1, 1), Slope::new(1, 1));
-        Self::scan_recursive(range, &mut quadrant, &mut first_row);
+        Self::scan_recursive(range, &mut quadrant, &mut first_row, &mut visible_points);
+
+        visible_points
     }
 
-    fn scan_recursive(range: u32, quadrant: &mut Quadrant<T, GRID_WIDTH, GRID_HEIGHT>, row: &mut Row) {
+    fn scan_recursive<T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>(
+        range: u32,
+        quadrant: &mut Quadrant<T, GRID_WIDTH, GRID_HEIGHT>,
+        row: &mut Row,
+        visible_points: &mut HashSet<Position<GRID_WIDTH, GRID_HEIGHT>>,
+    ) {
         let mut prev_tile = None;
         for tile in row.tiles() {
             if quadrant.distance_squared(tile) > (range as u64 * range as u64) {
@@ -68,7 +60,7 @@ impl<'w, 's, T: Component, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>
 
             // Should we reveal the tile?
             if quadrant.is_opaque(tile) | row.is_symmetric(tile) {
-                quadrant.set_visible(tile);
+                quadrant.set_visible(visible_points, tile);
             }
 
             // handle the current row based on vision angles around the previous tile
@@ -81,7 +73,7 @@ impl<'w, 's, T: Component, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>
                 if quadrant.is_clear(prev_tile) & quadrant.is_opaque(tile) {
                     let mut next_row = row.next();
                     next_row.calc_ending_slope(tile);
-                    Self::scan_recursive(range, quadrant, &mut next_row);
+                    Self::scan_recursive(range, quadrant, &mut next_row, visible_points);
                 }
             }
 
@@ -92,7 +84,7 @@ impl<'w, 's, T: Component, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>
         // if our last tile was floor, we can see down another row
         if let Some(prev_tile) = prev_tile {
             if quadrant.is_clear(prev_tile) {
-                Self::scan_recursive(range, quadrant, &mut row.next());
+                Self::scan_recursive(range, quadrant, &mut row.next(), visible_points);
             }
         }
     }

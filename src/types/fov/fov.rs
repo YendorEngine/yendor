@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 pub enum Fov<T> {
     Shadowcast(T),
-    ShadowcastDirection(CardinalDirection, T),
+    ShadowcastDirection(Direction, T),
 }
 
 impl<T> Fov<T> {
@@ -10,26 +10,32 @@ impl<T> Fov<T> {
         &self,
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
         range: FovRange,
-        provider: &mut impl FovProvider,
-        receiver: &mut impl FovReceiver,
-    ) {
+        provider: &mut impl FovProvider<T, GRID_WIDTH, GRID_HEIGHT>,
+    ) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> {
         let range = range.into();
         match self {
-            Self::Shadowcast(&pass_through_data) => Shadowcast::compute_fov(
-                origin,
-                range,
-                provider,
-                receiver,
-                pass_through_data,
-            ),
-            Self::ShadowcastDirection(direction, &pass_through_data) => Shadowcast::compute_direction(
-                origin,
-                range,
-                provider,
-                receiver,
-                *direction,
-                pass_through_data,
-            ),
+            Self::Shadowcast(pass_through_data) => {
+                Shadowcast::compute_fov(origin, range, provider, pass_through_data)
+            },
+            Self::ShadowcastDirection(direction, pass_through_data) => {
+                Shadowcast::compute_direction(origin, range, provider, *direction, pass_through_data)
+            },
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::prelude::*;
+
+    struct Provider;
+    impl FovProvider<(), 10, 10> for Provider {
+        fn is_opaque(&mut self, position: Position<10, 10>, pass_through_data: &'_ ()) -> bool { false }
+    }
+
+    #[test]
+    fn fov_test() {
+        let pos = Position::default();
+        Fov::Shadowcast(()).compute(pos, 8, provider)
     }
 }

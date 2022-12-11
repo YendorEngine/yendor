@@ -61,14 +61,14 @@ mod fov {
     }
     pub(crate) use shadowcast::*;
 
+    mod fov;
+    pub use fov::*;
     mod fov_algorithm;
     pub use fov_algorithm::*;
     mod fov_provider;
     pub use fov_provider::*;
-    mod fov_receiver;
-    pub use fov_receiver::*;
-    mod fov;
-    pub use fov::*;
+    mod slope;
+    pub use slope::*;
 }
 pub use fov::*;
 
