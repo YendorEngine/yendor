@@ -10,7 +10,7 @@ impl FovAlgorithm for Shadowcast {
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
         range: u32,
         provider: &mut impl FovProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-        pass_through_data: &T,
+        mut pass_through_data: T,
     ) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> {
         let mut visible_points: HashSet<Position<_, _>> =
             HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
@@ -18,7 +18,7 @@ impl FovAlgorithm for Shadowcast {
         visible_points.insert(origin);
 
         CardinalDirection::all().enumerate().for_each(|(_index, direction)| {
-            let mut quadrant = Quadrant::new(direction, origin, provider, pass_through_data);
+            let mut quadrant = Quadrant::new(direction, origin, provider, &mut pass_through_data);
             let mut first_row = Row::new(1, Slope::new(-1, 1), Slope::new(1, 1));
             Self::scan_recursive(range, &mut quadrant, &mut first_row, &mut visible_points);
         });
@@ -33,13 +33,13 @@ impl Shadowcast {
         range: u32,
         provider: &mut impl FovProvider<T, GRID_WIDTH, GRID_HEIGHT>,
         direction: Direction,
-        pass_through_data: &T,
+        mut pass_through_data: T,
     ) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> {
         let mut visible_points: HashSet<Position<_, _>> =
             HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
         visible_points.insert(origin);
 
-        let mut quadrant = Quadrant::new(direction, origin, provider, pass_through_data);
+        let mut quadrant = Quadrant::new(direction, origin, provider, &mut pass_through_data);
         let mut first_row = Row::new(1, Slope::new(-1, 1), Slope::new(1, 1));
         Self::scan_recursive(range, &mut quadrant, &mut first_row, &mut visible_points);
 
