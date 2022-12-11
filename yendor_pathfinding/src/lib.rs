@@ -4,6 +4,7 @@
 #![feature(adt_const_params)]
 // https://github.com/rust-lang/rust/issues/85077
 #![feature(generic_arg_infer)]
+#![feature(inherent_associated_types)]
 
 mod algorithms {
     mod astar;

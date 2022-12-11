@@ -11,14 +11,7 @@ impl PathAlgorithm for DijkstraPartial {
     ) -> Vec<Position<DIMENSIONS>> {
         let (paths, _) = dijkstra_partial(
             &origin,
-            |&p| {
-                let neighbors = provider.get_neighbors(p, &mut pass_through_data);
-                let mut successors = Vec::with_capacity(neighbors.len());
-                for neighbor in neighbors {
-                    successors.push((neighbor, provider.cost(p, neighbor, &mut pass_through_data)));
-                }
-                successors
-            },
+            |&p| provider.generate_successors(p, &mut pass_through_data),
             |&p| p == destination,
         );
 

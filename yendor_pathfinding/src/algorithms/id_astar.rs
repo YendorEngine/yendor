@@ -11,14 +11,7 @@ impl PathAlgorithm for IDAstar {
     ) -> Vec<Position<DIMENSIONS>> {
         let result = idastar(
             &origin,
-            |&p| {
-                let neighbors = provider.get_neighbors(p, &mut pass_through_data);
-                let mut successors = Vec::with_capacity(neighbors.len());
-                for neighbor in neighbors {
-                    successors.push((neighbor, provider.cost(p, neighbor, &mut pass_through_data)));
-                }
-                successors
-            },
+            |&p| provider.generate_successors(p, &mut pass_through_data),
             |&p| provider.distance(p, destination),
             |&p| p == destination,
         );
