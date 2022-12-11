@@ -35,7 +35,11 @@ mod tests {
 
     #[test]
     fn fov_test() {
-        let pos = Position::default();
-        Fov::Shadowcast(()).compute(pos, 8, provider)
+        let pos: Position<10, 10> = Position::default();
+        let data = ();
+        let visible_sets = Fov::Shadowcast(data).compute(pos, 1_u32, &mut Provider);
+        visible_sets.iter().for_each(|pos| {
+            println!("{}", pos);
+        });
     }
 }
