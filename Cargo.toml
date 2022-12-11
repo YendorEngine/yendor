@@ -43,9 +43,13 @@ panic         = 'abort'
 #########       Features
 #################################
 [features]
-default = ["random", "serialize"]
+default = ["fov", "pathfinding", "random", "serialize"]
 
 debug = []
+
+fov = []
+
+pathfinding = ["dep:pathfinding"]
 
 random = ["noise", "rand", "xxhash-rust"]
 
@@ -65,6 +69,7 @@ version          = "0.9"
 #########       Pathfinding
 ######################################
 [dependencies.pathfinding]
+optional = true
 version = "4"
 
 ######################################
