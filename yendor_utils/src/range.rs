@@ -1,3 +1,5 @@
+// TODO: Rewrite
+
 use std::ops::{Add, Bound::*, Div, Mul, RangeBounds, Sub};
 
 fn map_range<T: Copy>(source_value: T, from_range: (T, T), to_range: (T, T)) -> T

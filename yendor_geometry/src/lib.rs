@@ -34,8 +34,6 @@ pub mod directions {
     pub use ordinal_direction::*;
     mod vertical_direction;
     pub use vertical_direction::*;
-    mod horizontal_direction;
-    pub use horizontal_direction::*;
 }
 
 pub mod point {

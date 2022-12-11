@@ -17,8 +17,4 @@ impl DirectionFlags {
     pub const UP: DirectionType          = 1 << 4;
     /// `Down` = `0b00X0_0000`
     pub const DOWN: DirectionType        = 1 << 5;
-    /// `Left` = `0b0X00_0000`
-    pub const LEFT: DirectionType        = 1 << 6;
-    /// `Right` = `0bX000_0000`
-    pub const RIGHT: DirectionType       = 1 << 7;
 }
