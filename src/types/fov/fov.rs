@@ -30,7 +30,7 @@ mod tests {
 
     struct Provider;
     impl FovProvider<(), 10, 10> for Provider {
-        fn is_opaque(&mut self, position: Position<10, 10>, pass_through_data: &'_ ()) -> bool { false }
+        fn is_opaque(&mut self, position: Position<10, 10>, pass_through_data: &()) -> bool { false }
     }
 
     #[test]

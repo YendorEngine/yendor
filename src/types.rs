@@ -92,23 +92,23 @@ mod grid {
 }
 pub use grid::*;
 
-// pub mod pathfinding {
-//     mod algorithms {
-//         mod astar;
-//         pub use astar::*;
-//         mod dijkstra;
-//         pub use dijkstra::*;
-//     }
-//     pub(crate) use algorithms::*;
+pub mod pathfinding {
+    mod algorithms {
+        mod astar;
+        pub use astar::*;
+        mod dijkstra;
+        pub use dijkstra::*;
+    }
+    pub(crate) use algorithms::*;
 
-//     mod path_algorithm;
-//     pub use path_algorithm::*;
-//     mod path_provider;
-//     pub use path_provider::*;
-//     mod pathfinder;
-//     pub use pathfinder::*;
-// }
-// pub use self::pathfinding::*;
+    mod path_algorithm;
+    pub use path_algorithm::*;
+    mod path_provider;
+    pub use path_provider::*;
+    mod pathfinder;
+    pub use pathfinder::*;
+}
+pub use self::pathfinding::*;
 
 pub mod point {
     mod point_impl;

@@ -10,7 +10,7 @@ impl FovAlgorithm for Shadowcast {
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
         range: u32,
         provider: &mut impl FovProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-        pass_through_data: &'_ T,
+        pass_through_data: &T,
     ) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> {
         let mut visible_points: HashSet<Position<_, _>> =
             HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
@@ -33,7 +33,7 @@ impl Shadowcast {
         range: u32,
         provider: &mut impl FovProvider<T, GRID_WIDTH, GRID_HEIGHT>,
         direction: Direction,
-        pass_through_data: &'_ T,
+        pass_through_data: &T,
     ) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> {
         let mut visible_points: HashSet<Position<_, _>> =
             HashSet::with_capacity(((range * 2) * (range * 2)) as usize);

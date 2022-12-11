@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::{prelude::*, types::grid::grids::grid_2d::Grid};
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 // #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
@@ -169,11 +169,7 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
 
     #[inline]
     pub fn get_idx(&self, pos: impl Point) -> Option<usize> {
-        if pos.is_valid(self.size()) {
-            Some(self.get_idx_unchecked(pos))
-        } else {
-            None
-        }
+        if pos.is_valid(self.size()) { Some(self.get_idx_unchecked(pos)) } else { None }
     }
 
     #[inline]
@@ -182,11 +178,7 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
     #[inline]
     pub fn index_to_pt(&self, idx: usize) -> Option<UVec2> {
         let pt = self.index_to_pt_unchecked(idx);
-        if pt.is_valid(self.size()) {
-            Some(pt)
-        } else {
-            None
-        }
+        if pt.is_valid(self.size()) { Some(pt) } else { None }
     }
 
     #[inline]
@@ -237,11 +229,7 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
 
     pub fn get_grid_by_layer<LayerId: Into<usize>>(&self, layer_id: LayerId) -> Option<&Grid<T, DIMENSIONS>> {
         let layer_id = layer_id.into();
-        if self.is_layer(layer_id) {
-            Some(&self.layers[layer_id])
-        } else {
-            None
-        }
+        if self.is_layer(layer_id) { Some(&self.layers[layer_id]) } else { None }
     }
 
     pub fn get_grid_by_layer_mut<LayerId: Into<usize>>(
@@ -249,11 +237,7 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
         layer_id: LayerId,
     ) -> Option<&mut Grid<T, DIMENSIONS>> {
         let layer_id = layer_id.into();
-        if self.is_layer(layer_id) {
-            Some(&mut self.layers[layer_id])
-        } else {
-            None
-        }
+        if self.is_layer(layer_id) { Some(&mut self.layers[layer_id]) } else { None }
     }
 }
 

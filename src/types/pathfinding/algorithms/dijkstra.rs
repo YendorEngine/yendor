@@ -3,15 +3,15 @@ use crate::prelude::*;
 pub struct Dijkstras;
 
 impl Dijkstras {
-    fn compute_path_partial<T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>(
+    pub(crate) fn compute_path_partial<T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>(
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
         destination: Position<GRID_WIDTH, GRID_HEIGHT>,
         provider: &mut impl PathProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-        pass_through_data: T,
+        pass_through_data: &T,
     ) -> Vec<Position<GRID_WIDTH, GRID_HEIGHT>> {
         let (paths, _) = dijkstra_partial(
             &origin,
-            |p| provider.get_neighbors(p, &mut pass_through_data),
+            |&p| provider.get_neighbors(p, pass_through_data),
             |&p| p == destination,
         );
 
@@ -25,7 +25,7 @@ impl Dijkstras {
             .map(|(pt, _)| pt)
             .unwrap_or(&origin);
 
-        Some(build_path(target, &paths))
+        build_path(target, &paths)
     }
 }
 
@@ -34,12 +34,12 @@ impl PathAlgorithm for Dijkstras {
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
         destination: Position<GRID_WIDTH, GRID_HEIGHT>,
         provider: &mut impl PathProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-        pass_through_data: T,
+        pass_through_data: &T,
     ) -> Vec<Position<GRID_WIDTH, GRID_HEIGHT>> {
         let dijkstra_path = dijkstra(
             &origin,
-            |p| provider.get_neighbors(p, &mut pass_through_data),
-            |p| *p == destination,
+            |&p| provider.get_neighbors(p, pass_through_data),
+            |&p| p == destination,
         );
 
         match dijkstra_path {

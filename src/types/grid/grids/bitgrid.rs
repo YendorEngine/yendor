@@ -98,11 +98,7 @@ impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS
 
     #[inline]
     fn get_idx(&self, coord: impl Point) -> Option<usize> {
-        if coord.is_valid(self.size()) {
-            Some(self.get_idx_unchecked(coord))
-        } else {
-            None
-        }
+        if coord.is_valid(self.size()) { Some(self.get_idx_unchecked(coord)) } else { None }
     }
 
     #[inline]
@@ -115,11 +111,7 @@ impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS
     #[inline]
     fn index_to_pt(&self, idx: usize) -> Option<IVec2> {
         let pt = self.index_to_pt_unchecked(idx);
-        if pt.is_valid(self.size()) {
-            Some(pt)
-        } else {
-            None
-        }
+        if pt.is_valid(self.size()) { Some(pt) } else { None }
     }
 
     #[inline]

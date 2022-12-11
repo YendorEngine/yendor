@@ -4,6 +4,6 @@ pub trait FovAlgorithm {
         origin: Position<GRID_WIDTH, GRID_HEIGHT>,
         range: u32,
         provider: &mut impl FovProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-        pass_through_data: &'_ T,
+        pass_through_data: &T,
     ) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>>;
 }
