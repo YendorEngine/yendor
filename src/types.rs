@@ -52,6 +52,7 @@ mod distance {
 }
 pub use distance::*;
 
+#[cfg(feature = "fov")]
 mod fov {
     mod shadowcast {
         mod shadowcast;
@@ -70,6 +71,7 @@ mod fov {
     mod slope;
     pub use slope::*;
 }
+#[cfg(feature = "fov")]
 pub use fov::*;
 
 mod grid {
@@ -92,6 +94,7 @@ mod grid {
 }
 pub use grid::*;
 
+#[cfg(feature = "pathfinding")]
 pub mod pathfinding {
     mod algorithms {
         mod astar;
@@ -118,6 +121,7 @@ pub mod pathfinding {
     mod pathfinder;
     pub use pathfinder::*;
 }
+#[cfg(feature = "pathfinding")]
 pub use self::pathfinding::*;
 
 pub mod point {

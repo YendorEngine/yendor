@@ -51,7 +51,7 @@ fov = []
 
 pathfinding = ["dep:pathfinding"]
 
-random = ["noise", "rand", "xxhash-rust"]
+random = ["rand"]
 
 reflect = []
 
@@ -75,17 +75,7 @@ version = "4"
 ######################################
 #########       Random
 ######################################
-[dependencies.noise]
-optional = true
-# version  = "0.8"
-git = "https://github.com/YendorEngine/noise-rs"
-
 [dependencies.rand]
-optional = true
-version  = "0.8"
-
-[dependencies.xxhash-rust]
-features = ["xxh3", "const_xxh3"]
 optional = true
 version  = "0.8"
 
