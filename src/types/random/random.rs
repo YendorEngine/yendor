@@ -41,11 +41,7 @@ pub trait Random {
 
     fn max<Value: RandomValue>(&mut self, value: Value) -> Value {
         let value = value.to_u64();
-        if value == 0 {
-            Value::from_u64(0)
-        } else {
-            self.max_inclusive(Value::from_u64(value - 1))
-        }
+        if value == 0 { Value::from_u64(0) } else { self.max_inclusive(Value::from_u64(value - 1)) }
     }
 
     fn max_inclusive<Value: RandomValue>(&mut self, value: Value) -> Value {
@@ -89,20 +85,12 @@ pub trait Random {
 
     fn index<'a, T: Index<usize>>(&mut self, items: &'a [T]) -> Option<&'a T> {
         let len = items.len();
-        if len == 0 {
-            None
-        } else {
-            items.get(self.range(0..len))
-        }
+        if len == 0 { None } else { items.get(self.range(0..len)) }
     }
 
     fn index_mut<'a, T: IndexMut<usize>>(&mut self, items: &'a mut [T]) -> Option<&'a mut T> {
         let len = items.len();
-        if len == 0 {
-            None
-        } else {
-            items.get_mut(self.range(0..len))
-        }
+        if len == 0 { None } else { items.get_mut(self.range(0..len)) }
     }
 
     fn one_in<Value: RandomValue>(&mut self, value: Value) -> bool { self.max(value).to_u64() == 0 }

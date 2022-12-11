@@ -54,10 +54,6 @@ impl Iterator for RowIter {
     fn next(&mut self) -> Option<Self::Item> {
         let current = self.current_col;
         self.current_col += 1;
-        if current > self.max_col {
-            None
-        } else {
-            Some(IVec2::new(self.depth as i32, current))
-        }
+        if current > self.max_col { None } else { Some(IVec2::new(self.depth as i32, current)) }
     }
 }

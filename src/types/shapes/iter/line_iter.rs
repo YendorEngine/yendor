@@ -59,8 +59,8 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> BresenhamLineIter<GRID_WIDTH
 
         // loop inc
         self.abs_x += 1; // we can add because self.end_x is to the right and up(Octant(0))
-                         // we are moving towards the `end` offset into `Octant()`, so now we must wrap this new
-                         // coordinate back around to the original direction.
+        // we are moving towards the `end` offset into `Octant()`, so now we must wrap this new
+        // coordinate back around to the original direction.
         self.octant.from_offset(current_point, self.abs_z)
     }
 }
@@ -70,11 +70,7 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Iterator for BresenhamLineIt
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        if self.abs_x >= self.end_x {
-            None
-        } else {
-            Some(self.advance())
-        }
+        if self.abs_x >= self.end_x { None } else { Some(self.advance()) }
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -106,10 +102,6 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Iterator
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        if self.0.abs_x > self.0.end_x {
-            None
-        } else {
-            Some(self.0.advance())
-        }
+        if self.0.abs_x > self.0.end_x { None } else { Some(self.0.advance()) }
     }
 }

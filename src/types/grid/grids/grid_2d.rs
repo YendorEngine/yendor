@@ -96,11 +96,7 @@ impl<T: GridParam, const DIMENSIONS: UVec2> GridLayer<T, DIMENSIONS> for Grid<T,
 
     #[inline]
     fn get_idx(&self, pos: impl Point) -> Option<usize> {
-        if pos.is_valid(self.size()) {
-            Some(self.get_idx_unchecked(pos))
-        } else {
-            None
-        }
+        if pos.is_valid(self.size()) { Some(self.get_idx_unchecked(pos)) } else { None }
     }
 
     #[inline]
@@ -109,11 +105,7 @@ impl<T: GridParam, const DIMENSIONS: UVec2> GridLayer<T, DIMENSIONS> for Grid<T,
     #[inline]
     fn index_to_pt(&self, idx: usize) -> Option<IVec2> {
         let pt = self.index_to_pt_unchecked(idx);
-        if pt.is_valid(self.size()) {
-            Some(pt)
-        } else {
-            None
-        }
+        if pt.is_valid(self.size()) { Some(pt) } else { None }
     }
 
     #[inline]

@@ -48,11 +48,7 @@ pub trait Point: Clone + Copy {
 
     #[inline(always)]
     fn as_index(&self, size: impl Dimensions) -> Option<usize> {
-        if self.is_valid(size) {
-            Some(self.as_index_unchecked(size.width()))
-        } else {
-            None
-        }
+        if self.is_valid(size) { Some(self.as_index_unchecked(size.width())) } else { None }
     }
 
     /// Returns true if the point is valid for the given size.

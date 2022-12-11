@@ -48,11 +48,7 @@ impl Iterator for DirectionIter {
     fn next(&mut self) -> Option<Self::Item> {
         let next = self.current;
         self.current += 1;
-        if self.current > self.end {
-            None
-        } else {
-            Some(DIRECTION_TABLE[next])
-        }
+        if self.current > self.end { None } else { Some(DIRECTION_TABLE[next]) }
     }
 }
 
