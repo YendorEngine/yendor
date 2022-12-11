@@ -2,7 +2,7 @@
 #########       Package
 #################################
 [package]
-authors     = ["Laocoon <laocoon7@gmail.com>", "BigBanana <lecoqjacob@gmail.com>"]
+authors     = ["Laocoon <laocoon7@gmail.com>", "Jacob LeCoq <lecoqjacob@gmail.com>"]
 description = "A roguelike toolkit plugin for bevy"
 edition     = "2021"
 homepage    = "https://github.com/YendorEngine/yendor"
@@ -38,6 +38,36 @@ panic         = 'abort'
 #########       Workspaces
 #################################
 [workspace]
+members = [
+    "yendor_geometry",
+    "yendor_pathfinding",
+    "yendor_grid",
+    "yendor_distance",
+    "yendor_random",
+    "yendor_fov",
+    "yendor_utils",
+]
+
+[workspace.dependencies]
+yendor_distance    = { path = "yendor_distance" }
+yendor_fov         = { path = "yendor_fov" }
+yendor_geometry    = { path = "yendor_geometry" }
+yendor_grid        = { path = "yendor_grid" }
+yendor_pathfinding = { path = "yendor_pathfinding" }
+yendor_random      = { path = "yendor_random" }
+yendor_utils       = { path = "yendor_utils" }
+
+#################################
+#########       Dependencies
+#################################
+[dependencies]
+yendor_distance    = { workspace = true }
+yendor_fov         = { workspace = true }
+yendor_geometry    = { workspace = true }
+yendor_grid        = { workspace = true }
+yendor_pathfinding = { workspace = true }
+yendor_random      = { workspace = true }
+yendor_utils       = { workspace = true }
 
 #################################
 #########       Features
@@ -60,7 +90,7 @@ serialize = ["serde", "bitvec/serde"]
 ######################################
 #########       Bevy
 ######################################
-[dependencies.bevy]
+[workspace.dependencies.bevy]
 default-features = false
 features         = []
 version          = "0.9"
@@ -70,7 +100,7 @@ version          = "0.9"
 ######################################
 [dependencies.pathfinding]
 optional = true
-version = "4"
+version  = "4"
 
 ######################################
 #########       Random
