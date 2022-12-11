@@ -1,5 +1,5 @@
 use crate::prelude::*;
 
-pub trait FovProvider<T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32> {
-    fn is_opaque(&mut self, position: Position<GRID_WIDTH, GRID_HEIGHT>, pass_through_data: &mut T) -> bool;
+pub trait FovProvider<T, const DIMENSIONS: UVec2> {
+    fn is_opaque(&mut self, position: Position<DIMENSIONS>, pass_through_data: &mut T) -> bool;
 }

@@ -16,16 +16,16 @@ use crate::prelude::*;
 ///
 /// and then wrap it with your own type:
 ///
-/// `pub type Position = YendorPosition<GRID_WIDTH, GRID_HEIGHT>`
+/// `pub type Position = YendorPosition<DIMENSIONS>`
 #[derive(Default, Clone, Copy)]
 #[cfg_attr(feature = "reflect", derive(Reflect, FromReflect))]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
-pub struct Position<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> {
+pub struct Position<const DIMENSIONS: UVec2> {
     world_position: WorldPosition,
     local_position: LocalPosition,
 }
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HEIGHT> {
+impl<const DIMENSIONS: UVec2> Position<DIMENSIONS> {
     /// Creates a new [`Position`] from a [`WorldPosition`] and a [`LocalPosition`].
     #[inline(always)]
     pub const fn new(world_position: WorldPosition, local_position: LocalPosition) -> Self {
@@ -45,18 +45,18 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
     }
 
     /// Creates a new[`Position`] from a [`WorldPosition`] and the [`LocalPosition`] set to
-    /// `(GRID_WIDTH - 1, GRID_HEIGHT - 1)`
+    /// `(DIMENSIONS.x - 1, DIMENSIONS.y - 1)`
     pub const fn new_grid_max(world_position: WorldPosition) -> Self {
         Self {
             world_position,
-            local_position: LocalPosition::new(GRID_WIDTH - 1, GRID_HEIGHT - 1),
+            local_position: LocalPosition::new(DIMENSIONS.x - 1, DIMENSIONS.y - 1),
         }
     }
 
-    /// Returns an index composed from [`LocalPosition`] for a `grid` with size `(GRID_WIDTH,
-    /// GRID_HEIGHT)`
+    /// Returns an index composed from [`LocalPosition`] for a `grid` with size `(DIMENSIONS.x,
+    /// DIMENSIONS.y)`
     #[inline(always)]
-    pub fn as_index(&self) -> usize { self.gridpoint().as_index_unchecked(GRID_WIDTH) }
+    pub fn as_index(&self) -> usize { self.gridpoint().as_index_unchecked(DIMENSIONS.x) }
 
     /// Returns an Option<index> composed from [`LocalPosition`] for a `grid` with a custom
     /// size.
@@ -85,8 +85,8 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
     /// let distance = (other.get_local_position().x() - self.get_local_position().x()).abs();
     /// ```
     pub const fn distance_x(&self, other: Self) -> u32 {
-        ((other.world_x() as i64 * GRID_WIDTH as i64 + other.x() as i64) -
-            (self.world_x() as i64 * GRID_WIDTH as i64 + self.x() as i64))
+        ((other.world_x() as i64 * DIMENSIONS.x as i64 + other.x() as i64) -
+            (self.world_x() as i64 * DIMENSIONS.y as i64 + self.x() as i64))
             .unsigned_abs() as u32
     }
 
@@ -97,14 +97,14 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
     /// let distance = (other.get_local_position().y() - self.get_local_position().y()).abs();
     /// ```
     pub const fn distance_y(&self, other: Self) -> u32 {
-        ((other.world_y() as i64 * GRID_HEIGHT as i64 + other.y() as i64) -
-            (self.world_y() as i64 * GRID_HEIGHT as i64 + self.y() as i64))
+        ((other.world_y() as i64 * DIMENSIONS.x as i64 + other.y() as i64) -
+            (self.world_y() as i64 * DIMENSIONS.y as i64 + self.y() as i64))
             .unsigned_abs() as u32
     }
 
     /// Creates the [`octant`] to which the `other` [`Position`] belongs relative to this
     /// [`Position`]. This is useful for transforming static offsets in a dynamic direction.
-    pub const fn octant_to(&self, other: Self) -> Octant<GRID_WIDTH, GRID_HEIGHT> {
+    pub const fn octant_to(&self, other: Self) -> Octant<DIMENSIONS> {
         // adapted from <http://codereview.stackexchange.com/a/95551>
         let start = self.absolute_position();
         let end = other.absolute_position();
@@ -261,42 +261,42 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
     }
 
     /// Returns the current [`WorldPosition`]'s `X` and [`LocalPosition`]'s `X` calculated out
-    pub const fn absolute_x(&self) -> i64 { self.world_x() as i64 * GRID_WIDTH as i64 + self.x() as i64 }
+    pub const fn absolute_x(&self) -> i64 { self.world_x() as i64 * DIMENSIONS.x as i64 + self.x() as i64 }
 
     /// Returns the current [`WorldPosition`]'s `X` and [`LocalPosition`]'s `Y` calculated out
-    pub const fn absolute_y(&self) -> i64 { self.world_y() as i64 * GRID_HEIGHT as i64 + self.y() as i64 }
+    pub const fn absolute_y(&self) -> i64 { self.world_y() as i64 * DIMENSIONS.y as i64 + self.y() as i64 }
 
     /// Returns a [`Position`] created from an `absolute position`
     pub const fn from_absolute_position(absolute_position: (i64, i64, i32)) -> Self {
         let (world_x, local_x) = if absolute_position.0 < 0 {
             let abs_x = absolute_position.0.abs();
-            let mut world = abs_x / GRID_WIDTH as i64;
-            let mut local = GRID_WIDTH as i64 - (abs_x - (world * GRID_WIDTH as i64));
-            if local == GRID_WIDTH as i64 {
+            let mut world = abs_x / DIMENSIONS.x as i64;
+            let mut local = DIMENSIONS.x as i64 - (abs_x - (world * DIMENSIONS.x as i64));
+            if local == DIMENSIONS.x as i64 {
                 world -= 1;
                 local = 0;
             }
             (-(world as i32) - 1, local as u32)
         } else {
             (
-                (absolute_position.0 / GRID_WIDTH as i64) as i32,
-                (absolute_position.0 % GRID_WIDTH as i64) as u32,
+                (absolute_position.0 / DIMENSIONS.x as i64) as i32,
+                (absolute_position.0 % DIMENSIONS.x as i64) as u32,
             )
         };
 
         let (world_y, local_y) = if absolute_position.1 < 0 {
             let abs_y = absolute_position.1.abs();
-            let mut world = abs_y / GRID_HEIGHT as i64;
-            let mut local = GRID_HEIGHT as i64 - (abs_y - (world * GRID_HEIGHT as i64));
-            if local == GRID_HEIGHT as i64 {
+            let mut world = abs_y / DIMENSIONS.y as i64;
+            let mut local = DIMENSIONS.y as i64 - (abs_y - (world * DIMENSIONS.y as i64));
+            if local == DIMENSIONS.y as i64 {
                 world -= 1;
                 local = 0;
             }
             (-(world as i32) - 1, local as u32)
         } else {
             (
-                (absolute_position.1 / GRID_HEIGHT as i64) as i32,
-                (absolute_position.1 % GRID_HEIGHT as i64) as u32,
+                (absolute_position.1 / DIMENSIONS.y as i64) as i32,
+                (absolute_position.1 % DIMENSIONS.y as i64) as u32,
             )
         };
 
@@ -307,24 +307,24 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Position<GRID_WIDTH, GRID_HE
     }
 }
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> PartialEq for Position<GRID_WIDTH, GRID_HEIGHT> {
+impl<const DIMENSIONS: UVec2> PartialEq for Position<DIMENSIONS> {
     fn eq(&self, other: &Self) -> bool {
         self.world_position == other.world_position && self.get_local_position() == other.get_local_position()
     }
 }
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Eq for Position<GRID_WIDTH, GRID_HEIGHT> {}
+impl<const DIMENSIONS: UVec2> Eq for Position<DIMENSIONS> {}
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Hash for Position<GRID_WIDTH, GRID_HEIGHT> {
+impl<const DIMENSIONS: UVec2> Hash for Position<DIMENSIONS> {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        GRID_WIDTH.hash(state);
-        GRID_HEIGHT.hash(state);
+        DIMENSIONS.x.hash(state);
+        DIMENSIONS.y.hash(state);
         self.world_position.hash(state);
         self.get_local_position().hash(state);
     }
 }
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Display for Position<GRID_WIDTH, GRID_HEIGHT> {
+impl<const DIMENSIONS: UVec2> Display for Position<DIMENSIONS> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -334,15 +334,15 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Display for Position<GRID_WI
     }
 }
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Debug for Position<GRID_WIDTH, GRID_HEIGHT> {
+impl<const DIMENSIONS: UVec2> Debug for Position<DIMENSIONS> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({:?}::{:?})", self.world_position, self.local_position)
     }
 }
 
-// TODO: Fix IVec2 > GRID_WIDTH, GRID_HEIGHT
+// TODO: Fix IVec2 > DIMENSIONS.x, DIMENSIONS.y
 // Add offset to LocalPosition
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Add<IVec2> for Position<GRID_WIDTH, GRID_HEIGHT> {
+impl<const DIMENSIONS: UVec2> Add<IVec2> for Position<DIMENSIONS> {
     type Output = Self;
 
     #[inline]
@@ -355,18 +355,18 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Add<IVec2> for Position<GRID
 
         if local_x < 0 {
             world_x -= 1;
-            local_x += GRID_WIDTH as i32;
-        } else if local_x >= GRID_WIDTH as i32 {
+            local_x += DIMENSIONS.x as i32;
+        } else if local_x >= DIMENSIONS.x as i32 {
             world_x += 1;
-            local_x -= GRID_WIDTH as i32;
+            local_x -= DIMENSIONS.x as i32;
         }
 
         if local_y < 0 {
             world_y -= 1;
-            local_y += GRID_HEIGHT as i32;
-        } else if local_y >= GRID_HEIGHT as i32 {
+            local_y += DIMENSIONS.y as i32;
+        } else if local_y >= DIMENSIONS.y as i32 {
             world_y += 1;
-            local_y -= GRID_HEIGHT as i32;
+            local_y -= DIMENSIONS.y as i32;
         }
 
         Self::new(
@@ -376,9 +376,9 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Add<IVec2> for Position<GRID
     }
 }
 
-// TODO: Fix IVec2 > GRID_WIDTH, GRID_HEIGHT
+// TODO: Fix IVec2 > DIMENSIONS.x, DIMENSIONS.y
 // Add offset to LocalPosition
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> AddAssign<IVec2> for Position<GRID_WIDTH, GRID_HEIGHT> {
+impl<const DIMENSIONS: UVec2> AddAssign<IVec2> for Position<DIMENSIONS> {
     #[inline]
     fn add_assign(&mut self, rhs: IVec2) {
         let new_x = self.x() as i32 + rhs.x;
@@ -386,27 +386,27 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> AddAssign<IVec2> for Positio
 
         if new_x < 0 {
             self.set_world_x(self.world_x() - 1);
-            self.set_x((new_x + GRID_WIDTH as i32) as u32);
-        } else if new_x >= GRID_WIDTH as i32 {
+            self.set_x((new_x + DIMENSIONS.x as i32) as u32);
+        } else if new_x >= DIMENSIONS.x as i32 {
             self.set_world_x(self.world_x() + 1);
-            self.set_x((new_x - GRID_WIDTH as i32) as u32);
+            self.set_x((new_x - DIMENSIONS.x as i32) as u32);
         } else {
             self.set_x(new_x as u32);
         }
 
         if new_y < 0 {
             self.set_world_y(self.world_y() - 1);
-            self.set_y((new_y + GRID_HEIGHT as i32) as u32);
-        } else if new_y >= GRID_HEIGHT as i32 {
+            self.set_y((new_y + DIMENSIONS.y as i32) as u32);
+        } else if new_y >= DIMENSIONS.y as i32 {
             self.set_world_y(self.world_y() + 1);
-            self.set_y((new_y - GRID_HEIGHT as i32) as u32);
+            self.set_y((new_y - DIMENSIONS.y as i32) as u32);
         } else {
             self.set_y(new_y as u32);
         }
     }
 }
 
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Add<Direction> for Position<GRID_WIDTH, GRID_HEIGHT> {
+impl<const DIMENSIONS: UVec2> Add<Direction> for Position<DIMENSIONS> {
     type Output = Self;
 
     fn add(self, rhs: Direction) -> Self::Output {
@@ -415,9 +415,9 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Add<Direction> for Position<
     }
 }
 
-// TODO: Fix IVec2 > GRID_WIDTH, GRID_HEIGHT
+// TODO: Fix IVec2 > DIMENSIONS.x, DIMENSIONS.y
 // Sub offset to LocalPosition
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Sub<IVec2> for Position<GRID_WIDTH, GRID_HEIGHT> {
+impl<const DIMENSIONS: UVec2> Sub<IVec2> for Position<DIMENSIONS> {
     type Output = Self;
 
     fn sub(self, rhs: IVec2) -> Self::Output {
@@ -429,18 +429,18 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Sub<IVec2> for Position<GRID
 
         if local_x < 0 {
             world_x -= 1;
-            local_x += GRID_WIDTH as i32;
-        } else if local_x >= GRID_WIDTH as i32 {
+            local_x += DIMENSIONS.x as i32;
+        } else if local_x >= DIMENSIONS.x as i32 {
             world_x += 1;
-            local_x -= GRID_WIDTH as i32;
+            local_x -= DIMENSIONS.x as i32;
         }
 
         if local_y < 0 {
             world_y -= 1;
-            local_y += GRID_HEIGHT as i32;
-        } else if local_y >= GRID_HEIGHT as i32 {
+            local_y += DIMENSIONS.y as i32;
+        } else if local_y >= DIMENSIONS.y as i32 {
             world_y += 1;
-            local_y -= GRID_HEIGHT as i32;
+            local_y -= DIMENSIONS.y as i32;
         }
 
         Self::new(
@@ -450,29 +450,29 @@ impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Sub<IVec2> for Position<GRID
     }
 }
 
-// TODO: Fix IVec2 > GRID_WIDTH, GRID_HEIGHT
+// TODO: Fix IVec2 > DIMENSIONS.x, DIMENSIONS.y
 // Sub offset to LocalPosition
-impl<const GRID_WIDTH: u32, const GRID_HEIGHT: u32> SubAssign<IVec2> for Position<GRID_WIDTH, GRID_HEIGHT> {
+impl<const DIMENSIONS: UVec2> SubAssign<IVec2> for Position<DIMENSIONS> {
     fn sub_assign(&mut self, rhs: IVec2) {
         let new_x = self.x() as i32 - rhs.x;
         let new_y = self.y() as i32 - rhs.y;
 
         if new_x < 0 {
             self.set_world_x(self.world_x() - 1);
-            self.set_x((new_x + GRID_WIDTH as i32) as u32);
-        } else if new_x >= GRID_WIDTH as i32 {
+            self.set_x((new_x + DIMENSIONS.x as i32) as u32);
+        } else if new_x >= DIMENSIONS.x as i32 {
             self.set_world_x(self.world_x() + 1);
-            self.set_x((new_x - GRID_WIDTH as i32) as u32);
+            self.set_x((new_x - DIMENSIONS.x as i32) as u32);
         } else {
             self.set_x(new_x as u32);
         }
 
         if new_y < 0 {
             self.set_world_y(self.world_y() - 1);
-            self.set_y((new_y + GRID_HEIGHT as i32) as u32);
-        } else if new_y >= GRID_HEIGHT as i32 {
+            self.set_y((new_y + DIMENSIONS.y as i32) as u32);
+        } else if new_y >= DIMENSIONS.y as i32 {
             self.set_world_y(self.world_y() + 1);
-            self.set_y((new_y - GRID_HEIGHT as i32) as u32);
+            self.set_y((new_y - DIMENSIONS.y as i32) as u32);
         } else {
             self.set_y(new_y as u32);
         }

@@ -1,18 +1,14 @@
 use crate::prelude::*;
-pub trait PathProvider<T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32> {
+pub trait PathProvider<T, const DIMENSIONS: UVec2> {
     fn get_neighbors(
         &self,
-        position: Position<GRID_WIDTH, GRID_HEIGHT>,
+        position: Position<DIMENSIONS>,
         pass_through_data: &mut T,
-    ) -> Vec<Position<GRID_WIDTH, GRID_HEIGHT>>;
+    ) -> Vec<Position<DIMENSIONS>>;
 
-    fn cost(&self, position: Position<GRID_WIDTH, GRID_HEIGHT>, pass_through_data: &mut T) -> u32;
+    fn cost(&self, position: Position<DIMENSIONS>, pass_through_data: &mut T) -> u32;
 
-    fn distance(
-        &self,
-        origin: Position<GRID_WIDTH, GRID_HEIGHT>,
-        destination: Position<GRID_WIDTH, GRID_HEIGHT>,
-    ) -> u32 {
+    fn distance(&self, origin: Position<DIMENSIONS>, destination: Position<DIMENSIONS>) -> u32 {
         origin.distance(destination)
     }
 }

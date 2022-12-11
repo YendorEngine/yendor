@@ -11,13 +11,13 @@ pub enum PathFinder {
 }
 
 impl PathFinder {
-    pub fn compute<T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>(
+    pub fn compute<T, const DIMENSIONS: UVec2>(
         &self,
-        origin: Position<GRID_WIDTH, GRID_HEIGHT>,
-        destination: Position<GRID_WIDTH, GRID_HEIGHT>,
-        provider: &mut impl PathProvider<T, GRID_WIDTH, GRID_HEIGHT>,
+        origin: Position<DIMENSIONS>,
+        destination: Position<DIMENSIONS>,
+        provider: &mut impl PathProvider<T, DIMENSIONS>,
         pass_through_data: T,
-    ) -> Vec<Position<GRID_WIDTH, GRID_HEIGHT>> {
+    ) -> Vec<Position<DIMENSIONS>> {
         match self {
             Self::Astar => AStar::compute_path(origin, destination, provider, pass_through_data),
             Self::Bfs => Bfs::compute_path(origin, destination, provider, pass_through_data),

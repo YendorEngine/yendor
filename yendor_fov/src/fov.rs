@@ -13,18 +13,16 @@ pub enum Fov {
 }
 
 impl Fov {
-    pub fn compute<FovRange: Into<u32>, T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32>(
+    pub fn compute<FovRange: Into<u32>, T, const DIMENSIONS: UVec2>(
         &self,
-        origin: Position<GRID_WIDTH, GRID_HEIGHT>,
+        origin: Position<DIMENSIONS>,
         range: FovRange,
-        provider: &mut impl FovProvider<T, GRID_WIDTH, GRID_HEIGHT>,
+        provider: &mut impl FovProvider<T, DIMENSIONS>,
         pass_through_data: T,
-    ) -> HashSet<Position<GRID_WIDTH, GRID_HEIGHT>> {
+    ) -> HashSet<Position<DIMENSIONS>> {
         let range = range.into();
         match self {
-            Self::Shadowcast => {
-                Shadowcast::compute_fov(origin, range, provider, pass_through_data)
-            },
+            Self::Shadowcast => Shadowcast::compute_fov(origin, range, provider, pass_through_data),
             Self::ShadowcastDirection(direction) => {
                 Shadowcast::compute_direction(origin, range, provider, *direction, pass_through_data)
             },

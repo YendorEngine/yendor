@@ -1,17 +1,17 @@
 use crate::prelude::*;
 
-pub struct Quadrant<'a, T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32> {
+pub struct Quadrant<'a, T, const DIMENSIONS: UVec2> {
     direction: Direction,
     pass_through_data: &'a mut T,
-    provider: &'a mut dyn FovProvider<T, GRID_WIDTH, GRID_HEIGHT>,
-    origin: Position<GRID_WIDTH, GRID_HEIGHT>,
+    provider: &'a mut dyn FovProvider<T, DIMENSIONS>,
+    origin: Position<DIMENSIONS>,
 }
 
-impl<'a, T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Quadrant<'a, T, GRID_WIDTH, GRID_HEIGHT> {
+impl<'a, T, const DIMENSIONS: UVec2> Quadrant<'a, T, DIMENSIONS> {
     pub fn new(
         direction: Direction,
-        origin: Position<GRID_WIDTH, GRID_HEIGHT>,
-        provider: &'a mut dyn FovProvider<T, GRID_WIDTH, GRID_HEIGHT>,
+        origin: Position<DIMENSIONS>,
+        provider: &'a mut dyn FovProvider<T, DIMENSIONS>,
         pass_through_data: &'a mut T,
     ) -> Self {
         Self {
@@ -46,11 +46,7 @@ impl<'a, T, const GRID_WIDTH: u32, const GRID_HEIGHT: u32> Quadrant<'a, T, GRID_
     }
 
     // mark this tile as visible
-    pub fn set_visible(
-        &mut self,
-        visible_points: &mut HashSet<Position<GRID_WIDTH, GRID_HEIGHT>>,
-        tile: IVec2,
-    ) {
+    pub fn set_visible(&mut self, visible_points: &mut HashSet<Position<DIMENSIONS>>, tile: IVec2) {
         visible_points.insert(self.origin + self.transform(tile));
     }
 
