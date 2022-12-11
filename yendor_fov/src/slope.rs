@@ -11,4 +11,16 @@ impl Slope {
     // f64 y / x
     #[inline]
     pub fn value(&self) -> f64 { self.y as f64 / self.x as f64 }
+
+    // this > y/x
+    #[inline]
+    pub fn greater(&self, y: i32, x: i32) -> bool { self.y * x > self.x * y }
+
+    // s >= y/x
+    #[inline]
+    pub fn greater_or_equal(&self, y: i32, x: i32) -> bool { self.y * x >= self.x * y }
+
+    // s <= y/x
+    #[inline]
+    pub fn less_or_equal(&self, y: i32, x: i32) -> bool { self.y * x <= self.x * y } // this <= y/x
 }

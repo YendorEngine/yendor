@@ -8,6 +8,7 @@ use crate::prelude::*;
 // TODO: Permissive field of view (tile-to-tile)
 // TODO: Digital field of view (diamond-to-diamond)
 pub enum Fov {
+    Adams,
     Shadowcast,
     ShadowcastDirection(Direction),
 }
@@ -22,6 +23,7 @@ impl Fov {
     ) -> HashSet<Position<DIMENSIONS>> {
         let range = range.into();
         match self {
+            Self::Adams => AdamsFov::compute_fov(origin, range, provider, pass_through_data),
             Self::Shadowcast => Shadowcast::compute_fov(origin, range, provider, pass_through_data),
             Self::ShadowcastDirection(direction) => {
                 Shadowcast::compute_direction(origin, range, provider, *direction, pass_through_data)
@@ -34,7 +36,7 @@ impl Fov {
 mod tests {
     use crate::prelude::*;
 
-    const DIM: UVec2 = UVec2 {x:10, y:10};
+    const DIM: UVec2 = UVec2 { x: 10, y: 10 };
 
     struct Provider;
     impl FovProvider<(), DIM> for Provider {
@@ -42,10 +44,20 @@ mod tests {
     }
 
     #[test]
-    fn fov_test() {
+    fn shadowcast() {
         let pos: Position<DIM> = Position::default();
         let data = ();
         let visible_sets = Fov::Shadowcast.compute(pos, 1_u32, &mut Provider, data);
+        visible_sets.iter().for_each(|pos| {
+            println!("{}", pos);
+        });
+    }
+
+    #[test]
+    fn adams() {
+        let pos: Position<DIM> = Position::default();
+        let data = ();
+        let visible_sets = Fov::Adams.compute(pos, 1_u32, &mut Provider, data);
         visible_sets.iter().for_each(|pos| {
             println!("{}", pos);
         });

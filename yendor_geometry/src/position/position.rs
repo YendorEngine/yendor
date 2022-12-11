@@ -26,12 +26,24 @@ pub struct Position<const DIMENSIONS: UVec2> {
 }
 
 impl<const DIMENSIONS: UVec2> Position<DIMENSIONS> {
+    /// Returns [`Position`] `(0, 0)`.
+    pub const ZERO: Self = Self::splat(0);
+
     /// Creates a new [`Position`] from a [`WorldPosition`] and a [`LocalPosition`].
     #[inline(always)]
     pub const fn new(world_position: WorldPosition, local_position: LocalPosition) -> Self {
         Self {
             world_position,
             local_position,
+        }
+    }
+
+    /// Creates a new [`Position`] with all elements set to `value`.
+    #[inline]
+    pub const fn splat(value: u32) -> Self {
+        Self {
+            local_position: LocalPosition::splat(value),
+            world_position: WorldPosition::splat(value as i32),
         }
     }
 
