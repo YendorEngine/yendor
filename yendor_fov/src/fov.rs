@@ -34,6 +34,8 @@ impl Fov {
 
 #[cfg(test)]
 mod tests {
+    use yendor_utils::prelude::Canvas;
+
     use crate::prelude::*;
 
     const DIM: UVec2 = UVec2 { x: 10, y: 10 };
@@ -45,21 +47,30 @@ mod tests {
 
     #[test]
     fn shadowcast() {
-        let pos: Position<DIM> = Position::default();
-        let data = ();
-        let visible_sets = Fov::Shadowcast.compute(pos, 1_u32, &mut Provider, data);
+        let mut pos: Position<DIM> = Position::default();
+        pos.set_xy(UVec2::new(5, 5));
+        let visible_sets = Fov::Shadowcast.compute(pos, 4_u32, &mut Provider, ());
+        let mut canvas = Canvas::new([10, 10]);
         visible_sets.iter().for_each(|pos| {
             println!("{}", pos);
+            canvas.put(pos.gridpoint(), '*')
         });
+
+        canvas.print();
     }
 
     #[test]
     fn adams() {
-        let pos: Position<DIM> = Position::default();
-        let data = ();
-        let visible_sets = Fov::Adams.compute(pos, 1_u32, &mut Provider, data);
+        let mut pos: Position<DIM> = Position::default();
+        pos.set_xy(UVec2::new(5, 5));
+        let visible_sets = Fov::Adams.compute(pos, 1_u32, &mut Provider, ());
+
+        let mut canvas = Canvas::new([10, 10]);
         visible_sets.iter().for_each(|pos| {
             println!("{}", pos);
+            canvas.put(pos.gridpoint(), '*')
         });
+
+        canvas.print();
     }
 }

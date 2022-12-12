@@ -33,6 +33,7 @@ impl FovAlgorithm for AdamsFov {
 }
 
 impl AdamsFov {
+    #[allow(clippy::too_many_arguments)]
     fn compute_octant<T, const DIMENSIONS: UVec2>(
         octant: i32,
         origin: Position<DIMENSIONS>,
@@ -132,6 +133,7 @@ impl AdamsFov {
         IVec2::new(top_y, bottom_y)
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn compute_visiblity<T, const DIMENSIONS: UVec2>(
         top_y: i32,
         bottom_y: i32,
@@ -153,13 +155,6 @@ impl AdamsFov {
                     (range as u64 * range as u64)
             {
                 let is_opaque = Self::blocks_light(x, y, octant, origin, provider, pass_through_data);
-
-                // Less symmetrical
-                // let is_visible = is_opaque ||
-                // (
-                //     (y != top_y || top.greater(y * 4 - 1, x * 4 + 1)) &&
-                //     (y != bottom_y || bottom.less(y * 4 + 1, x * 4 - 1))
-                // );
 
                 // Better symmetry
                 let is_visible = is_opaque || // Remove is_opaque check for full symmetry but more artifacts in hallways
@@ -237,57 +232,31 @@ impl AdamsFov {
         x: i32,
         y: i32,
         octant: i32,
-        origin: Position<DIMENSIONS>,
+        mut origin: Position<DIMENSIONS>,
         provider: &mut impl FovProvider<T, DIMENSIONS>,
         pass_through_data: &mut T,
     ) -> bool {
-        let (mut nx, mut ny): (i32, i32) = origin.gridpoint().as_ivec2().into();
-        match octant {
-            0 => {
-                nx += x;
-                ny -= y;
-            },
-            1 => {
-                nx += y;
-                ny -= x;
-            },
-            2 => {
-                nx -= y;
-                ny -= x;
-            },
-            3 => {
-                nx -= x;
-                ny -= y;
-            },
-            4 => {
-                nx -= x;
-                ny += y;
-            },
-            5 => {
-                nx -= y;
-                ny += x;
-            },
-            6 => {
-                nx += y;
-                ny += x;
-            },
-            7 => {
-                nx += x;
-                ny += y;
-            },
-            _ => {},
-        }
-
-        provider.is_opaque(origin + IVec2::new(nx, ny), pass_through_data)
+        origin.set_xy(Self::transform(x, y, octant, origin));
+        provider.is_opaque(origin, pass_through_data)
     }
 
     fn set_visible<const DIMENSIONS: UVec2>(
         x: i32,
         y: i32,
         octant: i32,
-        origin: Position<DIMENSIONS>,
+        mut origin: Position<DIMENSIONS>,
         visible_points: &mut HashSet<Position<DIMENSIONS>>,
     ) {
+        origin.set_xy(Self::transform(x, y, octant, origin));
+        visible_points.insert(origin);
+    }
+
+    fn transform<const DIMENSIONS: UVec2>(
+        x: i32,
+        y: i32,
+        octant: i32,
+        origin: Position<DIMENSIONS>,
+    ) -> UVec2 {
         let (mut nx, mut ny): (i32, i32) = origin.gridpoint().as_ivec2().into();
         match octant {
             0 => {
@@ -325,7 +294,6 @@ impl AdamsFov {
             _ => {},
         }
 
-        let p = IVec2::new(nx, ny);
-        visible_points.insert(origin + p);
+        IVec2::new(nx, ny).as_uvec2()
     }
 }

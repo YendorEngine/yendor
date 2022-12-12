@@ -19,3 +19,4 @@ version    = "0.1.0"
 
 [dependencies]
 yendor_geometry = { workspace = true }
+yendor_utils    = { workspace = true }
