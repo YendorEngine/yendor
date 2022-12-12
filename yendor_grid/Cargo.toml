@@ -22,6 +22,7 @@ reflect   = ["yendor_geometry/reflect"]
 serialize = ["serde", "bitvec/serde", "yendor_geometry/serialize"]
 
 [dependencies]
+bevy            = { workspace = true }
 yendor_geometry = { workspace = true }
 
 [dependencies.serde]

@@ -1,3 +1,5 @@
+use crate::prelude::*;
+
 #[cfg(not(feature = "reflect"))]
 pub trait GridParam: Sync + Send + 'static {}
 
