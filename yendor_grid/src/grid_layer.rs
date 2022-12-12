@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub trait GridLayer<T: GridParam, const DIMENSIONS: UVec2> {
+pub trait GridLayer<T: GridParam, const DIM: UVec2> {
     type MutableReturn<'a>
     where Self: 'a;
 

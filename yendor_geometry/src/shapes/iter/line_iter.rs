@@ -6,7 +6,7 @@ use crate::prelude::*;
 
 /// Line-drawing iterator
 #[derive(Debug, Clone)]
-pub struct BresenhamLineIter<const DIMENSIONS: UVec2> {
+pub struct BresenhamLineIter<const DIM: UVec2> {
     abs_x: i64,      // Absolute start.x
     abs_y: i64,      // Absolute start.y
     abs_z: i32,      // Absolute start.z
@@ -14,14 +14,14 @@ pub struct BresenhamLineIter<const DIMENSIONS: UVec2> {
     delta_step: i64, // number of steps before we need to change y
     delta_x: i64,
     delta_y: i64,
-    octant: Octant<DIMENSIONS>,
+    octant: Octant<DIM>,
 }
 
-impl<const DIMENSIONS: UVec2> BresenhamLineIter<DIMENSIONS> {
+impl<const DIM: UVec2> BresenhamLineIter<DIM> {
     /// Creates a new iterator.Yields intermediate points between `start`
     /// and `end`. Does include `start` but not `end`.
     #[inline]
-    pub fn new(start: Position<DIMENSIONS>, end: Position<DIMENSIONS>) -> Self {
+    pub fn new(start: Position<DIM>, end: Position<DIM>) -> Self {
         // figure out which octant `end` is relative to `start`
         let octant = start.octant_to(end);
 
@@ -48,7 +48,7 @@ impl<const DIMENSIONS: UVec2> BresenhamLineIter<DIMENSIONS> {
 
     /// Return the next point without checking if we are past `end`.
     #[inline]
-    pub fn advance(&mut self) -> Position<DIMENSIONS> {
+    pub fn advance(&mut self) -> Position<DIM> {
         let current_point = (self.abs_x, self.abs_y);
         if self.delta_step >= 0 {
             self.abs_y += 1; // we can add because self.end_x is to the right and up(Octant(0))
@@ -65,8 +65,8 @@ impl<const DIMENSIONS: UVec2> BresenhamLineIter<DIMENSIONS> {
     }
 }
 
-impl<const DIMENSIONS: UVec2> Iterator for BresenhamLineIter<DIMENSIONS> {
-    type Item = Position<DIMENSIONS>;
+impl<const DIM: UVec2> Iterator for BresenhamLineIter<DIM> {
+    type Item = Position<DIM>;
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
@@ -79,22 +79,20 @@ impl<const DIMENSIONS: UVec2> Iterator for BresenhamLineIter<DIMENSIONS> {
 
 /// New type over `Bresenham` which include the `end` points when iterated over.
 #[derive(Debug, Clone)]
-pub struct BresenhamLineInclusiveIter<const DIMENSIONS: UVec2>(BresenhamLineIter<DIMENSIONS>);
+pub struct BresenhamLineInclusiveIter<const DIM: UVec2>(BresenhamLineIter<DIM>);
 
-impl<const DIMENSIONS: UVec2> BresenhamLineInclusiveIter<DIMENSIONS> {
+impl<const DIM: UVec2> BresenhamLineInclusiveIter<DIM> {
     /// Creates a new iterator. Yields points `start..=end`.
     #[inline]
-    pub fn new(start: Position<DIMENSIONS>, end: Position<DIMENSIONS>) -> Self {
-        Self(BresenhamLineIter::new(start, end))
-    }
+    pub fn new(start: Position<DIM>, end: Position<DIM>) -> Self { Self(BresenhamLineIter::new(start, end)) }
 
     /// Return the next point without checking if we are past `end`.
     #[inline]
-    pub fn advance(&mut self) -> Position<DIMENSIONS> { self.0.advance() }
+    pub fn advance(&mut self) -> Position<DIM> { self.0.advance() }
 }
 
-impl<const DIMENSIONS: UVec2> Iterator for BresenhamLineInclusiveIter<DIMENSIONS> {
-    type Item = Position<DIMENSIONS>;
+impl<const DIM: UVec2> Iterator for BresenhamLineInclusiveIter<DIM> {
+    type Item = Position<DIM>;
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {

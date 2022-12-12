@@ -3,12 +3,12 @@ use crate::prelude::*;
 pub struct AdamsFov;
 
 impl FovAlgorithm for AdamsFov {
-    fn compute_fov<T, const DIMENSIONS: UVec2>(
-        origin: Position<DIMENSIONS>,
+    fn compute_fov<T, const DIM: UVec2>(
+        origin: Position<DIM>,
         range: u32,
-        provider: &mut impl FovProvider<T, DIMENSIONS>,
+        provider: &mut impl FovProvider<T, DIM>,
         mut pass_through_data: T,
-    ) -> HashSet<Position<DIMENSIONS>> {
+    ) -> HashSet<Position<DIM>> {
         let mut visible_points: HashSet<Position<_>> =
             HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
 
@@ -34,16 +34,16 @@ impl FovAlgorithm for AdamsFov {
 
 impl AdamsFov {
     #[allow(clippy::too_many_arguments)]
-    fn compute_octant<T, const DIMENSIONS: UVec2>(
+    fn compute_octant<T, const DIM: UVec2>(
         octant: i32,
-        origin: Position<DIMENSIONS>,
+        origin: Position<DIM>,
         range: i32,
         x: i32,
         mut top: Slope,
         mut bottom: Slope,
-        provider: &mut impl FovProvider<T, DIMENSIONS>,
+        provider: &mut impl FovProvider<T, DIM>,
         pass_through_data: &mut T,
-        visible_points: &mut HashSet<Position<DIMENSIONS>>,
+        visible_points: &mut HashSet<Position<DIM>>,
     ) {
         for x in x..=range {
             let y_coords = Self::compute_y(
@@ -77,13 +77,13 @@ impl AdamsFov {
         }
     }
 
-    fn compute_y<T, const DIMENSIONS: UVec2>(
+    fn compute_y<T, const DIM: UVec2>(
         octant: i32,
-        origin: Position<DIMENSIONS>,
+        origin: Position<DIM>,
         x: i32,
         top: &mut Slope,
         bottom: &mut Slope,
-        provider: &mut impl FovProvider<T, DIMENSIONS>,
+        provider: &mut impl FovProvider<T, DIM>,
         pass_through_data: &mut T,
     ) -> IVec2 {
         let mut top_y;
@@ -134,24 +134,24 @@ impl AdamsFov {
     }
 
     #[allow(clippy::too_many_arguments)]
-    fn compute_visiblity<T, const DIMENSIONS: UVec2>(
+    fn compute_visiblity<T, const DIM: UVec2>(
         top_y: i32,
         bottom_y: i32,
         range: i32,
         octant: i32,
-        origin: Position<DIMENSIONS>,
+        origin: Position<DIM>,
         x: i32,
         top: &mut Slope,
         bottom: &mut Slope,
-        provider: &mut impl FovProvider<T, DIMENSIONS>,
+        provider: &mut impl FovProvider<T, DIM>,
         pass_through_data: &mut T,
-        visible_points: &mut HashSet<Position<DIMENSIONS>>,
+        visible_points: &mut HashSet<Position<DIM>>,
     ) -> bool {
         let mut was_opaque = -1;
 
         for y in (bottom_y..=top_y).rev() {
             if range < 0 ||
-                Self::distance_squared(Position::<DIMENSIONS>::ZERO, IVec2::new(x, y)) <=
+                Self::distance_squared(Position::<DIM>::ZERO, IVec2::new(x, y)) <=
                     (range as u64 * range as u64)
             {
                 let is_opaque = Self::blocks_light(x, y, octant, origin, provider, pass_through_data);
@@ -218,7 +218,7 @@ impl AdamsFov {
         was_opaque == 0
     }
 
-    pub fn distance_squared<const DIMENSIONS: UVec2>(origin: Position<DIMENSIONS>, tile: IVec2) -> u64 {
+    pub fn distance_squared<const DIM: UVec2>(origin: Position<DIM>, tile: IVec2) -> u64 {
         // we don't care about position, so no need to transform the tile
         let end = origin + tile;
         let dx = end.absolute_x() - origin.absolute_x();
@@ -228,35 +228,30 @@ impl AdamsFov {
         (dx * dx + dy * dy) as u64
     }
 
-    fn blocks_light<T, const DIMENSIONS: UVec2>(
+    fn blocks_light<T, const DIM: UVec2>(
         x: i32,
         y: i32,
         octant: i32,
-        mut origin: Position<DIMENSIONS>,
-        provider: &mut impl FovProvider<T, DIMENSIONS>,
+        mut origin: Position<DIM>,
+        provider: &mut impl FovProvider<T, DIM>,
         pass_through_data: &mut T,
     ) -> bool {
         origin.set_xy(Self::transform(x, y, octant, origin));
         provider.is_opaque(origin, pass_through_data)
     }
 
-    fn set_visible<const DIMENSIONS: UVec2>(
+    fn set_visible<const DIM: UVec2>(
         x: i32,
         y: i32,
         octant: i32,
-        mut origin: Position<DIMENSIONS>,
-        visible_points: &mut HashSet<Position<DIMENSIONS>>,
+        mut origin: Position<DIM>,
+        visible_points: &mut HashSet<Position<DIM>>,
     ) {
         origin.set_xy(Self::transform(x, y, octant, origin));
         visible_points.insert(origin);
     }
 
-    fn transform<const DIMENSIONS: UVec2>(
-        x: i32,
-        y: i32,
-        octant: i32,
-        origin: Position<DIMENSIONS>,
-    ) -> UVec2 {
+    fn transform<const DIM: UVec2>(x: i32, y: i32, octant: i32, origin: Position<DIM>) -> UVec2 {
         let (mut nx, mut ny): (i32, i32) = origin.gridpoint().as_ivec2().into();
         match octant {
             0 => {

@@ -2,11 +2,11 @@ use crate::prelude::*;
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 // #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
-pub struct Grid3d<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> {
-    layers: [Grid<T, DIMENSIONS>; LAYER_COUNT],
+pub struct Grid3d<T: GridParam, const LAYER_COUNT: usize, const DIM: UVec2> {
+    layers: [Grid<T, DIM>; LAYER_COUNT],
 }
 
-impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, LAYER_COUNT, DIMENSIONS> {
+impl<T: GridParam, const LAYER_COUNT: usize, const DIM: UVec2> Grid3d<T, LAYER_COUNT, DIM> {
     pub fn new_clone(value: T) -> Self
     where T: Clone {
         let mut layers = Vec::new();
@@ -47,12 +47,12 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
     }
 
     pub fn new_fn(f: impl Fn((usize, IVec2)) -> T) -> Self {
-        let count = DIMENSIONS.size();
+        let count = DIM.size();
         let mut layers = Vec::new();
         for index in 0..LAYER_COUNT {
             let mut cells = Vec::with_capacity(count);
-            DIMENSIONS.iter().for_each(|coord| cells.push(f((index, coord))));
-            layers.push(Grid::<T, DIMENSIONS> { cells });
+            DIM.iter().for_each(|coord| cells.push(f((index, coord))));
+            layers.push(Grid::<T, DIM> { cells });
         }
 
         Self {
@@ -98,7 +98,7 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
         &mut self,
         to_layer_id: ToLayerId,
         to: impl Point,
-        source: &Grid<T, DIMENSIONS>,
+        source: &Grid<T, DIM>,
         from: impl Point,
     ) where
         T: Clone,
@@ -112,7 +112,7 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
         &mut self,
         to_layer_id: ToLayerId,
         to: impl Point,
-        source: &Grid<T, DIMENSIONS>,
+        source: &Grid<T, DIM>,
         from: impl Point,
     ) where
         T: Copy,
@@ -126,7 +126,7 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
         &self,
         from_layer_id: FromLayerId,
         from: impl Point,
-        dest: &mut Grid<T, DIMENSIONS>,
+        dest: &mut Grid<T, DIM>,
         to: impl Point,
     ) where
         T: Clone,
@@ -140,7 +140,7 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
         &self,
         from_layer_id: FromLayerId,
         from: impl Point,
-        dest: &mut Grid<T, DIMENSIONS>,
+        dest: &mut Grid<T, DIM>,
         to: impl Point,
     ) where
         T: Copy,
@@ -151,13 +151,13 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
     }
 
     #[inline]
-    pub fn width(&self) -> u32 { DIMENSIONS.width() }
+    pub fn width(&self) -> u32 { DIM.width() }
 
     #[inline]
-    pub fn height(&self) -> u32 { DIMENSIONS.height() }
+    pub fn height(&self) -> u32 { DIM.height() }
 
     #[inline]
-    pub const fn size(&self) -> UVec2 { DIMENSIONS }
+    pub const fn size(&self) -> UVec2 { DIM }
 
     #[inline]
     pub fn in_bounds(&self, pos: impl Point) -> bool { pos.is_valid(self.size()) }
@@ -227,7 +227,7 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
         self.layers[layer_id.into()].set_unchecked(index, value)
     }
 
-    pub fn get_grid_by_layer<LayerId: Into<usize>>(&self, layer_id: LayerId) -> Option<&Grid<T, DIMENSIONS>> {
+    pub fn get_grid_by_layer<LayerId: Into<usize>>(&self, layer_id: LayerId) -> Option<&Grid<T, DIM>> {
         let layer_id = layer_id.into();
         if self.is_layer(layer_id) { Some(&self.layers[layer_id]) } else { None }
     }
@@ -235,19 +235,19 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> Grid3d<T, 
     pub fn get_grid_by_layer_mut<LayerId: Into<usize>>(
         &mut self,
         layer_id: LayerId,
-    ) -> Option<&mut Grid<T, DIMENSIONS>> {
+    ) -> Option<&mut Grid<T, DIM>> {
         let layer_id = layer_id.into();
         if self.is_layer(layer_id) { Some(&mut self.layers[layer_id]) } else { None }
     }
 }
 
-impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> GridIterable<T>
-    for Grid3d<T, LAYER_COUNT, DIMENSIONS>
+impl<T: GridParam, const LAYER_COUNT: usize, const DIM: UVec2> GridIterable<T>
+    for Grid3d<T, LAYER_COUNT, DIM>
 {
-    type IterChunkMutReturn<'a> = GridChunksMut<'a, Grid<T, DIMENSIONS>>;
-    type IterChunkReturn<'a> = GridChunks<'a, Grid<T, DIMENSIONS>>;
-    type IterMutReturn<'a> = GridIterMut<'a, Grid<T, DIMENSIONS>>;
-    type IterReturn<'a> = GridIter<'a, Grid<T, DIMENSIONS>>;
+    type IterChunkMutReturn<'a> = GridChunksMut<'a, Grid<T, DIM>>;
+    type IterChunkReturn<'a> = GridChunks<'a, Grid<T, DIM>>;
+    type IterMutReturn<'a> = GridIterMut<'a, Grid<T, DIM>>;
+    type IterReturn<'a> = GridIter<'a, Grid<T, DIM>>;
 
     #[inline]
     fn iter(&self) -> Self::IterReturn<'_> { self.layers.iter() }
@@ -256,30 +256,26 @@ impl<T: GridParam, const LAYER_COUNT: usize, const DIMENSIONS: UVec2> GridIterab
     fn iter_mut(&mut self) -> Self::IterMutReturn<'_> { self.layers.iter_mut() }
 
     #[inline]
-    fn point_iter(&self) -> PointIterRowMajor { DIMENSIONS.iter() }
+    fn point_iter(&self) -> PointIterRowMajor { DIM.iter() }
 
     #[inline]
     fn enumerate(&self) -> GridEnumerate<Self::IterReturn<'_>> { self.point_iter().zip(self.iter()) }
 
     #[inline]
-    fn rows(&self) -> Self::IterChunkReturn<'_> { self.layers.chunks(DIMENSIONS.width() as usize) }
+    fn rows(&self) -> Self::IterChunkReturn<'_> { self.layers.chunks(DIM.width() as usize) }
 
     #[inline]
-    fn rows_mut(&mut self) -> Self::IterChunkMutReturn<'_> {
-        self.layers.chunks_mut(DIMENSIONS.width() as usize)
-    }
+    fn rows_mut(&mut self) -> Self::IterChunkMutReturn<'_> { self.layers.chunks_mut(DIM.width() as usize) }
 
     #[inline]
-    fn cols(&self) -> Self::IterChunkReturn<'_> { self.layers.chunks(DIMENSIONS.width() as usize) }
+    fn cols(&self) -> Self::IterChunkReturn<'_> { self.layers.chunks(DIM.width() as usize) }
 
     #[inline]
-    fn cols_mut(&mut self) -> Self::IterChunkMutReturn<'_> {
-        self.layers.chunks_mut(DIMENSIONS.width() as usize)
-    }
+    fn cols_mut(&mut self) -> Self::IterChunkMutReturn<'_> { self.layers.chunks_mut(DIM.width() as usize) }
 
     #[inline]
     fn iter_column(&self, x: usize) -> Option<GridIterCol<Self::IterReturn<'_>>> {
-        if x < DIMENSIONS.size() {
+        if x < DIM.size() {
             let w = self.width() as usize;
             return Some(self.layers[x..].iter().step_by(w));
         } else {

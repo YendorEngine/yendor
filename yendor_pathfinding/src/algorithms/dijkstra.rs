@@ -3,12 +3,12 @@ use crate::prelude::*;
 pub struct Dijkstra;
 
 impl PathAlgorithm for Dijkstra {
-    fn compute_path<T, const DIMENSIONS: UVec2>(
-        origin: Position<DIMENSIONS>,
-        destination: Position<DIMENSIONS>,
-        provider: &mut impl PathProvider<T, DIMENSIONS>,
+    fn compute_path<T, const DIM: UVec2>(
+        origin: Position<DIM>,
+        destination: Position<DIM>,
+        provider: &mut impl PathProvider<T, DIM>,
         mut pass_through_data: T,
-    ) -> Vec<Position<DIMENSIONS>> {
+    ) -> Vec<Position<DIM>> {
         let dijkstra_path = dijkstra(
             &origin,
             |&p| provider.generate_successors(p, &mut pass_through_data),

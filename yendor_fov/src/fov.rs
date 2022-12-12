@@ -14,13 +14,13 @@ pub enum Fov {
 }
 
 impl Fov {
-    pub fn compute<FovRange: Into<u32>, T, const DIMENSIONS: UVec2>(
+    pub fn compute<FovRange: Into<u32>, T, const DIM: UVec2>(
         &self,
-        origin: Position<DIMENSIONS>,
+        origin: Position<DIM>,
         range: FovRange,
-        provider: &mut impl FovProvider<T, DIMENSIONS>,
+        provider: &mut impl FovProvider<T, DIM>,
         pass_through_data: T,
-    ) -> HashSet<Position<DIMENSIONS>> {
+    ) -> HashSet<Position<DIM>> {
         let range = range.into();
         match self {
             Self::Adams => AdamsFov::compute_fov(origin, range, provider, pass_through_data),

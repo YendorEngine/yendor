@@ -11,17 +11,17 @@ pub type BitChunkMut<'a> = slice::ChunksMut<'a, usize, Lsb0>;
 
 #[derive(Default, Debug, Clone, Hash, PartialEq, Eq)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
-pub struct BitGrid<const DIMENSIONS: UVec2> {
+pub struct BitGrid<const DIM: UVec2> {
     pub cells: BitVec,
 }
 
-impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS> {
+impl<const DIM: UVec2> GridLayer<bool, DIM> for BitGrid<DIM> {
     type MutableReturn<'a> = BitRef<'a, bitvec::ptr::Mut>;
 
     #[inline(always)]
     fn new_clone(value: bool) -> Self
     where bool: Clone {
-        let count = DIMENSIONS.size();
+        let count = DIM.size();
         let mut cells = BitVec::with_capacity(count);
         cells.resize(count, value);
         Self { cells }
@@ -30,7 +30,7 @@ impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS
     #[inline(always)]
     fn blit_clone(&mut self, to: impl Point, source: &Self, from: impl Point)
     where bool: Clone {
-        DIMENSIONS.iter().for_each(|coord| {
+        DIM.iter().for_each(|coord| {
             let x = coord.x_uint32();
             let y = coord.y_uint32();
             if let Some(val) = source.get((x + from.x_uint32(), y + from.y_uint32())) {
@@ -42,7 +42,7 @@ impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS
     #[inline(always)]
     fn new_copy(value: bool) -> Self
     where bool: Copy {
-        let count = DIMENSIONS.size();
+        let count = DIM.size();
         let mut cells = BitVec::with_capacity(count);
         cells.resize_with(count, |_| value);
         Self { cells }
@@ -51,7 +51,7 @@ impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS
     #[inline(always)]
     fn blit_copy(&mut self, to: impl Point, source: &Self, from: impl Point)
     where bool: Copy {
-        DIMENSIONS.iter().for_each(|coord| {
+        DIM.iter().for_each(|coord| {
             let x = coord.x_uint32();
             let y = coord.y_uint32();
             if let Some(val) = source.get((x + from.x_uint32(), y + from.y_uint32())) {
@@ -63,26 +63,26 @@ impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS
     #[inline(always)]
     fn new_default() -> Self {
         Self {
-            cells: bitvec![0_usize; DIMENSIONS.size()],
+            cells: bitvec![0_usize; DIM.size()],
         }
     }
 
     #[inline(always)]
     fn new_fn(f: impl Fn(IVec2) -> bool) -> Self {
-        let count = DIMENSIONS.size();
+        let count = DIM.size();
         let mut cells = BitVec::with_capacity(count);
-        DIMENSIONS.iter().for_each(|coord| cells.push(f(coord)));
+        DIM.iter().for_each(|coord| cells.push(f(coord)));
         Self { cells }
     }
 
     #[inline]
-    fn width(&self) -> u32 { DIMENSIONS.width() }
+    fn width(&self) -> u32 { DIM.width() }
 
     #[inline]
-    fn height(&self) -> u32 { DIMENSIONS.height() }
+    fn height(&self) -> u32 { DIM.height() }
 
     #[inline]
-    fn size(&self) -> UVec2 { DIMENSIONS }
+    fn size(&self) -> UVec2 { DIM }
 
     #[inline]
     fn len(&self) -> usize { self.cells.len() }
@@ -149,7 +149,7 @@ impl<const DIMENSIONS: UVec2> GridLayer<bool, DIMENSIONS> for BitGrid<DIMENSIONS
     }
 }
 
-impl<const DIMENSIONS: UVec2> GridIterable<bool> for BitGrid<DIMENSIONS> {
+impl<const DIM: UVec2> GridIterable<bool> for BitGrid<DIM> {
     type IterChunkMutReturn<'a> = BitChunkMut<'a>;
     type IterChunkReturn<'a> = BitChunk<'a>;
     type IterMutReturn<'a> = BitIterMut<'a>;
@@ -162,30 +162,26 @@ impl<const DIMENSIONS: UVec2> GridIterable<bool> for BitGrid<DIMENSIONS> {
     fn iter_mut(&mut self) -> Self::IterMutReturn<'_> { self.cells.iter_mut() }
 
     #[inline]
-    fn point_iter(&self) -> PointIterRowMajor { DIMENSIONS.iter() }
+    fn point_iter(&self) -> PointIterRowMajor { DIM.iter() }
 
     #[inline]
     fn enumerate(&self) -> GridEnumerate<Self::IterReturn<'_>> { self.point_iter().zip(self.iter()) }
 
     #[inline]
-    fn rows(&self) -> Self::IterChunkReturn<'_> { self.cells.chunks(DIMENSIONS.width() as usize) }
+    fn rows(&self) -> Self::IterChunkReturn<'_> { self.cells.chunks(DIM.width() as usize) }
 
     #[inline]
-    fn rows_mut(&mut self) -> Self::IterChunkMutReturn<'_> {
-        self.cells.chunks_mut(DIMENSIONS.width() as usize)
-    }
+    fn rows_mut(&mut self) -> Self::IterChunkMutReturn<'_> { self.cells.chunks_mut(DIM.width() as usize) }
 
     #[inline]
-    fn cols(&self) -> Self::IterChunkReturn<'_> { self.cells.chunks(DIMENSIONS.width() as usize) }
+    fn cols(&self) -> Self::IterChunkReturn<'_> { self.cells.chunks(DIM.width() as usize) }
 
     #[inline]
-    fn cols_mut(&mut self) -> Self::IterChunkMutReturn<'_> {
-        self.cells.chunks_mut(DIMENSIONS.width() as usize)
-    }
+    fn cols_mut(&mut self) -> Self::IterChunkMutReturn<'_> { self.cells.chunks_mut(DIM.width() as usize) }
 
     #[inline]
     fn iter_column(&self, x: usize) -> Option<GridIterCol<Self::IterReturn<'_>>> {
-        if x < DIMENSIONS.size() {
+        if x < DIM.size() {
             let w = self.width() as usize;
             return Some(self.cells[x..].iter().step_by(w));
         } else {
@@ -204,14 +200,14 @@ impl<const DIMENSIONS: UVec2> GridIterable<bool> for BitGrid<DIMENSIONS> {
 // Indexing
 ///////////////////////////////////////////////////////////////////////////
 
-impl<const DIMENSIONS: UVec2, P: Point> Index<P> for BitGrid<DIMENSIONS> {
+impl<const DIM: UVec2, P: Point> Index<P> for BitGrid<DIM> {
     type Output = bool;
 
     #[inline]
     fn index(&self, index: P) -> &bool { self.get_unchecked(index) }
 }
 
-// impl<const DIMENSIONS: UVec2> Index<usize> for BitGrid<DIMENSIONS> {
+// impl<const DIM: UVec2> Index<usize> for BitGrid<DIM> {
 //     type Output = bool;
 
 //     #[inline]

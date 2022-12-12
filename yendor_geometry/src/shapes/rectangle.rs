@@ -5,22 +5,19 @@ use crate::prelude::*;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
-pub struct Rectangle<const DIMENSIONS: UVec2> {
-    pub min: Position<DIMENSIONS>,
-    pub max: Position<DIMENSIONS>,
+pub struct Rectangle<const DIM: UVec2> {
+    pub min: Position<DIM>,
+    pub max: Position<DIM>,
 }
 
-impl<const DIMENSIONS: UVec2> Rectangle<DIMENSIONS> {
+impl<const DIM: UVec2> Rectangle<DIM> {
     #[inline]
-    pub fn new(min: Position<DIMENSIONS>, max: Position<DIMENSIONS>) -> Self {
+    pub fn new(min: Position<DIM>, max: Position<DIM>) -> Self {
         let (min, max) = Self::find_min_max(min, max);
         Self { min, max }
     }
 
-    fn find_min_max(
-        min: Position<DIMENSIONS>,
-        max: Position<DIMENSIONS>,
-    ) -> (Position<DIMENSIONS>, Position<DIMENSIONS>) {
+    fn find_min_max(min: Position<DIM>, max: Position<DIM>) -> (Position<DIM>, Position<DIM>) {
         let (abs_min_x, abs_min_y, abs_min_z) = min.absolute_position();
         let (abs_max_x, abs_max_y, abs_max_z) = max.absolute_position();
 
@@ -40,7 +37,7 @@ impl<const DIMENSIONS: UVec2> Rectangle<DIMENSIONS> {
     }
 }
 
-impl<const DIMENSIONS: UVec2> Rectangle<DIMENSIONS> {
+impl<const DIM: UVec2> Rectangle<DIM> {
     #[inline]
     pub const fn width(&self) -> u32 { self.max.x() - self.min.x() }
 
@@ -48,30 +45,30 @@ impl<const DIMENSIONS: UVec2> Rectangle<DIMENSIONS> {
     pub const fn height(&self) -> u32 { self.max.y() - self.min.y() }
 
     #[inline]
-    pub const fn min(&self) -> Position<DIMENSIONS> { self.min }
+    pub const fn min(&self) -> Position<DIM> { self.min }
 
     #[inline]
-    pub const fn max(&self) -> Position<DIMENSIONS> { self.max }
+    pub const fn max(&self) -> Position<DIM> { self.max }
 
     #[inline]
     pub const fn is_square(&self) -> bool { self.width() == self.height() }
 }
 
-impl<const DIMENSIONS: UVec2> Rectangle<DIMENSIONS> {
+impl<const DIM: UVec2> Rectangle<DIM> {
     #[inline]
-    fn center(&self) -> Position<DIMENSIONS> { self.min.lerp(self.max, 0.5) }
+    fn center(&self) -> Position<DIM> { self.min.lerp(self.max, 0.5) }
 
     #[inline]
-    fn left(&self) -> Position<DIMENSIONS> { self.center() - IVec2::new((self.width() / 2) as i32, 0) }
+    fn left(&self) -> Position<DIM> { self.center() - IVec2::new((self.width() / 2) as i32, 0) }
 
     #[inline]
-    fn right(&self) -> Position<DIMENSIONS> { self.center() + IVec2::new((self.width() / 2) as i32, 0) }
+    fn right(&self) -> Position<DIM> { self.center() + IVec2::new((self.width() / 2) as i32, 0) }
 
     #[inline]
-    fn top(&self) -> Position<DIMENSIONS> { self.center() + IVec2::new(0, (self.height() / 2) as i32) }
+    fn top(&self) -> Position<DIM> { self.center() + IVec2::new(0, (self.height() / 2) as i32) }
 
     #[inline]
-    fn bottom(&self) -> Position<DIMENSIONS> { self.center() - IVec2::new(0, (self.height() / 2) as i32) }
+    fn bottom(&self) -> Position<DIM> { self.center() - IVec2::new(0, (self.height() / 2) as i32) }
 
     /// Check if this rectangle intersects another rectangle.
     #[inline]
@@ -87,17 +84,17 @@ impl<const DIMENSIONS: UVec2> Rectangle<DIMENSIONS> {
 
     /// Calls a function for each x/y point in the rectangle
     pub fn for_each<F>(&self, f: F)
-    where F: FnMut(Position<DIMENSIONS>) {
+    where F: FnMut(Position<DIM>) {
         self.into_iter().for_each(f)
     }
 }
 
-impl<const DIMENSIONS: UVec2> Shape<DIMENSIONS> for Rectangle<DIMENSIONS> {
+impl<const DIM: UVec2> Shape<DIM> for Rectangle<DIM> {
     #[inline]
     fn get_count(&self) -> u32 { self.width() * self.height() }
 
     #[inline]
-    fn contains(&self, position: Position<DIMENSIONS>) -> bool {
+    fn contains(&self, position: Position<DIM>) -> bool {
         let (s_min_x, s_min_y, _s_min_z) = self.min.absolute_position();
         let (s_max_x, s_max_y, _s_max_z) = self.max.absolute_position();
 
@@ -107,27 +104,27 @@ impl<const DIMENSIONS: UVec2> Shape<DIMENSIONS> for Rectangle<DIMENSIONS> {
 
     /// returns an iterator over all of the points
     #[inline]
-    fn get_positions(&self) -> HashSet<Position<DIMENSIONS>> { self.iter().collect() }
+    fn get_positions(&self) -> HashSet<Position<DIM>> { self.iter().collect() }
 
     #[inline]
-    fn boxed_iter(&self) -> BoxedShapeIter<DIMENSIONS> { Box::new(self.into_iter()) }
+    fn boxed_iter(&self) -> BoxedShapeIter<DIM> { Box::new(self.into_iter()) }
 }
 
-impl<const DIMENSIONS: UVec2> IntoIterator for Rectangle<DIMENSIONS> {
-    type IntoIter = GridRectIter<DIMENSIONS>;
-    type Item = Position<DIMENSIONS>;
+impl<const DIM: UVec2> IntoIterator for Rectangle<DIM> {
+    type IntoIter = GridRectIter<DIM>;
+    type Item = Position<DIM>;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter { GridRectIter::new(self.min, self.max) }
 }
 
-impl<const DIMENSIONS: UVec2> ShapeIter<DIMENSIONS> for Rectangle<DIMENSIONS> {
-    type Iterator = GridRectIter<DIMENSIONS>;
+impl<const DIM: UVec2> ShapeIter<DIM> for Rectangle<DIM> {
+    type Iterator = GridRectIter<DIM>;
 
     #[inline]
     fn iter(&self) -> Self::Iterator { self.into_iter() }
 }
 
-impl<const DIMENSIONS: UVec2> From<Rectangle<DIMENSIONS>> for BoxedShape<DIMENSIONS> {
-    fn from(value: Rectangle<DIMENSIONS>) -> Self { Box::new(value) }
+impl<const DIM: UVec2> From<Rectangle<DIM>> for BoxedShape<DIM> {
+    fn from(value: Rectangle<DIM>) -> Self { Box::new(value) }
 }
