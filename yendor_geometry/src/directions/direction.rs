@@ -389,6 +389,22 @@ impl Direction {
             _ => None,
         }
     }
+
+    /// Creates a [`Direction`] from a [`Octant`]
+    pub fn from_octant<const DIM: UVec2>(octant: Octant<DIM>) -> Direction {
+        // TODO: match on the range??
+        match octant.0 {
+            0 => Self::EAST,
+            1 => Self::NORTH,
+            2 => Self::NORTH,
+            3 => Self::WEST,
+            4 => Self::WEST,
+            5 => Self::SOUTH,
+            6 => Self::SOUTH,
+            7 => Self::EAST,
+            _ => unreachable!(),
+        }
+    }
 }
 
 impl DirectionIterator for Direction {
