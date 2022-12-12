@@ -30,6 +30,18 @@ impl Fov {
             },
         }
     }
+
+    pub fn within_fov<FovRange: Into<u32>, T, const DIM: UVec2>(
+        &self,
+        origin: Position<DIM>,
+        target: Position<DIM>,
+        range: FovRange,
+        provider: &mut impl FovProvider<T, DIM>,
+        pass_through_data: T,
+    ) -> bool {
+        let range = range.into();
+        Self::compute(self, origin, range, provider, pass_through_data).contains(&target)
+    }
 }
 
 #[cfg(test)]
