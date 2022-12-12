@@ -73,7 +73,7 @@ yendor_utils       = { workspace = true }
 #########       Features
 #################################
 [features]
-default = ["fov", "pathfinding", "random", "serialize"]
+default = ["fov", "pathfinding", "random", "reflect", "serialize"]
 
 debug = []
 
