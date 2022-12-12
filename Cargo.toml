@@ -79,7 +79,7 @@ debug = []
 
 fov = []
 
-pathfinding = ["dep:pathfinding"]
+pathfinding = []
 
 random = ["rand"]
 
@@ -100,13 +100,6 @@ serialize = [
 default-features = false
 features         = []
 version          = "0.9"
-
-######################################
-#########       Pathfinding
-######################################
-[dependencies.pathfinding]
-optional = true
-version  = "4"
 
 ######################################
 #########       Random
