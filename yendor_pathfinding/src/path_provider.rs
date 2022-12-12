@@ -9,10 +9,12 @@ pub trait PathProvider<T, const DIMENSIONS: UVec2> {
 
     fn cost(
         &self,
-        from_position: Position<DIMENSIONS>,
-        to_position: Position<DIMENSIONS>,
-        pass_through_data: &mut T,
-    ) -> u32;
+        _from_position: Position<DIMENSIONS>,
+        _to_position: Position<DIMENSIONS>,
+        _pass_through_data: &mut T,
+    ) -> u32 {
+        1
+    }
 
     fn distance(&self, origin: Position<DIMENSIONS>, destination: Position<DIMENSIONS>) -> u32 {
         origin.distance(destination)
