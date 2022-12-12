@@ -203,12 +203,6 @@ impl<const DIMENSIONS: UVec2> GridIterable<bool> for BitGrid<DIMENSIONS> {
 ///////////////////////////////////////////////////////////////////////////
 // Indexing
 ///////////////////////////////////////////////////////////////////////////
-impl<const DIMENSIONS: UVec2> Index<usize> for BitGrid<DIMENSIONS> {
-    type Output = bool;
-
-    #[inline]
-    fn index(&self, index: usize) -> &bool { &self.cells[index] }
-}
 
 impl<const DIMENSIONS: UVec2, P: Point> Index<P> for BitGrid<DIMENSIONS> {
     type Output = bool;
@@ -216,3 +210,10 @@ impl<const DIMENSIONS: UVec2, P: Point> Index<P> for BitGrid<DIMENSIONS> {
     #[inline]
     fn index(&self, index: P) -> &bool { self.get_unchecked(index) }
 }
+
+// impl<const DIMENSIONS: UVec2> Index<usize> for BitGrid<DIMENSIONS> {
+//     type Output = bool;
+
+//     #[inline]
+//     fn index(&self, index: usize) -> &bool { &self.cells[index] }
+// }

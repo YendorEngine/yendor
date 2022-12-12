@@ -4,3 +4,5 @@ pub use bevy::{
     prelude::{Deref, DerefMut},
     utils::{HashMap, HashSet},
 };
+#[cfg(feature = "serialize")]
+pub use serde::{Deserialize, Serialize};

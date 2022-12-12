@@ -18,6 +18,7 @@ resolver   = "2"
 version    = "0.1.0"
 
 [features]
+reflect   = ["yendor_geometry/reflect"]
 serialize = ["serde", "bitvec/serde", "yendor_geometry/serialize"]
 
 [dependencies]
