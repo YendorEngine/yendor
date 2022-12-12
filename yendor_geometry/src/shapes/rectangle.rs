@@ -5,12 +5,12 @@ use crate::prelude::*;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
-pub struct GridRectangle<const DIMENSIONS: UVec2> {
+pub struct Rectangle<const DIMENSIONS: UVec2> {
     pub min: Position<DIMENSIONS>,
     pub max: Position<DIMENSIONS>,
 }
 
-impl<const DIMENSIONS: UVec2> GridRectangle<DIMENSIONS> {
+impl<const DIMENSIONS: UVec2> Rectangle<DIMENSIONS> {
     #[inline]
     pub fn new(min: Position<DIMENSIONS>, max: Position<DIMENSIONS>) -> Self {
         let (min, max) = Self::find_min_max(min, max);
@@ -40,7 +40,7 @@ impl<const DIMENSIONS: UVec2> GridRectangle<DIMENSIONS> {
     }
 }
 
-impl<const DIMENSIONS: UVec2> GridRectangle<DIMENSIONS> {
+impl<const DIMENSIONS: UVec2> Rectangle<DIMENSIONS> {
     #[inline]
     pub const fn width(&self) -> u32 { self.max.x() - self.min.x() }
 
@@ -57,7 +57,7 @@ impl<const DIMENSIONS: UVec2> GridRectangle<DIMENSIONS> {
     pub const fn is_square(&self) -> bool { self.width() == self.height() }
 }
 
-impl<const DIMENSIONS: UVec2> GridRectangle<DIMENSIONS> {
+impl<const DIMENSIONS: UVec2> Rectangle<DIMENSIONS> {
     #[inline]
     fn center(&self) -> Position<DIMENSIONS> { self.min.lerp(self.max, 0.5) }
 
@@ -92,7 +92,7 @@ impl<const DIMENSIONS: UVec2> GridRectangle<DIMENSIONS> {
     }
 }
 
-impl<const DIMENSIONS: UVec2> Shape<DIMENSIONS> for GridRectangle<DIMENSIONS> {
+impl<const DIMENSIONS: UVec2> Shape<DIMENSIONS> for Rectangle<DIMENSIONS> {
     #[inline]
     fn get_count(&self) -> u32 { self.width() * self.height() }
 
@@ -113,7 +113,7 @@ impl<const DIMENSIONS: UVec2> Shape<DIMENSIONS> for GridRectangle<DIMENSIONS> {
     fn boxed_iter(&self) -> BoxedShapeIter<DIMENSIONS> { Box::new(self.into_iter()) }
 }
 
-impl<const DIMENSIONS: UVec2> IntoIterator for GridRectangle<DIMENSIONS> {
+impl<const DIMENSIONS: UVec2> IntoIterator for Rectangle<DIMENSIONS> {
     type IntoIter = GridRectIter<DIMENSIONS>;
     type Item = Position<DIMENSIONS>;
 
@@ -121,13 +121,13 @@ impl<const DIMENSIONS: UVec2> IntoIterator for GridRectangle<DIMENSIONS> {
     fn into_iter(self) -> Self::IntoIter { GridRectIter::new(self.min, self.max) }
 }
 
-impl<const DIMENSIONS: UVec2> ShapeIter<DIMENSIONS> for GridRectangle<DIMENSIONS> {
+impl<const DIMENSIONS: UVec2> ShapeIter<DIMENSIONS> for Rectangle<DIMENSIONS> {
     type Iterator = GridRectIter<DIMENSIONS>;
 
     #[inline]
     fn iter(&self) -> Self::Iterator { self.into_iter() }
 }
 
-impl<const DIMENSIONS: UVec2> From<GridRectangle<DIMENSIONS>> for BoxedShape<DIMENSIONS> {
-    fn from(value: GridRectangle<DIMENSIONS>) -> Self { Box::new(value) }
+impl<const DIMENSIONS: UVec2> From<Rectangle<DIMENSIONS>> for BoxedShape<DIMENSIONS> {
+    fn from(value: Rectangle<DIMENSIONS>) -> Self { Box::new(value) }
 }
