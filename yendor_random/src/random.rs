@@ -3,10 +3,10 @@ use std::ops::{Bound, Index, IndexMut, RangeBounds};
 use crate::prelude::*;
 
 pub trait Random {
-    fn next_u32(&mut self) -> u32;
-    fn next_u64(&mut self) -> u64;
-    fn fill_bytes(&mut self, dest: &mut [u8]);
-    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand::Error>;
+    fn internal_next_u32(&mut self) -> u32;
+    fn internal_next_u64(&mut self) -> u64;
+    fn internal_fill_bytes(&mut self, dest: &mut [u8]);
+    fn internal_try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand::Error>;
 
     fn coin(&mut self) -> bool { self.max_inclusive(1u64) == 0 }
 
@@ -25,7 +25,7 @@ pub trait Random {
             let limit = (buckets * top).max(1);
             let mut x;
             loop {
-                x = self.next_u64() as u128;
+                x = self.internal_next_u64() as u128;
                 if x < limit {
                     break;
                 }
@@ -52,7 +52,7 @@ pub trait Random {
         Value::from_u64(self.max_inclusive(difference) + min)
     }
 
-    fn float(&mut self) -> f64 { self.next_u64() as f64 / (u64::MAX as u128 + 1) as f64 }
+    fn float(&mut self) -> f64 { self.internal_next_u64() as f64 / (u64::MAX as u128 + 1) as f64 }
 
     fn index<'a, T: Index<usize>>(&mut self, items: &'a [T]) -> Option<&'a T> {
         let len = items.len();
@@ -70,11 +70,11 @@ pub trait Random {
 }
 
 impl<T: RngCore> Random for T {
-    fn next_u32(&mut self) -> u32 { self.next_u32() }
+    fn internal_next_u32(&mut self) -> u32 { self.next_u32() }
 
-    fn next_u64(&mut self) -> u64 { self.next_u64() }
+    fn internal_next_u64(&mut self) -> u64 { self.next_u64() }
 
-    fn fill_bytes(&mut self, dest: &mut [u8]) { self.fill_bytes(dest) }
+    fn internal_fill_bytes(&mut self, dest: &mut [u8]) { self.fill_bytes(dest) }
 
-    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand::Error> { self.try_fill_bytes(dest) }
+    fn internal_try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand::Error> { self.try_fill_bytes(dest) }
 }
