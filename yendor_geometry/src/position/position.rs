@@ -17,7 +17,7 @@ use crate::prelude::*;
 /// and then wrap it with your own type:
 ///
 /// `pub type Position = YendorPosition<DIM>`
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, Component)]
 #[cfg_attr(feature = "reflect", derive(Reflect, FromReflect))]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct Position<const DIM: UVec2> {
