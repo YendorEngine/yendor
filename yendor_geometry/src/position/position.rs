@@ -16,16 +16,16 @@ use crate::prelude::*;
 ///
 /// and then wrap it with your own type:
 ///
-/// `pub type Position = YendorPosition<DIMENSIONS>`
+/// `pub type Position = YendorPosition<DIM>`
 #[derive(Default, Clone, Copy)]
 #[cfg_attr(feature = "reflect", derive(Reflect, FromReflect))]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
-pub struct Position<const DIMENSIONS: UVec2> {
+pub struct Position<const DIM: UVec2> {
     world_position: WorldPosition,
     local_position: LocalPosition,
 }
 
-impl<const DIMENSIONS: UVec2> Position<DIMENSIONS> {
+impl<const DIM: UVec2> Position<DIM> {
     /// Returns [`Position`] `(0, 0)`.
     pub const ZERO: Self = Self::splat(0);
 
@@ -57,18 +57,18 @@ impl<const DIMENSIONS: UVec2> Position<DIMENSIONS> {
     }
 
     /// Creates a new[`Position`] from a [`WorldPosition`] and the [`LocalPosition`] set to
-    /// `(DIMENSIONS.x - 1, DIMENSIONS.y - 1)`
+    /// `(DIM.x - 1, DIM.y - 1)`
     pub const fn new_grid_max(world_position: WorldPosition) -> Self {
         Self {
             world_position,
-            local_position: LocalPosition::new(DIMENSIONS.x - 1, DIMENSIONS.y - 1),
+            local_position: LocalPosition::new(DIM.x - 1, DIM.y - 1),
         }
     }
 
-    /// Returns an index composed from [`LocalPosition`] for a `grid` with size `(DIMENSIONS.x,
-    /// DIMENSIONS.y)`
+    /// Returns an index composed from [`LocalPosition`] for a `grid` with size `(DIM.x,
+    /// DIM.y)`
     #[inline(always)]
-    pub fn as_index(&self) -> usize { self.gridpoint().as_index_unchecked(DIMENSIONS.x) }
+    pub fn as_index(&self) -> usize { self.gridpoint().as_index_unchecked(DIM.x) }
 
     /// Returns an Option<index> composed from [`LocalPosition`] for a `grid` with a custom
     /// size.
@@ -97,8 +97,8 @@ impl<const DIMENSIONS: UVec2> Position<DIMENSIONS> {
     /// let distance = (other.get_local_position().x() - self.get_local_position().x()).abs();
     /// ```
     pub const fn distance_x(&self, other: Self) -> u32 {
-        ((other.world_x() as i64 * DIMENSIONS.x as i64 + other.x() as i64) -
-            (self.world_x() as i64 * DIMENSIONS.y as i64 + self.x() as i64))
+        ((other.world_x() as i64 * DIM.x as i64 + other.x() as i64) -
+            (self.world_x() as i64 * DIM.y as i64 + self.x() as i64))
             .unsigned_abs() as u32
     }
 
@@ -109,14 +109,14 @@ impl<const DIMENSIONS: UVec2> Position<DIMENSIONS> {
     /// let distance = (other.get_local_position().y() - self.get_local_position().y()).abs();
     /// ```
     pub const fn distance_y(&self, other: Self) -> u32 {
-        ((other.world_y() as i64 * DIMENSIONS.x as i64 + other.y() as i64) -
-            (self.world_y() as i64 * DIMENSIONS.y as i64 + self.y() as i64))
+        ((other.world_y() as i64 * DIM.x as i64 + other.y() as i64) -
+            (self.world_y() as i64 * DIM.y as i64 + self.y() as i64))
             .unsigned_abs() as u32
     }
 
     /// Creates the [`octant`] to which the `other` [`Position`] belongs relative to this
     /// [`Position`]. This is useful for transforming static offsets in a dynamic direction.
-    pub const fn octant_to(&self, other: Self) -> Octant<DIMENSIONS> {
+    pub const fn octant_to(&self, other: Self) -> Octant<DIM> {
         // adapted from <http://codereview.stackexchange.com/a/95551>
         let start = self.absolute_position();
         let end = other.absolute_position();
@@ -273,42 +273,42 @@ impl<const DIMENSIONS: UVec2> Position<DIMENSIONS> {
     }
 
     /// Returns the current [`WorldPosition`]'s `X` and [`LocalPosition`]'s `X` calculated out
-    pub const fn absolute_x(&self) -> i64 { self.world_x() as i64 * DIMENSIONS.x as i64 + self.x() as i64 }
+    pub const fn absolute_x(&self) -> i64 { self.world_x() as i64 * DIM.x as i64 + self.x() as i64 }
 
     /// Returns the current [`WorldPosition`]'s `X` and [`LocalPosition`]'s `Y` calculated out
-    pub const fn absolute_y(&self) -> i64 { self.world_y() as i64 * DIMENSIONS.y as i64 + self.y() as i64 }
+    pub const fn absolute_y(&self) -> i64 { self.world_y() as i64 * DIM.y as i64 + self.y() as i64 }
 
     /// Returns a [`Position`] created from an `absolute position`
     pub const fn from_absolute_position(absolute_position: (i64, i64, i32)) -> Self {
         let (world_x, local_x) = if absolute_position.0 < 0 {
             let abs_x = absolute_position.0.abs();
-            let mut world = abs_x / DIMENSIONS.x as i64;
-            let mut local = DIMENSIONS.x as i64 - (abs_x - (world * DIMENSIONS.x as i64));
-            if local == DIMENSIONS.x as i64 {
+            let mut world = abs_x / DIM.x as i64;
+            let mut local = DIM.x as i64 - (abs_x - (world * DIM.x as i64));
+            if local == DIM.x as i64 {
                 world -= 1;
                 local = 0;
             }
             (-(world as i32) - 1, local as u32)
         } else {
             (
-                (absolute_position.0 / DIMENSIONS.x as i64) as i32,
-                (absolute_position.0 % DIMENSIONS.x as i64) as u32,
+                (absolute_position.0 / DIM.x as i64) as i32,
+                (absolute_position.0 % DIM.x as i64) as u32,
             )
         };
 
         let (world_y, local_y) = if absolute_position.1 < 0 {
             let abs_y = absolute_position.1.abs();
-            let mut world = abs_y / DIMENSIONS.y as i64;
-            let mut local = DIMENSIONS.y as i64 - (abs_y - (world * DIMENSIONS.y as i64));
-            if local == DIMENSIONS.y as i64 {
+            let mut world = abs_y / DIM.y as i64;
+            let mut local = DIM.y as i64 - (abs_y - (world * DIM.y as i64));
+            if local == DIM.y as i64 {
                 world -= 1;
                 local = 0;
             }
             (-(world as i32) - 1, local as u32)
         } else {
             (
-                (absolute_position.1 / DIMENSIONS.y as i64) as i32,
-                (absolute_position.1 % DIMENSIONS.y as i64) as u32,
+                (absolute_position.1 / DIM.y as i64) as i32,
+                (absolute_position.1 % DIM.y as i64) as u32,
             )
         };
 
@@ -319,24 +319,24 @@ impl<const DIMENSIONS: UVec2> Position<DIMENSIONS> {
     }
 }
 
-impl<const DIMENSIONS: UVec2> PartialEq for Position<DIMENSIONS> {
+impl<const DIM: UVec2> PartialEq for Position<DIM> {
     fn eq(&self, other: &Self) -> bool {
         self.world_position == other.world_position && self.get_local_position() == other.get_local_position()
     }
 }
 
-impl<const DIMENSIONS: UVec2> Eq for Position<DIMENSIONS> {}
+impl<const DIM: UVec2> Eq for Position<DIM> {}
 
-impl<const DIMENSIONS: UVec2> Hash for Position<DIMENSIONS> {
+impl<const DIM: UVec2> Hash for Position<DIM> {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        DIMENSIONS.x.hash(state);
-        DIMENSIONS.y.hash(state);
+        DIM.x.hash(state);
+        DIM.y.hash(state);
         self.world_position.hash(state);
         self.get_local_position().hash(state);
     }
 }
 
-impl<const DIMENSIONS: UVec2> Display for Position<DIMENSIONS> {
+impl<const DIM: UVec2> Display for Position<DIM> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -346,15 +346,15 @@ impl<const DIMENSIONS: UVec2> Display for Position<DIMENSIONS> {
     }
 }
 
-impl<const DIMENSIONS: UVec2> Debug for Position<DIMENSIONS> {
+impl<const DIM: UVec2> Debug for Position<DIM> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({:?}::{:?})", self.world_position, self.local_position)
     }
 }
 
-// TODO: Fix IVec2 > DIMENSIONS.x, DIMENSIONS.y
+// TODO: Fix IVec2 > DIM.x, DIM.y
 // Add offset to LocalPosition
-impl<const DIMENSIONS: UVec2> Add<IVec2> for Position<DIMENSIONS> {
+impl<const DIM: UVec2> Add<IVec2> for Position<DIM> {
     type Output = Self;
 
     #[inline]
@@ -367,18 +367,18 @@ impl<const DIMENSIONS: UVec2> Add<IVec2> for Position<DIMENSIONS> {
 
         if local_x < 0 {
             world_x -= 1;
-            local_x += DIMENSIONS.x as i32;
-        } else if local_x >= DIMENSIONS.x as i32 {
+            local_x += DIM.x as i32;
+        } else if local_x >= DIM.x as i32 {
             world_x += 1;
-            local_x -= DIMENSIONS.x as i32;
+            local_x -= DIM.x as i32;
         }
 
         if local_y < 0 {
             world_y -= 1;
-            local_y += DIMENSIONS.y as i32;
-        } else if local_y >= DIMENSIONS.y as i32 {
+            local_y += DIM.y as i32;
+        } else if local_y >= DIM.y as i32 {
             world_y += 1;
-            local_y -= DIMENSIONS.y as i32;
+            local_y -= DIM.y as i32;
         }
 
         Self::new(
@@ -388,9 +388,9 @@ impl<const DIMENSIONS: UVec2> Add<IVec2> for Position<DIMENSIONS> {
     }
 }
 
-// TODO: Fix IVec2 > DIMENSIONS.x, DIMENSIONS.y
+// TODO: Fix IVec2 > DIM.x, DIM.y
 // Add offset to LocalPosition
-impl<const DIMENSIONS: UVec2> AddAssign<IVec2> for Position<DIMENSIONS> {
+impl<const DIM: UVec2> AddAssign<IVec2> for Position<DIM> {
     #[inline]
     fn add_assign(&mut self, rhs: IVec2) {
         let new_x = self.x() as i32 + rhs.x;
@@ -398,27 +398,27 @@ impl<const DIMENSIONS: UVec2> AddAssign<IVec2> for Position<DIMENSIONS> {
 
         if new_x < 0 {
             self.set_world_x(self.world_x() - 1);
-            self.set_x((new_x + DIMENSIONS.x as i32) as u32);
-        } else if new_x >= DIMENSIONS.x as i32 {
+            self.set_x((new_x + DIM.x as i32) as u32);
+        } else if new_x >= DIM.x as i32 {
             self.set_world_x(self.world_x() + 1);
-            self.set_x((new_x - DIMENSIONS.x as i32) as u32);
+            self.set_x((new_x - DIM.x as i32) as u32);
         } else {
             self.set_x(new_x as u32);
         }
 
         if new_y < 0 {
             self.set_world_y(self.world_y() - 1);
-            self.set_y((new_y + DIMENSIONS.y as i32) as u32);
-        } else if new_y >= DIMENSIONS.y as i32 {
+            self.set_y((new_y + DIM.y as i32) as u32);
+        } else if new_y >= DIM.y as i32 {
             self.set_world_y(self.world_y() + 1);
-            self.set_y((new_y - DIMENSIONS.y as i32) as u32);
+            self.set_y((new_y - DIM.y as i32) as u32);
         } else {
             self.set_y(new_y as u32);
         }
     }
 }
 
-impl<const DIMENSIONS: UVec2> Add<Direction> for Position<DIMENSIONS> {
+impl<const DIM: UVec2> Add<Direction> for Position<DIM> {
     type Output = Self;
 
     fn add(self, rhs: Direction) -> Self::Output {
@@ -427,9 +427,9 @@ impl<const DIMENSIONS: UVec2> Add<Direction> for Position<DIMENSIONS> {
     }
 }
 
-// TODO: Fix IVec2 > DIMENSIONS.x, DIMENSIONS.y
+// TODO: Fix IVec2 > DIM.x, DIM.y
 // Sub offset to LocalPosition
-impl<const DIMENSIONS: UVec2> Sub<IVec2> for Position<DIMENSIONS> {
+impl<const DIM: UVec2> Sub<IVec2> for Position<DIM> {
     type Output = Self;
 
     fn sub(self, rhs: IVec2) -> Self::Output {
@@ -441,18 +441,18 @@ impl<const DIMENSIONS: UVec2> Sub<IVec2> for Position<DIMENSIONS> {
 
         if local_x < 0 {
             world_x -= 1;
-            local_x += DIMENSIONS.x as i32;
-        } else if local_x >= DIMENSIONS.x as i32 {
+            local_x += DIM.x as i32;
+        } else if local_x >= DIM.x as i32 {
             world_x += 1;
-            local_x -= DIMENSIONS.x as i32;
+            local_x -= DIM.x as i32;
         }
 
         if local_y < 0 {
             world_y -= 1;
-            local_y += DIMENSIONS.y as i32;
-        } else if local_y >= DIMENSIONS.y as i32 {
+            local_y += DIM.y as i32;
+        } else if local_y >= DIM.y as i32 {
             world_y += 1;
-            local_y -= DIMENSIONS.y as i32;
+            local_y -= DIM.y as i32;
         }
 
         Self::new(
@@ -462,29 +462,29 @@ impl<const DIMENSIONS: UVec2> Sub<IVec2> for Position<DIMENSIONS> {
     }
 }
 
-// TODO: Fix IVec2 > DIMENSIONS.x, DIMENSIONS.y
+// TODO: Fix IVec2 > DIM.x, DIM.y
 // Sub offset to LocalPosition
-impl<const DIMENSIONS: UVec2> SubAssign<IVec2> for Position<DIMENSIONS> {
+impl<const DIM: UVec2> SubAssign<IVec2> for Position<DIM> {
     fn sub_assign(&mut self, rhs: IVec2) {
         let new_x = self.x() as i32 - rhs.x;
         let new_y = self.y() as i32 - rhs.y;
 
         if new_x < 0 {
             self.set_world_x(self.world_x() - 1);
-            self.set_x((new_x + DIMENSIONS.x as i32) as u32);
-        } else if new_x >= DIMENSIONS.x as i32 {
+            self.set_x((new_x + DIM.x as i32) as u32);
+        } else if new_x >= DIM.x as i32 {
             self.set_world_x(self.world_x() + 1);
-            self.set_x((new_x - DIMENSIONS.x as i32) as u32);
+            self.set_x((new_x - DIM.x as i32) as u32);
         } else {
             self.set_x(new_x as u32);
         }
 
         if new_y < 0 {
             self.set_world_y(self.world_y() - 1);
-            self.set_y((new_y + DIMENSIONS.y as i32) as u32);
-        } else if new_y >= DIMENSIONS.y as i32 {
+            self.set_y((new_y + DIM.y as i32) as u32);
+        } else if new_y >= DIM.y as i32 {
             self.set_world_y(self.world_y() + 1);
-            self.set_y((new_y - DIMENSIONS.y as i32) as u32);
+            self.set_y((new_y - DIM.y as i32) as u32);
         } else {
             self.set_y(new_y as u32);
         }

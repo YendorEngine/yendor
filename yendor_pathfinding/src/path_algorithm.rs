@@ -1,9 +1,9 @@
 use crate::prelude::*;
 pub trait PathAlgorithm {
-    fn compute_path<T, const DIMENSIONS: UVec2>(
-        origin: Position<DIMENSIONS>,
-        destination: Position<DIMENSIONS>,
-        provider: &mut impl PathProvider<T, DIMENSIONS>,
+    fn compute_path<T, const DIM: UVec2>(
+        origin: Position<DIM>,
+        destination: Position<DIM>,
+        provider: &mut impl PathProvider<T, DIM>,
         pass_through_data: T,
-    ) -> Vec<Position<DIMENSIONS>>;
+    ) -> Vec<Position<DIM>>;
 }

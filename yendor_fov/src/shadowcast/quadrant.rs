@@ -1,17 +1,17 @@
 use crate::prelude::*;
 
-pub struct Quadrant<'a, T, const DIMENSIONS: UVec2> {
+pub struct Quadrant<'a, T, const DIM: UVec2> {
     direction: Direction,
     pass_through_data: &'a mut T,
-    provider: &'a mut dyn FovProvider<T, DIMENSIONS>,
-    origin: Position<DIMENSIONS>,
+    provider: &'a mut dyn FovProvider<T, DIM>,
+    origin: Position<DIM>,
 }
 
-impl<'a, T, const DIMENSIONS: UVec2> Quadrant<'a, T, DIMENSIONS> {
+impl<'a, T, const DIM: UVec2> Quadrant<'a, T, DIM> {
     pub fn new(
         direction: Direction,
-        origin: Position<DIMENSIONS>,
-        provider: &'a mut dyn FovProvider<T, DIMENSIONS>,
+        origin: Position<DIM>,
+        provider: &'a mut dyn FovProvider<T, DIM>,
         pass_through_data: &'a mut T,
     ) -> Self {
         Self {
@@ -46,7 +46,7 @@ impl<'a, T, const DIMENSIONS: UVec2> Quadrant<'a, T, DIMENSIONS> {
     }
 
     // mark this tile as visible
-    pub fn set_visible(&mut self, visible_points: &mut HashSet<Position<DIMENSIONS>>, tile: IVec2) {
+    pub fn set_visible(&mut self, visible_points: &mut HashSet<Position<DIM>>, tile: IVec2) {
         visible_points.insert(self.origin + self.transform(tile));
     }
 
