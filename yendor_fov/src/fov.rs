@@ -45,32 +45,37 @@ mod tests {
         fn is_opaque(&mut self, _position: Position<DIM>, _pass_through_data: &mut ()) -> bool { false }
     }
 
-    #[test]
-    fn shadowcast() {
-        let mut pos: Position<DIM> = Position::default();
-        pos.set_xy(UVec2::new(5, 5));
-        let visible_sets = Fov::Shadowcast.compute(pos, 4_u32, &mut Provider, ());
-        let mut canvas = Canvas::new([10, 10]);
-        visible_sets.iter().for_each(|pos| {
-            println!("{}", pos);
-            canvas.put(pos.gridpoint(), '*')
-        });
+    mod shadowcast {
+        use super::*;
 
-        canvas.print();
+        #[test]
+        fn shadowcast() {
+            let mut pos: Position<DIM> = Position::default();
+            pos.set_xy(UVec2::new(5, 5));
+            let visible_sets = Fov::Shadowcast.compute(pos, 2_u32, &mut Provider, ());
+            assert_eq!(visible_sets.len(), 13);
+
+            // Pretty print to canvas for visual inspection
+            let mut canvas = Canvas::new([10, 10]);
+            visible_sets.iter().for_each(|pos| canvas.put(pos.gridpoint(), '*'));
+            canvas.print();
+        }
     }
 
-    #[test]
-    fn adams() {
-        let mut pos: Position<DIM> = Position::default();
-        pos.set_xy(UVec2::new(5, 5));
-        let visible_sets = Fov::Adams.compute(pos, 1_u32, &mut Provider, ());
+    mod adams {
+        use super::*;
 
-        let mut canvas = Canvas::new([10, 10]);
-        visible_sets.iter().for_each(|pos| {
-            println!("{}", pos);
-            canvas.put(pos.gridpoint(), '*')
-        });
+        #[test]
+        fn adams() {
+            let mut pos: Position<DIM> = Position::default();
+            pos.set_xy(UVec2::new(5, 5));
+            let visible_sets = Fov::Adams.compute(pos, 2_u32, &mut Provider, ());
+            assert_eq!(visible_sets.len(), 13);
 
-        canvas.print();
+            // Pretty print to canvas for visual inspection
+            let mut canvas = Canvas::new([10, 10]);
+            visible_sets.iter().for_each(|pos| canvas.put(pos.gridpoint(), '*'));
+            canvas.print();
+        }
     }
 }
