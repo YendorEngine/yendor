@@ -33,6 +33,6 @@ pub use pathfinder::*;
 pub mod imports;
 
 pub mod prelude {
-    pub(crate) use crate::{algorithms::*, imports::*};
-    pub use crate::{path_algorithm::*, path_provider::*, pathfinder::*};
+    pub(crate) use crate::imports::*;
+    pub use crate::{algorithms::*, path_algorithm::*, path_provider::*, pathfinder::*};
 }
