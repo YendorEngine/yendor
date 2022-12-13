@@ -6,7 +6,7 @@ impl PathAlgorithm for IDDfs {
     fn compute_path<T, const DIM: UVec2>(
         origin: Position<DIM>,
         destination: Position<DIM>,
-        provider: &mut impl PathProvider<T, DIM>,
+        provider: &mut impl PathProvider<T>,
         mut pass_through_data: T,
     ) -> Vec<Position<DIM>> {
         let result = iddfs(

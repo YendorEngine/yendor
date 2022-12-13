@@ -15,7 +15,7 @@ impl PathFinder {
         &self,
         origin: Position<DIM>,
         destination: Position<DIM>,
-        provider: &mut impl PathProvider<T, DIM>,
+        provider: &mut impl PathProvider<T>,
         pass_through_data: T,
     ) -> Vec<Position<DIM>> {
         match self {
