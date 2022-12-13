@@ -14,13 +14,13 @@ use crate::prelude::*;
 /// 8: 315..=359
 /// ```
 #[derive(Debug, Clone)]
-pub struct Octant<const DIM: UVec2>(pub u8);
+pub struct Octant(pub u8);
 // adapted from <http://codereview.stackexchange.com/a/95551>
 
-impl<const DIM: UVec2> Octant<DIM> {
+impl Octant {
     /// converts a `Position` into a coordinate relative `Octant(0)` offset
     #[inline]
-    pub fn to_offset(&self, position: Position<DIM>) -> (i64, i64) {
+    pub fn to_offset<const DIM: UVec2>(&self, position: Position<DIM>) -> (i64, i64) {
         let offset = position.absolute_position();
         match self.0 {
             0 => (offset.0, offset.1),
@@ -38,7 +38,7 @@ impl<const DIM: UVec2> Octant<DIM> {
     /// converts from a `Octant(0)` relative coordinate into a `Position`
     #[inline]
     #[allow(clippy::wrong_self_convention)]
-    pub fn from_offset(&self, offset: (i64, i64), z: i32) -> Position<DIM> {
+    pub fn from_offset<const DIM: UVec2>(&self, offset: (i64, i64), z: i32) -> Position<DIM> {
         let p = match self.0 {
             0 => (offset.0, offset.1),
             1 => (offset.1, offset.0),

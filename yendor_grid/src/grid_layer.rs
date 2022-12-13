@@ -1,31 +1,30 @@
 use crate::prelude::*;
 
-pub trait GridLayer<T: GridParam, const DIM: UVec2> {
+pub trait GridLayer<T: GridParam> {
     type MutableReturn<'a>
     where Self: 'a;
 
     /// Create a new grid layer with the given size (clone the given value).
-    fn new_clone(value: T) -> Self
+    fn new_clone(size: impl Dimensions, value: T) -> Self
     where T: Clone;
 
     /// Clone a region of the grid onto a new grid.
-    fn blit_clone(&mut self, to: impl Point, source: &Self, from: impl Point)
+    fn blit_clone(&mut self, to: impl Point, source: &Self, from: impl Point, size: impl Dimensions)
     where T: Clone;
 
     /// Create a new grid with the given size (copy the given value).
-    fn new_copy(value: T) -> Self
+    fn new_copy(size: impl Dimensions, value: T) -> Self
     where T: Copy;
 
     /// Copy a region from another grid into this grid.
-    fn blit_copy(&mut self, to: impl Point, source: &Self, from: impl Point)
+    fn blit_copy(&mut self, to: impl Point, source: &Self, from: impl Point, size: impl Dimensions)
     where T: Copy;
 
     /// Create a new grid with the given size and default values.
-    fn new_default() -> Self
+    fn new_default(size: impl Dimensions) -> Self
     where T: Default;
 
-    /// Create a new grid with the given size and a function to generate values.
-    fn new_fn(f: impl Fn(IVec2) -> T) -> Self;
+    fn new_fn(size: impl Dimensions, f: impl Fn(IVec2) -> T) -> Self;
 
     ///////////////////////////////////////////////////////////////////////////
     // Utility Functionality
@@ -37,7 +36,7 @@ pub trait GridLayer<T: GridParam, const DIM: UVec2> {
     fn height(&self) -> u32;
 
     /// Returns the size of the grid as a 2D vector.
-    fn size(&self) -> UVec2;
+    fn dimensions(&self) -> UVec2;
 
     /// Returns the number of elements in the vector, also referred to as its 'length'.
     fn len(&self) -> usize;

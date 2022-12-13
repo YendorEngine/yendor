@@ -391,7 +391,7 @@ impl Direction {
     }
 
     /// Creates a [`Direction`] from a [`Octant`]
-    pub fn from_octant<const DIM: UVec2>(octant: Octant<DIM>) -> Direction {
+    pub fn from_octant(octant: Octant) -> Direction {
         // TODO: match on the range??
         match octant.0 {
             0 => Self::EAST,

@@ -116,7 +116,7 @@ impl<const DIM: UVec2> Position<DIM> {
 
     /// Creates the [`octant`] to which the `other` [`Position`] belongs relative to this
     /// [`Position`]. This is useful for transforming static offsets in a dynamic direction.
-    pub const fn octant_to(&self, other: Self) -> Octant<DIM> {
+    pub const fn octant_to(&self, other: Self) -> Octant {
         // adapted from <http://codereview.stackexchange.com/a/95551>
         let start = self.absolute_position();
         let end = other.absolute_position();

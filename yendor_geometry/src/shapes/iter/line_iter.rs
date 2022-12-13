@@ -14,7 +14,7 @@ pub struct BresenhamLineIter<const DIM: UVec2> {
     delta_step: i64, // number of steps before we need to change y
     delta_x: i64,
     delta_y: i64,
-    octant: Octant<DIM>,
+    octant: Octant,
 }
 
 impl<const DIM: UVec2> BresenhamLineIter<DIM> {
