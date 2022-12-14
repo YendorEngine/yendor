@@ -37,7 +37,7 @@ impl Canvas {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::canvas::*;
+    use crate::canvas::*;
 
     #[test]
     fn print_test() {
