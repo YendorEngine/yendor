@@ -11,8 +11,8 @@ pub type GridChunksMut<'a, T> = slice::ChunksMut<'a, T>;
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone, Hash, PartialEq, Eq)]
 pub struct Grid<T: GridParam> {
-    pub cells: Vec<T>,
     pub dimensions: UVec2,
+    pub cells: Vec<T>,
 }
 
 // Grid Layer
@@ -235,14 +235,13 @@ impl<T: GridParam> std::ops::DerefMut for Grid<T> {
 // Indexing
 ///////////////////////////////////////////////////////////////////////////
 
-impl<T: GridParam, P: Point> Index<P> for Grid<T> {
+impl<T: Copy + GridParam> Index<usize> for Grid<T> {
     type Output = T;
 
     #[inline]
-    fn index(&self, index: P) -> &T { self.get_unchecked(index) }
+    fn index(&self, index: usize) -> &T { &self.cells[index] }
 }
-
-impl<T: GridParam, P: Point> IndexMut<P> for Grid<T> {
+impl<T: Copy + GridParam> std::ops::IndexMut<usize> for Grid<T> {
     #[inline]
-    fn index_mut(&mut self, index: P) -> &mut Self::Output { self.get_mut_unchecked(index) }
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output { &mut self.cells[index] }
 }

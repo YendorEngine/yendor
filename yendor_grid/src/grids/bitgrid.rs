@@ -213,9 +213,9 @@ impl GridIterable<bool> for BitGrid {
 // Indexing
 ///////////////////////////////////////////////////////////////////////////
 
-impl<P: Point> Index<P> for BitGrid {
+impl Index<usize> for BitGrid {
     type Output = bool;
 
     #[inline]
-    fn index(&self, index: P) -> &bool { self.get_unchecked(index) }
+    fn index(&self, index: usize) -> &bool { &self.cells[index] }
 }
