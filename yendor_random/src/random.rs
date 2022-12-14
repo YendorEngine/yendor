@@ -2,7 +2,7 @@ use std::ops::{Bound, Index, IndexMut, RangeBounds};
 
 use crate::prelude::*;
 
-pub trait Random {
+pub trait Rand {
     fn internal_next_u32(&mut self) -> u32;
     fn internal_next_u64(&mut self) -> u64;
     fn internal_fill_bytes(&mut self, dest: &mut [u8]);
@@ -69,12 +69,14 @@ pub trait Random {
     // TODO: roll possible roll settings instead of generics?
 }
 
-impl<T: RngCore> Random for T {
+impl<T: RngCore> Rand for T {
     fn internal_next_u32(&mut self) -> u32 { self.next_u32() }
 
     fn internal_next_u64(&mut self) -> u64 { self.next_u64() }
 
     fn internal_fill_bytes(&mut self, dest: &mut [u8]) { self.fill_bytes(dest) }
 
-    fn internal_try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand::Error> { self.try_fill_bytes(dest) }
+    fn internal_try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand::Error> {
+        self.try_fill_bytes(dest)
+    }
 }
