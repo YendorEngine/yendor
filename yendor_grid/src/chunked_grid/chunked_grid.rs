@@ -7,8 +7,8 @@ pub trait StoreChunk<T> = Fn(IVec3, Grid<T>);
 
 pub struct ChunkedGrid<'f, T> {
     dimensions: UVec2,
-    load_chunk: Box<&'f dyn LoadChunk<T>>,
-    store_chunk: Box<&'f dyn StoreChunk<T>>,
+    load_chunk: &'f dyn LoadChunk<T>,
+    store_chunk: &'f dyn StoreChunk<T>,
 
     // max_loaded_grids: u32,
     loaded_positions: VecDeque<IVec3>,
@@ -25,8 +25,8 @@ impl<'f, T> ChunkedGrid<'f, T> {
     ) -> Self {
         Self {
             dimensions: chunk_dimensions.into(),
-            load_chunk: Box::new(load_chunk),
-            store_chunk: Box::new(store_chunk),
+            load_chunk,
+            store_chunk,
 
             // max_loaded_grids: 0,
             loaded_positions: VecDeque::new(),
@@ -68,12 +68,8 @@ impl<'f, T> ChunkedGrid<'f, T> {
     }
 
     pub fn store_all(&mut self) {
-        loop {
-            if let Some(chunk_position) = self.loaded_positions.front() {
-                self.store_chunk(*chunk_position);
-            } else {
-                break;
-            }
+        while let Some(chunk_position) = self.loaded_positions.front() {
+            self.store_chunk(*chunk_position);
         }
     }
 

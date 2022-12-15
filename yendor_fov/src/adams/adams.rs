@@ -9,8 +9,7 @@ impl FovAlgorithm for AdamsFov {
         provider: &mut impl FovProvider<T>,
         mut pass_through_data: T,
     ) -> HashSet<ChunkPosition> {
-        let mut visible_points =
-            HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
+        let mut visible_points = HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
 
         visible_points.insert(origin);
 
@@ -219,7 +218,7 @@ impl AdamsFov {
         x: i32,
         y: i32,
         octant: i32,
-        mut origin: ChunkPosition,
+        origin: ChunkPosition,
         provider: &mut impl FovProvider<T>,
         pass_through_data: &mut T,
     ) -> bool {
@@ -235,7 +234,7 @@ impl AdamsFov {
         x: i32,
         y: i32,
         octant: i32,
-        mut origin: ChunkPosition,
+        origin: ChunkPosition,
         visible_points: &mut HashSet<ChunkPosition>,
     ) {
         let xy = Self::transform(x, y, octant, origin);
@@ -251,7 +250,7 @@ impl AdamsFov {
         let mut nx = mx as i32;
         let mut ny = my as i32;
 
-        //let (mut nx, mut ny): (i32, i32) = origin.gridpoint().as_ivec2().into();
+        // let (mut nx, mut ny): (i32, i32) = origin.gridpoint().as_ivec2().into();
         match octant {
             0 => {
                 nx += x;

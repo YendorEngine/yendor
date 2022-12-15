@@ -39,7 +39,6 @@ panic         = 'abort'
 #################################
 [workspace]
 members = [
-    "yendor_geometry",
     "yendor_pathfinding",
     "yendor_grid",
     "yendor_distance",
@@ -51,7 +50,6 @@ members = [
 [workspace.dependencies]
 yendor_distance    = { path = "yendor_distance" }
 yendor_fov         = { path = "yendor_fov" }
-yendor_geometry    = { path = "yendor_geometry" }
 yendor_grid        = { path = "yendor_grid" }
 yendor_pathfinding = { path = "yendor_pathfinding" }
 yendor_random      = { path = "yendor_random" }
@@ -63,7 +61,6 @@ yendor_utils       = { path = "yendor_utils" }
 [dependencies]
 yendor_distance    = { workspace = true }
 yendor_fov         = { workspace = true }
-yendor_geometry    = { workspace = true }
 yendor_grid        = { workspace = true }
 yendor_pathfinding = { workspace = true }
 yendor_random      = { workspace = true }
@@ -83,15 +80,9 @@ pathfinding = []
 
 random = ["rand"]
 
-reflect = ["yendor_geometry/reflect", "yendor_grid/reflect"]
+reflect = ["yendor_grid/reflect"]
 
-serialize = [
-    "serde",
-    "bitvec/serde",
-    "yendor_geometry/serialize",
-    "yendor_grid/serialize",
-    "yendor_pathfinding/serialize",
-]
+serialize = ["serde", "bitvec/serde", "yendor_grid/serialize", "yendor_pathfinding/serialize"]
 
 ######################################
 #########       Bevy
@@ -122,4 +113,3 @@ version  = "1"
 [dependencies.bitvec]
 optional = false
 version  = "1"
-

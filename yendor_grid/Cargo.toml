@@ -18,13 +18,12 @@ resolver   = "2"
 version    = "0.1.0"
 
 [features]
-reflect   = ["yendor_geometry/reflect"]
-serialize = ["serde", "bitvec/serde", "yendor_geometry/serialize"]
+reflect   = []
+serialize = ["serde", "bitvec/serde"]
 
 [dependencies]
-bevy            = { workspace = true }
-serde_test      = "1"
-yendor_geometry = { workspace = true }
+bevy       = { workspace = true }
+serde_test = "1"
 
 [dependencies.serde]
 features = ["derive"]
