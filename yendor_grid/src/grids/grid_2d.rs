@@ -235,13 +235,14 @@ impl<T> std::ops::DerefMut for Grid<T> {
 // Indexing
 ///////////////////////////////////////////////////////////////////////////
 
-impl<T: Copy + FromReflect> Index<usize> for Grid<T> {
+impl<T> Index<usize> for Grid<T> {
     type Output = T;
 
     #[inline]
     fn index(&self, index: usize) -> &T { &self.cells[index] }
 }
-impl<T: Copy + FromReflect> std::ops::IndexMut<usize> for Grid<T> {
+
+impl<T> std::ops::IndexMut<usize> for Grid<T> {
     #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output { &mut self.cells[index] }
 }
