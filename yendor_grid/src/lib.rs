@@ -6,7 +6,6 @@
 // https://github.com/rust-lang/rust/issues/85077
 #![feature(generic_arg_infer)]
 
-
 pub mod chunked_grid {
     mod chunk_position;
     pub use chunk_position::*;
@@ -43,6 +42,12 @@ pub mod directions {
 }
 
 pub mod grids {
+    #[cfg(feature = "reflect")]
+    mod reflect {
+        mod grid_2d;
+        pub use grid_2d::*;
+    }
+
     #[cfg(feature = "bitvec")]
     mod bitgrid;
     #[cfg(feature = "bitvec")]
@@ -51,12 +56,6 @@ pub mod grids {
     pub use grid_2d::*;
     mod grid_3d;
     pub use grid_3d::*;
-}
-
-#[cfg(feature = "reflect")]
-mod reflect {
-    mod grid_2d;
-    pub use grid_2d::*;
 }
 
 pub mod point {
@@ -88,7 +87,6 @@ pub mod shapes {
     pub use shape::*;
 }
 
-
 mod grid_iterable;
 mod grid_layer;
 
@@ -97,14 +95,7 @@ pub mod imports;
 pub mod prelude {
     pub(crate) use crate::imports::*;
     pub use crate::{
-        chunked_grid::*,
-        dimensions::*,
-        directions::*,
-        grids::*,
-        point::*,
+        chunked_grid::*, dimensions::*, directions::*, grid_iterable::*, grid_layer::*, grids::*, point::*,
         shapes::*,
-        grid_iterable::*,
-        grid_layer::*,
-        reflect::*,
     };
 }

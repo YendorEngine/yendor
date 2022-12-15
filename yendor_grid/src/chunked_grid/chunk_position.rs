@@ -25,7 +25,9 @@ pub struct ChunkPosition {
 // Constructor
 //######################
 impl ChunkPosition {
-    pub fn new(chunk_position: IVec3, local_position: UVec2) -> Self {
+    pub const ZERO: Self = Self::new(IVec3::new(0, 0, 0), UVec2::new(0, 0));
+
+    pub const fn new(chunk_position: IVec3, local_position: UVec2) -> Self {
         Self {
             dimensions: DimensionType::Modifier((chunk_position.x as i64, chunk_position.y as i64)),
             x: local_position.x as i64,

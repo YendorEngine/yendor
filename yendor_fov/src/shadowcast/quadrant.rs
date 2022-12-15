@@ -35,9 +35,7 @@ impl<'a, T> Quadrant<'a, T> {
         }
     }
 
-    pub fn distance_squared(&self, tile: IVec2) -> u64 {
-        (tile.x * tile.x + tile.y * tile.y) as u64
-    }
+    pub fn distance_squared(&self, tile: IVec2) -> u64 { (tile.x * tile.x + tile.y * tile.y) as u64 }
 
     // mark this tile as visible
     pub fn set_visible(&mut self, visible_points: &mut HashSet<ChunkPosition>, tile: IVec2) {

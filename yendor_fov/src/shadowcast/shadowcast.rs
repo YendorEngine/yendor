@@ -12,8 +12,7 @@ impl FovAlgorithm for Shadowcast {
         provider: &mut impl FovProvider<T>,
         mut pass_through_data: T,
     ) -> HashSet<ChunkPosition> {
-        let mut visible_points =
-            HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
+        let mut visible_points = HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
 
         visible_points.insert(origin);
 
@@ -35,8 +34,7 @@ impl Shadowcast {
         direction: Direction,
         mut pass_through_data: T,
     ) -> HashSet<ChunkPosition> {
-        let mut visible_points =
-            HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
+        let mut visible_points = HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
         visible_points.insert(origin);
 
         let mut quadrant = Quadrant::new(direction, origin, provider, &mut pass_through_data);

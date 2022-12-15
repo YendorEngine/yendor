@@ -43,3 +43,53 @@ impl Fov {
         Self::compute(self, origin, range, provider, pass_through_data).contains(&target)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use bevy::prelude::IVec3;
+    use yendor_utils::prelude::Canvas;
+
+    use crate::prelude::*;
+
+    struct Provider;
+    impl FovProvider<()> for Provider {
+        fn is_opaque(&mut self, _position: ChunkPosition, _pass_through_data: &mut ()) -> bool { false }
+    }
+
+    mod shadowcast {
+        use super::*;
+
+        #[test]
+        fn shadowcast() {
+            let dim = UVec2::new(10, 10);
+            let pos: ChunkPosition = ChunkPosition::new(IVec3::new(5, 5, 0), dim);
+            let visible_sets = Fov::Shadowcast.compute(pos, 2_u32, &mut Provider, ());
+            assert_eq!(visible_sets.len(), 13);
+
+            // Pretty print to canvas for visual inspection
+            let mut canvas = Canvas::new([10, 10]);
+            visible_sets.iter().for_each(|pos| canvas.put(pos.local_position(dim), '*'));
+            canvas.print();
+        }
+    }
+
+    mod adams {
+        use super::*;
+
+        #[test]
+        fn adams() {
+            let dim = UVec2::new(10, 10);
+            let mut pos: ChunkPosition =
+                ChunkPosition::new_dimensions(IVec3::new(0, 0, 0), UVec2::new(5, 5), dim);
+            let visible_sets = Fov::Adams.compute(pos, 2_u32, &mut Provider, ());
+            assert_eq!(visible_sets.len(), 13);
+
+            // Pretty print to canvas for visual inspection
+            let mut canvas = Canvas::new([10, 10]);
+            visible_sets.iter().for_each(|pos| canvas.put(pos.local_position(dim), '*'));
+            canvas.print();
+
+            visible_sets.iter().for_each(|p| println!("{p:?}"));
+        }
+    }
+}

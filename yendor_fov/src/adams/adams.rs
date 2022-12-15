@@ -9,7 +9,8 @@ impl FovAlgorithm for AdamsFov {
         provider: &mut impl FovProvider<T>,
         mut pass_through_data: T,
     ) -> HashSet<ChunkPosition> {
-        let mut visible_points = HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
+        let mut visible_points: HashSet<ChunkPosition> =
+            HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
 
         visible_points.insert(origin);
 
@@ -149,7 +150,10 @@ impl AdamsFov {
         let mut was_opaque = -1;
 
         for y in (bottom_y..=top_y).rev() {
-            if range < 0 || (x * x + y * y) <= (range * range) {
+            if range < 0 ||
+                Self::distance_squared(ChunkPosition::ZERO, IVec2::new(x, y)) <=
+                    (range as u64 * range as u64)
+            {
                 let is_opaque = Self::blocks_light(x, y, octant, origin, provider, pass_through_data);
 
                 // Better symmetry
@@ -214,43 +218,42 @@ impl AdamsFov {
         was_opaque == 0
     }
 
+    pub fn distance_squared(origin: ChunkPosition, tile: IVec2) -> u64 {
+        // we don't care about position, so no need to transform the tile
+        let end = origin + tile;
+        let dx = end.as_absolute().0 - origin.as_absolute().0;
+        let dy = end.as_absolute().1 - origin.as_absolute().1;
+
+        // multiplying times itself is always positive
+        (dx * dx + dy * dy) as u64
+    }
+
     fn blocks_light<T>(
         x: i32,
         y: i32,
         octant: i32,
-        origin: ChunkPosition,
+        mut origin: ChunkPosition,
         provider: &mut impl FovProvider<T>,
         pass_through_data: &mut T,
     ) -> bool {
-        let xy = Self::transform(x, y, octant, origin);
-
-        let d = origin.dimensions().expect("Origin has no dimensions.");
-
-        let cp = ChunkPosition::new_dimensions(origin.chunk_position(d), UVec2::new(xy.x, xy.y), d);
-        provider.is_opaque(cp, pass_through_data)
+        origin = origin + Self::transform(x, y, octant, origin);
+        provider.is_opaque(origin, pass_through_data)
     }
 
     fn set_visible(
         x: i32,
         y: i32,
         octant: i32,
-        origin: ChunkPosition,
+        mut origin: ChunkPosition,
         visible_points: &mut HashSet<ChunkPosition>,
     ) {
-        let xy = Self::transform(x, y, octant, origin);
-
-        let d = origin.dimensions().expect("Origin has no dimensions.");
-
-        let cp = ChunkPosition::new_dimensions(origin.chunk_position(d), UVec2::new(xy.x, xy.y), d);
-        visible_points.insert(cp);
+        origin = origin + Self::transform(x, y, octant, origin);
+        visible_points.insert(origin);
     }
 
     fn transform(x: i32, y: i32, octant: i32, origin: ChunkPosition) -> UVec2 {
-        let (mx, my, _z) = origin.as_absolute();
-        let mut nx = mx as i32;
-        let mut ny = my as i32;
-
-        // let (mut nx, mut ny): (i32, i32) = origin.gridpoint().as_ivec2().into();
+        println!("{}", origin);
+        let (mut nx, mut ny): (i32, i32) = origin.try_local_position().unwrap().as_ivec2().into();
         match octant {
             0 => {
                 nx += x;
