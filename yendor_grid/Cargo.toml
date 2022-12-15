@@ -23,6 +23,7 @@ serialize = ["serde", "bitvec/serde", "yendor_geometry/serialize"]
 
 [dependencies]
 bevy            = { workspace = true }
+serde_test      = "1"
 yendor_geometry = { workspace = true }
 
 [dependencies.serde]

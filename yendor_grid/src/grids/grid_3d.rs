@@ -7,6 +7,7 @@ pub type GridIterMut<'a, T> = slice::IterMut<'a, T>;
 pub type GridChunks<'a, T> = slice::Chunks<'a, T>;
 pub type GridChunksMut<'a, T> = slice::ChunksMut<'a, T>;
 
+#[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct Grid3d<T, const LAYER_COUNT: usize> {
     dimensions: UVec2,
     layers: [Grid<T>; LAYER_COUNT],
@@ -317,5 +318,38 @@ impl<T, const LAYER_COUNT: usize> GridIterable<T> for Grid3d<T, LAYER_COUNT> {
     fn iter_column_unchecked(&self, x: usize) -> GridIterCol<Self::IterReturn<'_>> {
         let w = self.width() as usize;
         return self.layers[x..].iter().step_by(w);
+    }
+}
+
+//#########################################################################
+// Serialize
+//#########################################################################
+#[cfg(feature = "serialize")]
+impl<T: Serialize + Clone, const LAYER_COUNT: usize> Serialize for Grid3d<T, LAYER_COUNT> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where S: serde::Serializer {
+        let mut serde_state = match serde::Serializer::serialize_struct(serializer, "Grid3d", 2) {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(err);
+            },
+        };
+
+        match serde::ser::SerializeStruct::serialize_field(&mut serde_state, "dimensions", &self.dimensions) {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(err);
+            },
+        };
+
+        match serde::ser::SerializeStruct::serialize_field(&mut serde_state, "layers", &self.layers.to_vec())
+        {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(err);
+            },
+        };
+
+        serde::ser::SerializeStruct::end(serde_state)
     }
 }

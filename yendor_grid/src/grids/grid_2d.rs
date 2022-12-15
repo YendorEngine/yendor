@@ -282,6 +282,7 @@ impl<T: Serialize> Serialize for Grid<T> {
 //#########################################################################
 // Deserialize
 //#########################################################################
+#[cfg(feature = "serialize")]
 impl<'de, T: Deserialize<'de>> Deserialize<'de> for Grid<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where D: serde::Deserializer<'de> {
