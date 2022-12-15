@@ -56,40 +56,24 @@ impl ChunkPosition {
         Self::from_absolute_position((x, y, self.z), dimensions)
     }
 
-    pub fn chunk_position(&self, dimensions: UVec2) -> IVec3 {
-        self.position(dimensions).0
-    }
-    
-    pub fn local_position(&self, dimensions: UVec2) -> UVec2 {
-        self.position(dimensions).1
-    }
+    pub fn chunk_position(&self, dimensions: UVec2) -> IVec3 { self.position(dimensions).0 }
+
+    pub fn local_position(&self, dimensions: UVec2) -> UVec2 { self.position(dimensions).1 }
 }
 
 // TryPosition
 //######################
 impl ChunkPosition {
     pub fn try_position(&self) -> Option<(IVec3, UVec2)> {
-        if let DimensionType::Dimensions(v) = self.dimensions {
-            Some(self.position(v))
-        } else {
-            None
-        }
+        if let DimensionType::Dimensions(v) = self.dimensions { Some(self.position(v)) } else { None }
     }
 
     pub fn try_chunk_position(&self) -> Option<IVec3> {
-        if let Some(position) = self.try_position() {
-            Some(position.0)
-        } else {
-            None
-        }
+        if let Some(position) = self.try_position() { Some(position.0) } else { None }
     }
 
     pub fn try_local_position(&self) -> Option<UVec2> {
-        if let Some(position) = self.try_position() {
-            Some(position.1)
-        } else {
-            None
-        }
+        if let Some(position) = self.try_position() { Some(position.1) } else { None }
     }
 }
 
@@ -97,27 +81,15 @@ impl ChunkPosition {
 //######################
 impl ChunkPosition {
     pub fn distance(&self, other: Self) -> Option<u32> {
-        if let Some((x, y)) = self.distance_both(other) {
-            Some(x.max(y))
-        } else {
-            None
-        }
+        if let Some((x, y)) = self.distance_both(other) { Some(x.max(y)) } else { None }
     }
 
     pub fn distance_x(&self, other: Self) -> Option<u32> {
-        if let Some((x, _)) = self.distance_both(other) {
-            Some(x)
-        } else {
-            None
-        }
+        if let Some((x, _)) = self.distance_both(other) { Some(x) } else { None }
     }
 
     pub fn distance_y(&self, other: Self) -> Option<u32> {
-        if let Some((_, y)) = self.distance_both(other) {
-            Some(y)
-        } else {
-            None
-        }
+        if let Some((_, y)) = self.distance_both(other) { Some(y) } else { None }
     }
 
     pub fn distance_both(&self, other: Self) -> Option<(u32, u32)> {
@@ -200,17 +172,12 @@ impl ChunkPosition {
 }
 
 impl Default for ChunkPosition {
-    fn default() -> Self {
-        Self::new(IVec3::new(0, 0, 0,), UVec2::new(0, 0))
-    }
+    fn default() -> Self { Self::new(IVec3::new(0, 0, 0), UVec2::new(0, 0)) }
 }
 
 impl PartialEq for ChunkPosition {
     fn eq(&self, other: &Self) -> bool {
-        self.dimensions == other.dimensions &&
-        self.x == other.x &&
-        self.y == other.y &&
-        self.z == other.z
+        self.dimensions == other.dimensions && self.x == other.x && self.y == other.y && self.z == other.z
     }
 }
 
@@ -230,9 +197,15 @@ impl Debug for ChunkPosition {
         let text = match self.dimensions {
             DimensionType::Dimensions(v) => {
                 let position = self.position(v);
-                format!("(x:{}, y:{}, z:{}::x:{}, y:{})", position.0.x, position.0.y, position.0.z, position.1.x, position.1.y)
+                format!(
+                    "(x:{}, y:{}, z:{}::x:{}, y:{})",
+                    position.0.x, position.0.y, position.0.z, position.1.x, position.1.y
+                )
             },
-            DimensionType::Modifier(m) => format!("([mod_x:{}, mod_y:{}] x:{}, y:{}, z:{})", m.0, m.1, self.x, self.y, self.z),
+            DimensionType::Modifier(m) => format!(
+                "([mod_x:{}, mod_y:{}] x:{}, y:{}, z:{})",
+                m.0, m.1, self.x, self.y, self.z
+            ),
         };
         write!(f, "{}", text)
     }
@@ -243,9 +216,16 @@ impl Display for ChunkPosition {
         let text = match self.dimensions {
             DimensionType::Dimensions(v) => {
                 let position = self.position(v);
-                format!("ChunkPosition {{\n\twidth: {}\n\theight: {}\n\n\tchunk_x: {},\n\tchunk_y: {},\n\tchunk_z: {}\n\n\tlocal_x: {},\n\tlocal_y: {},\n}}", v.x, v.y, position.0.x, position.0.y, position.0.z, position.1.x, position.1.y)
+                format!(
+                    "ChunkPosition {{\n\twidth: {}\n\theight: {}\n\n\tchunk_x: {},\n\tchunk_y: \
+                     {},\n\tchunk_z: {}\n\n\tlocal_x: {},\n\tlocal_y: {},\n}}",
+                    v.x, v.y, position.0.x, position.0.y, position.0.z, position.1.x, position.1.y
+                )
             },
-            DimensionType::Modifier(m) => format!("ChunkPosition {{\n\tmod_x: {},\n\tmod_y: {},\n\n\tx: {},\n\ty: {},\n\tz: {}\n}}", m.0, m.1, self.x, self.y, self.z),
+            DimensionType::Modifier(m) => format!(
+                "ChunkPosition {{\n\tmod_x: {},\n\tmod_y: {},\n\n\tx: {},\n\ty: {},\n\tz: {}\n}}",
+                m.0, m.1, self.x, self.y, self.z
+            ),
         };
         write!(f, "{}", text)
     }
@@ -286,23 +266,19 @@ impl Add<ChunkPosition> for ChunkPosition {
                     },
                 }
             },
-            DimensionType::Modifier(modifier) => {
-                match rhs.dimensions {
-                    DimensionType::Dimensions(dimensions) => {
-                        let mut s = self.clone();
-                        s.set_dimensions(dimensions);
-                        s + rhs
-                    },
-                    DimensionType::Modifier(m) => {
-                        Self {
-                            dimensions: DimensionType::Modifier((modifier.0 + m.0, modifier.1 + m.1)),
-                            x: self.x + rhs.x,
-                            y: self.y + rhs.y,
-                            z: self.z + rhs.z,
-                        }
-                    }
-                }
-            }
+            DimensionType::Modifier(modifier) => match rhs.dimensions {
+                DimensionType::Dimensions(dimensions) => {
+                    let mut s = self.clone();
+                    s.set_dimensions(dimensions);
+                    s + rhs
+                },
+                DimensionType::Modifier(m) => Self {
+                    dimensions: DimensionType::Modifier((modifier.0 + m.0, modifier.1 + m.1)),
+                    x: self.x + rhs.x,
+                    y: self.y + rhs.y,
+                    z: self.z + rhs.z,
+                },
+            },
         }
     }
 }
@@ -315,7 +291,7 @@ impl Add<IVec2> for ChunkPosition {
             dimensions: self.dimensions,
             x: self.x + rhs.x as i64,
             y: self.y + rhs.y as i64,
-            z: self.z
+            z: self.z,
         }
     }
 }
@@ -335,7 +311,7 @@ impl Add<UVec2> for ChunkPosition {
             dimensions: self.dimensions,
             x: self.x + rhs.x as i64,
             y: self.y + rhs.y as i64,
-            z: self.z
+            z: self.z,
         }
     }
 }
@@ -382,23 +358,19 @@ impl Sub<ChunkPosition> for ChunkPosition {
                     },
                 }
             },
-            DimensionType::Modifier(modifier) => {
-                match rhs.dimensions {
-                    DimensionType::Dimensions(dimensions) => {
-                        let mut s = self.clone();
-                        s.set_dimensions(dimensions);
-                        s - rhs
-                    },
-                    DimensionType::Modifier(m) => {
-                        Self {
-                            dimensions: DimensionType::Modifier((modifier.0 + m.0, modifier.1 + m.1)),
-                            x: self.x - rhs.x,
-                            y: self.y - rhs.y,
-                            z: self.z - rhs.z,
-                        }
-                    }
-                }
-            }
+            DimensionType::Modifier(modifier) => match rhs.dimensions {
+                DimensionType::Dimensions(dimensions) => {
+                    let mut s = self.clone();
+                    s.set_dimensions(dimensions);
+                    s - rhs
+                },
+                DimensionType::Modifier(m) => Self {
+                    dimensions: DimensionType::Modifier((modifier.0 + m.0, modifier.1 + m.1)),
+                    x: self.x - rhs.x,
+                    y: self.y - rhs.y,
+                    z: self.z - rhs.z,
+                },
+            },
         }
     }
 }
@@ -411,7 +383,7 @@ impl Sub<IVec2> for ChunkPosition {
             dimensions: self.dimensions,
             x: self.x - rhs.x as i64,
             y: self.y - rhs.y as i64,
-            z: self.z
+            z: self.z,
         }
     }
 }
@@ -431,7 +403,7 @@ impl Sub<UVec2> for ChunkPosition {
             dimensions: self.dimensions,
             x: self.x - rhs.x as i64,
             y: self.y - rhs.y as i64,
-            z: self.z
+            z: self.z,
         }
     }
 }

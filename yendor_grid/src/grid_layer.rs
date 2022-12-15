@@ -1,8 +1,10 @@
 use crate::prelude::*;
 
-pub trait GridLayer<T: GridParam> {
+pub trait GridLayer<T> {
     type MutableReturn<'a>
-    where Self: 'a;
+    where
+        T: 'a,
+        Self: 'a;
 
     /// Create a new grid layer with the given size (clone the given value).
     fn new_clone(size: impl Dimensions, value: T) -> Self

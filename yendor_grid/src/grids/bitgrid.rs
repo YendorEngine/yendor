@@ -9,7 +9,8 @@ pub type BitIterMut<'a> = slice::IterMut<'a, usize, Lsb0>;
 pub type BitChunk<'a> = slice::Chunks<'a, usize, Lsb0>;
 pub type BitChunkMut<'a> = slice::ChunksMut<'a, usize, Lsb0>;
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, Hash, PartialEq, Eq)]
+#[derive(Default, Debug, Clone, Hash, PartialEq, Eq)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct BitGrid {
     pub cells: BitVec,
     pub dimensions: UVec2,

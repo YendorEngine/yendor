@@ -5,22 +5,30 @@ use crate::prelude::*;
 pub type GridIterCol<'a, T> = iter::StepBy<T>;
 pub type GridEnumerate<'a, T> = iter::Zip<PointIterRowMajor, T>;
 
-pub trait GridIterable<T: GridParam> {
+pub trait GridIterable<T> {
     /// iterator over the cells of the grid.
     type IterReturn<'a>
-    where Self: 'a;
+    where
+        T: 'a,
+        Self: 'a;
 
     /// mutable iterator over the cells of the grid.
     type IterMutReturn<'a>
-    where Self: 'a;
+    where
+        T: 'a,
+        Self: 'a;
 
     /// iterator over the row / col of the grid.
     type IterChunkReturn<'a>
-    where Self: 'a;
+    where
+        T: 'a,
+        Self: 'a;
 
     /// mutable iterator over the row / col of the grid.
     type IterChunkMutReturn<'a>
-    where Self: 'a;
+    where
+        T: 'a,
+        Self: 'a;
 
     /// Returns an iterator over the slice.
     ///

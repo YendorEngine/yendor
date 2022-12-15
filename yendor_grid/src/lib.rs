@@ -16,13 +16,20 @@ mod grids {
     pub use grid_3d::*;
 }
 
+#[cfg(feature = "reflect")]
+mod reflect {
+    mod grid_2d;
+    pub use grid_2d::*;
+}
+
 mod grid_iterable;
 mod grid_layer;
-mod grid_param;
 
 pub mod imports;
 
 pub mod prelude {
     pub(crate) use crate::imports::*;
-    pub use crate::{grid_iterable::*, grid_layer::*, grid_param::*, grids::*};
+    #[cfg(feature = "reflect")]
+    pub use crate::reflect::*;
+    pub use crate::{grid_iterable::*, grid_layer::*, grids::*};
 }

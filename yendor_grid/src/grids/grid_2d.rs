@@ -9,15 +9,15 @@ pub type GridIterMut<'a, T> = slice::IterMut<'a, T>;
 pub type GridChunks<'a, T> = slice::Chunks<'a, T>;
 pub type GridChunksMut<'a, T> = slice::ChunksMut<'a, T>;
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, Hash, PartialEq, Eq)]
-pub struct Grid<T: GridParam> {
-    pub dimensions: UVec2,
+#[derive(Default, Debug, Clone, Hash, PartialEq, Eq)]
+pub struct Grid<T> {
     pub cells: Vec<T>,
+    pub dimensions: UVec2,
 }
 
 // Grid Layer
-impl<T: GridParam> GridLayer<T> for Grid<T> {
-    type MutableReturn<'a> = &'a mut T;
+impl<T> GridLayer<T> for Grid<T> {
+    type MutableReturn<'a> = &'a mut T where T: 'a, Self: 'a;
 
     #[inline(always)]
     fn new_clone(dimensions: impl Dimensions, value: T) -> Self
@@ -164,11 +164,11 @@ impl<T: GridParam> GridLayer<T> for Grid<T> {
     }
 }
 
-impl<T: GridParam> GridIterable<T> for Grid<T> {
-    type IterChunkMutReturn<'a> = GridChunksMut<'a, T>;
-    type IterChunkReturn<'a> = GridChunks<'a, T>;
-    type IterMutReturn<'a> = GridIterMut<'a, T>;
-    type IterReturn<'a> = GridIter<'a, T>;
+impl<T> GridIterable<T> for Grid<T> {
+    type IterChunkMutReturn<'a> = GridChunksMut<'a, T> where T: 'a, Self: 'a;
+    type IterChunkReturn<'a> = GridChunks<'a, T> where T: 'a, Self: 'a;
+    type IterMutReturn<'a> = GridIterMut<'a, T> where T: 'a, Self: 'a;
+    type IterReturn<'a> = GridIter<'a, T> where T: 'a, Self: 'a;
 
     #[inline]
     fn iter(&self) -> GridIter<T> { self.cells.iter() }
@@ -220,14 +220,14 @@ impl<T: GridParam> GridIterable<T> for Grid<T> {
 // Deref/DerefMut
 ///////////////////////////////////////////////////////////////////////////
 // Deref
-impl<T: GridParam> std::ops::Deref for Grid<T> {
+impl<T> std::ops::Deref for Grid<T> {
     type Target = Vec<T>;
 
     fn deref(&self) -> &Self::Target { &self.cells }
 }
 
 // DerefMut
-impl<T: GridParam> std::ops::DerefMut for Grid<T> {
+impl<T> std::ops::DerefMut for Grid<T> {
     fn deref_mut(&mut self) -> &mut Self::Target { &mut self.cells }
 }
 
@@ -235,13 +235,230 @@ impl<T: GridParam> std::ops::DerefMut for Grid<T> {
 // Indexing
 ///////////////////////////////////////////////////////////////////////////
 
-impl<T: Copy + GridParam> Index<usize> for Grid<T> {
+impl<T: Copy + FromReflect> Index<usize> for Grid<T> {
     type Output = T;
 
     #[inline]
     fn index(&self, index: usize) -> &T { &self.cells[index] }
 }
-impl<T: Copy + GridParam> std::ops::IndexMut<usize> for Grid<T> {
+impl<T: Copy + FromReflect> std::ops::IndexMut<usize> for Grid<T> {
     #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output { &mut self.cells[index] }
+}
+
+//#########################################################################
+// Serialize
+//#########################################################################
+#[cfg(feature = "serialize")]
+impl<T: Serialize> Serialize for Grid<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where S: serde::Serializer {
+        let mut serde_state = match serde::Serializer::serialize_struct(serializer, "Grid", 2) {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(err);
+            },
+        };
+
+        match serde::ser::SerializeStruct::serialize_field(&mut serde_state, "dimensions", &self.dimensions) {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(err);
+            },
+        };
+
+        match serde::ser::SerializeStruct::serialize_field(&mut serde_state, "cells", &self.cells) {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(err);
+            },
+        };
+
+        serde::ser::SerializeStruct::end(serde_state)
+    }
+}
+
+//#########################################################################
+// Deserialize
+//#########################################################################
+impl<'de, T: Deserialize<'de>> Deserialize<'de> for Grid<T> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where D: serde::Deserializer<'de> {
+        use serde::__private::de::*;
+
+        #[allow(non_camel_case_types)]
+        enum Field {
+            cells,
+            dimensions,
+            __ignore,
+        }
+
+        struct FieldVisitor;
+        impl<'de> serde::de::Visitor<'de> for FieldVisitor {
+            type Value = Field;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> serde::__private::fmt::Result {
+                std::fmt::Formatter::write_str(formatter, "field identifier")
+            }
+
+            fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
+            where E: serde::de::Error {
+                match value {
+                    0_u64 => Ok(Field::cells),
+                    1_u64 => Ok(Field::dimensions),
+                    _ => Ok(Field::__ignore),
+                }
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where E: serde::de::Error {
+                match value {
+                    "cells" => Ok(Field::cells),
+                    "dimensions" => Ok(Field::dimensions),
+                    _ => Ok(Field::__ignore),
+                }
+            }
+
+            fn visit_bytes<E>(self, value: &[u8]) -> Result<Self::Value, E>
+            where E: serde::de::Error {
+                match value {
+                    b"cells" => Ok(Field::cells),
+                    b"dimensions" => Ok(Field::dimensions),
+                    _ => Ok(Field::__ignore),
+                }
+            }
+        }
+        impl<'de> serde::Deserialize<'de> for Field {
+            #[inline]
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where D: serde::Deserializer<'de> {
+                serde::Deserializer::deserialize_identifier(deserializer, FieldVisitor)
+            }
+        }
+
+        struct Visitor<'de, T>
+        where T: serde::Deserialize<'de>
+        {
+            marker: std::marker::PhantomData<Grid<T>>,
+            lifetime: std::marker::PhantomData<&'de ()>,
+        }
+
+        impl<'de, T> serde::de::Visitor<'de> for Visitor<'de, T>
+        where T: serde::Deserialize<'de>
+        {
+            type Value = Grid<T>;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> serde::__private::fmt::Result {
+                std::fmt::Formatter::write_str(formatter, "struct Grid")
+            }
+
+            #[inline]
+            fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+            where A: serde::de::SeqAccess<'de> {
+                let cells = match match serde::de::SeqAccess::next_element::<Vec<T>>(&mut seq) {
+                    Ok(val) => val,
+                    Err(err) => {
+                        return Err(err);
+                    },
+                } {
+                    Some(value) => value,
+                    None => {
+                        return Err(serde::de::Error::invalid_length(
+                            0usize,
+                            &"struct Grid with 2 elements",
+                        ));
+                    },
+                };
+                let dimensions = match match serde::de::SeqAccess::next_element::<UVec2>(&mut seq) {
+                    Ok(val) => val,
+                    Err(err) => {
+                        return Err(err);
+                    },
+                } {
+                    Some(value) => value,
+                    None => {
+                        return Err(serde::de::Error::invalid_length(
+                            1usize,
+                            &"struct Grid with 2 elements",
+                        ));
+                    },
+                };
+                Ok(Grid { cells, dimensions })
+            }
+
+            #[inline]
+            fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
+            where A: serde::de::MapAccess<'de> {
+                let mut cells: Option<Vec<T>> = None;
+                let mut dimensions: Option<UVec2> = None;
+                while let Some(key) = match serde::de::MapAccess::next_key::<Field>(&mut map) {
+                    Ok(val) => val,
+                    Err(err) => {
+                        return Err(err);
+                    },
+                } {
+                    match key {
+                        Field::cells => {
+                            if Option::is_some(&cells) {
+                                return Err(<A::Error as serde::de::Error>::duplicate_field("cells"));
+                            }
+                            cells = Some(match serde::de::MapAccess::next_value::<Vec<T>>(&mut map) {
+                                Ok(val) => val,
+                                Err(err) => {
+                                    return Err(err);
+                                },
+                            });
+                        },
+                        Field::dimensions => {
+                            if Option::is_some(&dimensions) {
+                                return Err(<A::Error as serde::de::Error>::duplicate_field(
+                                    "dimensions",
+                                ));
+                            }
+                            dimensions = Some(match serde::de::MapAccess::next_value::<UVec2>(&mut map) {
+                                Ok(val) => val,
+                                Err(err) => {
+                                    return Err(err);
+                                },
+                            });
+                        },
+                        _ => {
+                            let _ = match serde::de::MapAccess::next_value::<serde::de::IgnoredAny>(&mut map)
+                            {
+                                Ok(val) => val,
+                                Err(err) => {
+                                    return Err(err);
+                                },
+                            };
+                        },
+                    }
+                }
+                let cells = match cells {
+                    Some(cells) => cells,
+                    None => match missing_field("cells") {
+                        Ok(val) => val,
+                        Err(err) => {
+                            return Err(err);
+                        },
+                    },
+                };
+                let dimensions = match dimensions {
+                    Some(dimensions) => dimensions,
+                    None => match missing_field("dimensions") {
+                        Ok(val) => val,
+                        Err(err) => {
+                            return Err(err);
+                        },
+                    },
+                };
+                Ok(Grid { cells, dimensions })
+            }
+        }
+
+        const FIELDS: &[&str] = &["cells", "dimensions"];
+        serde::Deserializer::deserialize_struct(deserializer, "Grid", FIELDS, Visitor {
+            marker: std::marker::PhantomData::<Grid<T>>,
+            lifetime: std::marker::PhantomData,
+        })
+    }
 }

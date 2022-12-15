@@ -1,11 +1,18 @@
+use std::slice;
+
 use crate::prelude::*;
 
-pub struct Grid3d<T: GridParam, const LAYER_COUNT: usize> {
+pub type GridIter<'a, T> = slice::Iter<'a, T>;
+pub type GridIterMut<'a, T> = slice::IterMut<'a, T>;
+pub type GridChunks<'a, T> = slice::Chunks<'a, T>;
+pub type GridChunksMut<'a, T> = slice::ChunksMut<'a, T>;
+
+pub struct Grid3d<T, const LAYER_COUNT: usize> {
     dimensions: UVec2,
     layers: [Grid<T>; LAYER_COUNT],
 }
 
-impl<T: GridParam, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
+impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
     pub fn new_clone(dimensions: impl Dimensions, value: T) -> Self
     where T: Clone {
         let mut layers = Vec::new();
@@ -249,5 +256,56 @@ impl<T: GridParam, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
     pub fn get_grid_by_layer_mut<LayerId: Into<usize>>(&mut self, layer_id: LayerId) -> Option<&mut Grid<T>> {
         let layer_id = layer_id.into();
         if self.is_layer(layer_id) { Some(&mut self.layers[layer_id]) } else { None }
+    }
+}
+
+impl<T, const LAYER_COUNT: usize> GridIterable<T> for Grid3d<T, LAYER_COUNT> {
+    type IterChunkMutReturn<'a> = GridChunksMut<'a, Grid<T>> where T: 'a, Self: 'a;
+    type IterChunkReturn<'a> = GridChunks<'a, Grid<T>> where T: 'a, Self: 'a;
+    type IterMutReturn<'a> = GridIterMut<'a, Grid<T>> where T: 'a, Self: 'a;
+    type IterReturn<'a> = GridIter<'a, Grid<T>> where T: 'a, Self: 'a;
+
+    #[inline]
+    fn iter(&self) -> Self::IterReturn<'_> { self.layers.iter() }
+
+    #[inline]
+    fn iter_mut(&mut self) -> Self::IterMutReturn<'_> { self.layers.iter_mut() }
+
+    #[inline]
+    fn point_iter(&self) -> PointIterRowMajor { self.dimensions.iter() }
+
+    #[inline]
+    fn enumerate(&self) -> GridEnumerate<Self::IterReturn<'_>> { self.point_iter().zip(self.iter()) }
+
+    #[inline]
+    fn rows(&self) -> Self::IterChunkReturn<'_> { self.layers.chunks(self.dimensions.width() as usize) }
+
+    #[inline]
+    fn rows_mut(&mut self) -> Self::IterChunkMutReturn<'_> {
+        self.layers.chunks_mut(self.dimensions.width() as usize)
+    }
+
+    #[inline]
+    fn cols(&self) -> Self::IterChunkReturn<'_> { self.layers.chunks(self.dimensions.width() as usize) }
+
+    #[inline]
+    fn cols_mut(&mut self) -> Self::IterChunkMutReturn<'_> {
+        self.layers.chunks_mut(self.dimensions.width() as usize)
+    }
+
+    #[inline]
+    fn iter_column(&self, x: usize) -> Option<GridIterCol<Self::IterReturn<'_>>> {
+        if x < self.dimensions.size() {
+            let w = self.width() as usize;
+            return Some(self.layers[x..].iter().step_by(w));
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    fn iter_column_unchecked(&self, x: usize) -> GridIterCol<Self::IterReturn<'_>> {
+        let w = self.width() as usize;
+        return self.layers[x..].iter().step_by(w);
     }
 }
