@@ -14,13 +14,13 @@ pub enum Fov {
 }
 
 impl Fov {
-    pub fn compute<FovRange: Into<u32>, T, const DIM: UVec2>(
+    pub fn compute<FovRange: Into<u32>, T>(
         &self,
-        origin: Position<DIM>,
+        origin: ChunkPosition,
         range: FovRange,
-        provider: &mut impl FovProvider<T, DIM>,
+        provider: &mut impl FovProvider<T>,
         pass_through_data: T,
-    ) -> HashSet<Position<DIM>> {
+    ) -> HashSet<ChunkPosition> {
         let range = range.into();
         match self {
             Self::Adams => AdamsFov::compute_fov(origin, range, provider, pass_through_data),
@@ -31,63 +31,15 @@ impl Fov {
         }
     }
 
-    pub fn within_fov<FovRange: Into<u32>, T, const DIM: UVec2>(
+    pub fn within_fov<FovRange: Into<u32>, T>(
         &self,
-        origin: Position<DIM>,
-        target: Position<DIM>,
+        origin: ChunkPosition,
+        target: ChunkPosition,
         range: FovRange,
-        provider: &mut impl FovProvider<T, DIM>,
+        provider: &mut impl FovProvider<T>,
         pass_through_data: T,
     ) -> bool {
         let range = range.into();
         Self::compute(self, origin, range, provider, pass_through_data).contains(&target)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use yendor_utils::prelude::Canvas;
-
-    use crate::prelude::*;
-
-    const DIM: UVec2 = UVec2 { x: 10, y: 10 };
-
-    struct Provider;
-    impl FovProvider<(), DIM> for Provider {
-        fn is_opaque(&mut self, _position: Position<DIM>, _pass_through_data: &mut ()) -> bool { false }
-    }
-
-    mod shadowcast {
-        use super::*;
-
-        #[test]
-        fn shadowcast() {
-            let mut pos: Position<DIM> = Position::default();
-            pos.set_xy(UVec2::new(5, 5));
-            let visible_sets = Fov::Shadowcast.compute(pos, 2_u32, &mut Provider, ());
-            assert_eq!(visible_sets.len(), 13);
-
-            // Pretty print to canvas for visual inspection
-            let mut canvas = Canvas::new([10, 10]);
-            visible_sets.iter().for_each(|pos| canvas.put(pos.gridpoint(), '*'));
-            canvas.print();
-        }
-    }
-
-    mod adams {
-        use super::*;
-
-        #[test]
-        fn adams() {
-            let mut pos: Position<DIM> = Position::default();
-            pos.set_xy(UVec2::new(5, 5));
-            let visible_sets = Fov::Adams.compute(pos, 2_u32, &mut Provider, ());
-            assert_eq!(visible_sets.len(), 13);
-
-            // Pretty print to canvas for visual inspection
-            let mut canvas = Canvas::new([10, 10]);
-            visible_sets.iter().for_each(|pos| canvas.put(pos.gridpoint(), '*'));
-            canvas.print();
-        }
     }
 }

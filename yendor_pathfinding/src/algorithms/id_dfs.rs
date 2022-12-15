@@ -3,12 +3,12 @@ use crate::prelude::*;
 pub struct IDDfs;
 
 impl PathAlgorithm for IDDfs {
-    fn compute_path<T, const DIM: UVec2>(
-        origin: Position<DIM>,
-        destination: Position<DIM>,
-        provider: &mut impl PathProvider<T, DIM>,
+    fn compute_path<T>(
+        origin: ChunkPosition,
+        destination: ChunkPosition,
+        provider: &mut impl PathProvider<T>,
         mut pass_through_data: T,
-    ) -> Vec<Position<DIM>> {
+    ) -> Vec<ChunkPosition> {
         let result = iddfs(
             origin,
             |&p| provider.get_neighbors(p, &mut pass_through_data),

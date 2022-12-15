@@ -1,17 +1,17 @@
 use crate::prelude::*;
 
-pub struct Quadrant<'a, T, const DIM: UVec2> {
+pub struct Quadrant<'a, T> {
     direction: Direction,
     pass_through_data: &'a mut T,
-    provider: &'a mut dyn FovProvider<T, DIM>,
-    origin: Position<DIM>,
+    provider: &'a mut dyn FovProvider<T>,
+    origin: ChunkPosition,
 }
 
-impl<'a, T, const DIM: UVec2> Quadrant<'a, T, DIM> {
+impl<'a, T> Quadrant<'a, T> {
     pub fn new(
         direction: Direction,
-        origin: Position<DIM>,
-        provider: &'a mut dyn FovProvider<T, DIM>,
+        origin: ChunkPosition,
+        provider: &'a mut dyn FovProvider<T>,
         pass_through_data: &'a mut T,
     ) -> Self {
         Self {
@@ -36,17 +36,11 @@ impl<'a, T, const DIM: UVec2> Quadrant<'a, T, DIM> {
     }
 
     pub fn distance_squared(&self, tile: IVec2) -> u64 {
-        // we don't care about position, so no need to transform the tile
-        let end = self.origin + tile;
-        let dx = end.absolute_x() - self.origin.absolute_x();
-        let dy = end.absolute_y() - self.origin.absolute_y();
-
-        // multiplying times itself is always positive
-        (dx * dx + dy * dy) as u64
+        (tile.x * tile.x + tile.y * tile.y) as u64
     }
 
     // mark this tile as visible
-    pub fn set_visible(&mut self, visible_points: &mut HashSet<Position<DIM>>, tile: IVec2) {
+    pub fn set_visible(&mut self, visible_points: &mut HashSet<ChunkPosition>, tile: IVec2) {
         visible_points.insert(self.origin + self.transform(tile));
     }
 

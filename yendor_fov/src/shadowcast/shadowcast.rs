@@ -6,13 +6,13 @@ use crate::prelude::*;
 pub struct Shadowcast;
 
 impl FovAlgorithm for Shadowcast {
-    fn compute_fov<T, const DIM: UVec2>(
-        origin: Position<DIM>,
+    fn compute_fov<T>(
+        origin: ChunkPosition,
         range: u32,
-        provider: &mut impl FovProvider<T, DIM>,
+        provider: &mut impl FovProvider<T>,
         mut pass_through_data: T,
-    ) -> HashSet<Position<DIM>> {
-        let mut visible_points: HashSet<Position<_>> =
+    ) -> HashSet<ChunkPosition> {
+        let mut visible_points =
             HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
 
         visible_points.insert(origin);
@@ -28,14 +28,14 @@ impl FovAlgorithm for Shadowcast {
 }
 
 impl Shadowcast {
-    pub fn compute_direction<T, const DIM: UVec2>(
-        origin: Position<DIM>,
+    pub fn compute_direction<T>(
+        origin: ChunkPosition,
         range: u32,
-        provider: &mut impl FovProvider<T, DIM>,
+        provider: &mut impl FovProvider<T>,
         direction: Direction,
         mut pass_through_data: T,
-    ) -> HashSet<Position<DIM>> {
-        let mut visible_points: HashSet<Position<_>> =
+    ) -> HashSet<ChunkPosition> {
+        let mut visible_points =
             HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
         visible_points.insert(origin);
 
@@ -46,11 +46,11 @@ impl Shadowcast {
         visible_points
     }
 
-    fn scan_recursive<T, const DIM: UVec2>(
+    fn scan_recursive<T>(
         range: u32,
-        quadrant: &mut Quadrant<T, DIM>,
+        quadrant: &mut Quadrant<T>,
         row: &mut Row,
-        visible_points: &mut HashSet<Position<DIM>>,
+        visible_points: &mut HashSet<ChunkPosition>,
     ) {
         let mut prev_tile = None;
         for tile in row.tiles() {

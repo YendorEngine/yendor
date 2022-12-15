@@ -3,12 +3,12 @@ use crate::prelude::*;
 pub struct Bfs;
 
 impl PathAlgorithm for Bfs {
-    fn compute_path<T, const DIM: UVec2>(
-        origin: Position<DIM>,
-        destination: Position<DIM>,
-        provider: &mut impl PathProvider<T, DIM>,
+    fn compute_path<T>(
+        origin: ChunkPosition,
+        destination: ChunkPosition,
+        provider: &mut impl PathProvider<T>,
         mut pass_through_data: T,
-    ) -> Vec<Position<DIM>> {
+    ) -> Vec<ChunkPosition> {
         let result = bfs(
             &origin,
             |&p| provider.get_neighbors(p, &mut pass_through_data),

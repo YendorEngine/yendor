@@ -3,13 +3,13 @@ use crate::prelude::*;
 pub struct AdamsFov;
 
 impl FovAlgorithm for AdamsFov {
-    fn compute_fov<T, const DIM: UVec2>(
-        origin: Position<DIM>,
+    fn compute_fov<T>(
+        origin: ChunkPosition,
         range: u32,
-        provider: &mut impl FovProvider<T, DIM>,
+        provider: &mut impl FovProvider<T>,
         mut pass_through_data: T,
-    ) -> HashSet<Position<DIM>> {
-        let mut visible_points: HashSet<Position<_>> =
+    ) -> HashSet<ChunkPosition> {
+        let mut visible_points =
             HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
 
         visible_points.insert(origin);
@@ -34,16 +34,16 @@ impl FovAlgorithm for AdamsFov {
 
 impl AdamsFov {
     #[allow(clippy::too_many_arguments)]
-    fn compute_octant<T, const DIM: UVec2>(
+    fn compute_octant<T>(
         octant: i32,
-        origin: Position<DIM>,
+        origin: ChunkPosition,
         range: i32,
         x: i32,
         mut top: Slope,
         mut bottom: Slope,
-        provider: &mut impl FovProvider<T, DIM>,
+        provider: &mut impl FovProvider<T>,
         pass_through_data: &mut T,
-        visible_points: &mut HashSet<Position<DIM>>,
+        visible_points: &mut HashSet<ChunkPosition>,
     ) {
         for x in x..=range {
             let y_coords = Self::compute_y(
@@ -77,13 +77,13 @@ impl AdamsFov {
         }
     }
 
-    fn compute_y<T, const DIM: UVec2>(
+    fn compute_y<T>(
         octant: i32,
-        origin: Position<DIM>,
+        origin: ChunkPosition,
         x: i32,
         top: &mut Slope,
         bottom: &mut Slope,
-        provider: &mut impl FovProvider<T, DIM>,
+        provider: &mut impl FovProvider<T>,
         pass_through_data: &mut T,
     ) -> IVec2 {
         let mut top_y;
@@ -134,26 +134,23 @@ impl AdamsFov {
     }
 
     #[allow(clippy::too_many_arguments)]
-    fn compute_visiblity<T, const DIM: UVec2>(
+    fn compute_visiblity<T>(
         top_y: i32,
         bottom_y: i32,
         range: i32,
         octant: i32,
-        origin: Position<DIM>,
+        origin: ChunkPosition,
         x: i32,
         top: &mut Slope,
         bottom: &mut Slope,
-        provider: &mut impl FovProvider<T, DIM>,
+        provider: &mut impl FovProvider<T>,
         pass_through_data: &mut T,
-        visible_points: &mut HashSet<Position<DIM>>,
+        visible_points: &mut HashSet<ChunkPosition>,
     ) -> bool {
         let mut was_opaque = -1;
 
         for y in (bottom_y..=top_y).rev() {
-            if range < 0 ||
-                Self::distance_squared(Position::<DIM>::ZERO, IVec2::new(x, y)) <=
-                    (range as u64 * range as u64)
-            {
+            if range < 0 || (x * x + y * y) <= (range * range) {
                 let is_opaque = Self::blocks_light(x, y, octant, origin, provider, pass_through_data);
 
                 // Better symmetry
@@ -218,41 +215,43 @@ impl AdamsFov {
         was_opaque == 0
     }
 
-    pub fn distance_squared<const DIM: UVec2>(origin: Position<DIM>, tile: IVec2) -> u64 {
-        // we don't care about position, so no need to transform the tile
-        let end = origin + tile;
-        let dx = end.absolute_x() - origin.absolute_x();
-        let dy = end.absolute_y() - origin.absolute_y();
-
-        // multiplying times itself is always positive
-        (dx * dx + dy * dy) as u64
-    }
-
-    fn blocks_light<T, const DIM: UVec2>(
+    fn blocks_light<T>(
         x: i32,
         y: i32,
         octant: i32,
-        mut origin: Position<DIM>,
-        provider: &mut impl FovProvider<T, DIM>,
+        mut origin: ChunkPosition,
+        provider: &mut impl FovProvider<T>,
         pass_through_data: &mut T,
     ) -> bool {
-        origin.set_xy(Self::transform(x, y, octant, origin));
-        provider.is_opaque(origin, pass_through_data)
+        let xy = Self::transform(x, y, octant, origin);
+
+        let d = origin.dimensions().expect("Origin has no dimensions.");
+
+        let cp = ChunkPosition::new_dimensions(origin.chunk_position(d), UVec2::new(xy.x, xy.y), d);
+        provider.is_opaque(cp, pass_through_data)
     }
 
-    fn set_visible<const DIM: UVec2>(
+    fn set_visible(
         x: i32,
         y: i32,
         octant: i32,
-        mut origin: Position<DIM>,
-        visible_points: &mut HashSet<Position<DIM>>,
+        mut origin: ChunkPosition,
+        visible_points: &mut HashSet<ChunkPosition>,
     ) {
-        origin.set_xy(Self::transform(x, y, octant, origin));
-        visible_points.insert(origin);
+        let xy = Self::transform(x, y, octant, origin);
+
+        let d = origin.dimensions().expect("Origin has no dimensions.");
+
+        let cp = ChunkPosition::new_dimensions(origin.chunk_position(d), UVec2::new(xy.x, xy.y), d);
+        visible_points.insert(cp);
     }
 
-    fn transform<const DIM: UVec2>(x: i32, y: i32, octant: i32, origin: Position<DIM>) -> UVec2 {
-        let (mut nx, mut ny): (i32, i32) = origin.gridpoint().as_ivec2().into();
+    fn transform(x: i32, y: i32, octant: i32, origin: ChunkPosition) -> UVec2 {
+        let (mx, my, _z) = origin.as_absolute();
+        let mut nx = mx as i32;
+        let mut ny = my as i32;
+
+        //let (mut nx, mut ny): (i32, i32) = origin.gridpoint().as_ivec2().into();
         match octant {
             0 => {
                 nx += x;

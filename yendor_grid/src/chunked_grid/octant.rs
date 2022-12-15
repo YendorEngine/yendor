@@ -20,8 +20,8 @@ pub struct Octant(pub u8);
 impl Octant {
     /// converts a `Position` into a coordinate relative `Octant(0)` offset
     #[inline]
-    pub fn to_offset<const DIM: UVec2>(&self, position: Position<DIM>) -> (i64, i64) {
-        let offset = position.absolute_position();
+    pub fn to_offset(&self, position: ChunkPosition) -> (i64, i64) {
+        let offset = position.as_absolute();
         match self.0 {
             0 => (offset.0, offset.1),
             1 => (offset.1, offset.0),
@@ -38,7 +38,7 @@ impl Octant {
     /// converts from a `Octant(0)` relative coordinate into a `Position`
     #[inline]
     #[allow(clippy::wrong_self_convention)]
-    pub fn from_offset<const DIM: UVec2>(&self, offset: (i64, i64), z: i32) -> Position<DIM> {
+    pub fn from_offset(&self, offset: (i64, i64), z: i32) -> ChunkPosition {
         let p = match self.0 {
             0 => (offset.0, offset.1),
             1 => (offset.1, offset.0),
@@ -50,7 +50,8 @@ impl Octant {
             7 => (offset.0, -offset.1),
             _ => unreachable!(),
         };
-        Position::from_absolute_position((p.0, p.1, z))
+
+        ChunkPosition::from_raw(p.0, p.1, z)
     }
 
     #[inline]

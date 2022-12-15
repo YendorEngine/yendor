@@ -18,10 +18,10 @@ resolver   = "2"
 version    = "0.1.0"
 
 [features]
-serialize = ["serde", "yendor_geometry/serialize"]
+serialize = ["serde", "yendor_grid/serialize"]
 
 [dependencies]
-yendor_geometry = { workspace = true }
+yendor_grid = { workspace = true }
 
 ######################################
 #########       Serialization

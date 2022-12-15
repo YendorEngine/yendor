@@ -7,12 +7,14 @@ pub use std::{
 use crate::prelude::*;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 enum DimensionType {
     Dimensions(UVec2),
     Modifier((i64, i64)),
 }
 
 #[derive(Clone, Copy)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct ChunkPosition {
     dimensions: DimensionType,
     x: i64,
@@ -38,6 +40,15 @@ impl ChunkPosition {
             x: chunk_position.x as i64 * dimensions.x as i64 + local_position.x as i64,
             y: chunk_position.y as i64 * dimensions.y as i64 + local_position.y as i64,
             z: chunk_position.z,
+        }
+    }
+
+    pub fn from_raw(x: i64, y: i64, z: i32) -> Self {
+        Self {
+            dimensions: DimensionType::Modifier((0, 0)),
+            x,
+            y,
+            z,
         }
     }
 }
@@ -102,6 +113,35 @@ impl ChunkPosition {
     }
 }
 
+// Getters
+//######################
+impl ChunkPosition {
+    pub fn z(&self) -> i32 {
+        self.z
+    }
+
+    pub fn is_dimension(&self) -> bool {
+        if let DimensionType::Dimensions(_) = self.dimensions{
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn dimensions(&self) -> Option<UVec2> {
+        if let DimensionType::Dimensions(v) = self.dimensions {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
+    /// Check dimensions first!!!
+    pub fn as_absolute(&self) -> (i64, i64, i32) {
+        (self.x, self.y, self.z)
+    }
+}
+
 // Setters
 //######################
 impl ChunkPosition {
@@ -112,6 +152,63 @@ impl ChunkPosition {
         }
 
         self.dimensions = DimensionType::Dimensions(dimensions);
+    }
+}
+
+// Octant
+//######################
+impl ChunkPosition {
+    pub fn octant_to(&self, other: Self) -> Option<Octant> {
+        // adapted from <http://codereview.stackexchange.com/a/95551>
+
+        if let DimensionType::Dimensions(d1) = self.dimensions {
+            if let DimensionType::Dimensions(d2) = other.dimensions {
+                if d1 == d2 {
+                    let start = self.as_absolute();
+                    let end = other.as_absolute();
+
+                    let mut dx = end.0 - start.0;
+                    let mut dy = end.1 - start.1;
+                    let mut octant = 0;
+                    if dy < 0 {
+                        dx = -dx;
+                        dy = -dy;
+                        octant += 4;
+                    }
+                    if dx < 0 {
+                        let tmp = dx;
+                        dx = dy;
+                        dy = -tmp;
+                        octant += 2;
+                    }
+                    if dx < dy {
+                        octant += 1;
+                    }
+            
+                    return Some(Octant(octant));
+                }
+            }
+        }
+        None
+    }
+}
+
+// Lerp
+//######################
+impl ChunkPosition {
+    pub fn lerp(&self, other: Self, percent: f32) -> Self {
+        let (abs_self_x, abs_self_y, abs_self_z) = self.as_absolute();
+        let (abs_other_x, abs_other_y, abs_other_z) = other.as_absolute();
+
+        let lerp_x = ((abs_other_x - abs_self_x) as f64).mul_add(percent as f64, abs_self_x as f64) as i64;
+        let lerp_y = ((abs_other_y - abs_self_y) as f64).mul_add(percent as f64, abs_self_y as f64) as i64;
+        let lerp_z = ((abs_other_z - abs_self_z) as f64).mul_add(percent as f64, abs_self_z as f64) as i32;
+
+        let mut s = Self::from_raw(lerp_x, lerp_y, lerp_z);
+        if let DimensionType::Dimensions(v) = self.dimensions {
+            s.set_dimensions(v);
+        }
+        s
     }
 }
 
