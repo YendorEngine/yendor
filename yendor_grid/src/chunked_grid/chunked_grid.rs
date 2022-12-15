@@ -1,3 +1,5 @@
+pub use std::collections::VecDeque;
+
 use crate::prelude::*;
 
 pub trait LoadChunk<T> = Fn(IVec3) -> Grid<T>;
