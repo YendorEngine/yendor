@@ -13,6 +13,7 @@ pub struct Grid3d<T, const LAYER_COUNT: usize> {
 }
 
 impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
+    #[inline(always)]
     pub fn new_clone(dimensions: impl Dimensions, value: T) -> Self
     where T: Clone {
         let mut layers = Vec::new();
@@ -27,6 +28,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    #[inline(always)]
     pub fn new_copy(dimensions: impl Dimensions, value: T) -> Self
     where T: Copy {
         let mut layers = Vec::new();
@@ -41,6 +43,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    #[inline(always)]
     pub fn new_default(dimensions: impl Dimensions) -> Self
     where T: Default {
         let mut layers = Vec::new();
@@ -55,6 +58,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    #[inline(always)]
     pub fn new_fn(dimensions: impl Dimensions, f: impl Fn((usize, IVec2)) -> T) -> Self {
         let count = dimensions.size();
         let mut layers = Vec::new();
@@ -75,6 +79,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    #[inline(always)]
     pub fn blit_clone<ToLayerId: Into<usize>, FromLayerId: Into<usize>>(
         &mut self,
         to_layer_id: ToLayerId,
@@ -93,6 +98,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    #[inline(always)]
     pub fn blit_copy<ToLayerId: Into<usize>, FromLayerId: Into<usize>>(
         &mut self,
         to_layer_id: ToLayerId,
@@ -111,6 +117,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    #[inline(always)]
     pub fn blit_clone_from_2d<ToLayerId: Into<usize>>(
         &mut self,
         to_layer_id: ToLayerId,
@@ -126,6 +133,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    #[inline(always)]
     pub fn blit_copy_from_2d<ToLayerId: Into<usize>>(
         &mut self,
         to_layer_id: ToLayerId,
@@ -141,6 +149,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    #[inline(always)]
     pub fn blit_clone_to_2d<FromLayerId: Into<usize>>(
         &self,
         from_layer_id: FromLayerId,
@@ -156,6 +165,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    #[inline(always)]
     pub fn blit_copy_to_2d<FromLayerId: Into<usize>>(
         &self,
         from_layer_id: FromLayerId,

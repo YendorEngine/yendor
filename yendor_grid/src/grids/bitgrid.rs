@@ -10,7 +10,6 @@ pub type BitChunk<'a> = slice::Chunks<'a, usize, Lsb0>;
 pub type BitChunkMut<'a> = slice::ChunksMut<'a, usize, Lsb0>;
 
 #[derive(Default, Debug, Clone, Hash, PartialEq, Eq)]
-#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct BitGrid {
     pub cells: BitVec,
     pub dimensions: UVec2,
@@ -219,4 +218,222 @@ impl Index<usize> for BitGrid {
 
     #[inline]
     fn index(&self, index: usize) -> &bool { &self.cells[index] }
+}
+
+//#########################################################################
+// Serialize
+//#########################################################################
+#[cfg(feature = "serialize")]
+impl serde::Serialize for BitGrid {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where S: serde::Serializer {
+        let mut _serde_state =
+            match serde::Serializer::serialize_struct(serializer, "BitGrid", false as usize + 1 + 1) {
+                Ok(val) => val,
+                Err(err) => {
+                    return Err(err);
+                },
+            };
+
+        match serde::ser::SerializeStruct::serialize_field(&mut _serde_state, "cells", &self.cells) {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(err);
+            },
+        };
+
+        match serde::ser::SerializeStruct::serialize_field(&mut _serde_state, "dimensions", &self.dimensions)
+        {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(err);
+            },
+        };
+
+        serde::ser::SerializeStruct::end(_serde_state)
+    }
+}
+
+//#########################################################################
+// Deserialize
+//#########################################################################
+#[cfg(feature = "serialize")]
+impl<'de> Deserialize<'de> for BitGrid {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where D: serde::Deserializer<'de> {
+        use serde::__private::de::*;
+
+        #[allow(non_camel_case_types)]
+        enum __BitGrid {
+            cells,
+            dimensions,
+            __ignore,
+        }
+
+        struct FieldVisitor;
+        impl<'de> serde::de::Visitor<'de> for FieldVisitor {
+            type Value = __BitGrid;
+
+            fn expecting(&self, __formatter: &mut std::fmt::Formatter) -> serde::__private::fmt::Result {
+                std::fmt::Formatter::write_str(__formatter, "field identifier")
+            }
+
+            fn visit_u64<E>(self, value: u64) -> serde::__private::Result<Self::Value, E>
+            where E: serde::de::Error {
+                match value {
+                    0u64 => Ok(__BitGrid::cells),
+                    1u64 => Ok(__BitGrid::dimensions),
+                    _ => Ok(__BitGrid::__ignore),
+                }
+            }
+
+            fn visit_str<E>(self, value: &str) -> serde::__private::Result<Self::Value, E>
+            where E: serde::de::Error {
+                match value {
+                    "cells" => Ok(__BitGrid::cells),
+                    "dimensions" => Ok(__BitGrid::dimensions),
+                    _ => Ok(__BitGrid::__ignore),
+                }
+            }
+
+            fn visit_bytes<E>(self, value: &[u8]) -> serde::__private::Result<Self::Value, E>
+            where E: serde::de::Error {
+                match value {
+                    b"cells" => Ok(__BitGrid::cells),
+                    b"dimensions" => Ok(__BitGrid::dimensions),
+                    _ => Ok(__BitGrid::__ignore),
+                }
+            }
+        }
+
+        impl<'de> serde::Deserialize<'de> for __BitGrid {
+            #[inline]
+            fn deserialize<D>(__deserializer: D) -> serde::__private::Result<Self, D::Error>
+            where D: serde::Deserializer<'de> {
+                serde::Deserializer::deserialize_identifier(__deserializer, FieldVisitor)
+            }
+        }
+
+        struct Visitor<'de> {
+            marker: std::marker::PhantomData<BitGrid>,
+            lifetime: std::marker::PhantomData<&'de ()>,
+        }
+
+        impl<'de> serde::de::Visitor<'de> for Visitor<'de> {
+            type Value = BitGrid;
+
+            fn expecting(&self, __formatter: &mut std::fmt::Formatter) -> serde::__private::fmt::Result {
+                std::fmt::Formatter::write_str(__formatter, "struct BitGrid")
+            }
+
+            #[inline]
+            fn visit_seq<A>(self, mut seq: A) -> serde::__private::Result<Self::Value, A::Error>
+            where A: serde::de::SeqAccess<'de> {
+                let cells = match match serde::de::SeqAccess::next_element::<BitVec>(&mut seq) {
+                    Ok(val) => val,
+                    Err(err) => {
+                        return Err(err);
+                    },
+                } {
+                    Some(value) => value,
+                    None => {
+                        return Err(serde::de::Error::invalid_length(
+                            0usize,
+                            &"struct BitGrid with 2 elements",
+                        ));
+                    },
+                };
+                let dimensions = match match serde::de::SeqAccess::next_element::<UVec2>(&mut seq) {
+                    Ok(val) => val,
+                    Err(err) => {
+                        return Err(err);
+                    },
+                } {
+                    Some(value) => value,
+                    None => {
+                        return Err(serde::de::Error::invalid_length(
+                            1usize,
+                            &"struct BitGrid with 2 elements",
+                        ));
+                    },
+                };
+
+                Ok(BitGrid { cells, dimensions })
+            }
+
+            #[inline]
+            fn visit_map<A>(self, mut map: A) -> serde::__private::Result<Self::Value, A::Error>
+            where A: serde::de::MapAccess<'de> {
+                let mut cells: Option<BitVec> = None;
+                let mut dimensions: Option<UVec2> = None;
+                while let Some(__key) = match serde::de::MapAccess::next_key::<__BitGrid>(&mut map) {
+                    Ok(val) => val,
+                    Err(err) => {
+                        return Err(err);
+                    },
+                } {
+                    match __key {
+                        __BitGrid::cells => {
+                            if Option::is_some(&cells) {
+                                return Err(<A::Error as serde::de::Error>::duplicate_field("cells"));
+                            }
+                            cells = Some(match serde::de::MapAccess::next_value::<BitVec>(&mut map) {
+                                Ok(val) => val,
+                                Err(err) => {
+                                    return Err(err);
+                                },
+                            });
+                        },
+                        __BitGrid::dimensions => {
+                            if Option::is_some(&dimensions) {
+                                return Err(<A::Error as serde::de::Error>::duplicate_field(
+                                    "dimensions",
+                                ));
+                            }
+                            dimensions = Some(match serde::de::MapAccess::next_value::<UVec2>(&mut map) {
+                                Ok(val) => val,
+                                Err(err) => {
+                                    return Err(err);
+                                },
+                            });
+                        },
+                        _ => {
+                            let _ = match serde::de::MapAccess::next_value::<serde::de::IgnoredAny>(&mut map)
+                            {
+                                Ok(val) => val,
+                                Err(err) => {
+                                    return Err(err);
+                                },
+                            };
+                        },
+                    }
+                }
+                let cells = match cells {
+                    Some(cells) => cells,
+                    None => match missing_field("cells") {
+                        Ok(val) => val,
+                        Err(err) => {
+                            return Err(err);
+                        },
+                    },
+                };
+                let dimensions = match dimensions {
+                    Some(dimensions) => dimensions,
+                    None => match missing_field("dimensions") {
+                        Ok(val) => val,
+                        Err(err) => {
+                            return Err(err);
+                        },
+                    },
+                };
+                Ok(BitGrid { cells, dimensions })
+            }
+        }
+
+        const FIELDS: &[&str] = &["cells", "dimensions"];
+        serde::Deserializer::deserialize_struct(deserializer, "BitGrid", FIELDS, Visitor {
+            marker: std::marker::PhantomData::<BitGrid>,
+            lifetime: std::marker::PhantomData,
+        })
+    }
 }

@@ -288,7 +288,7 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for Grid<T> {
         use serde::__private::de::*;
 
         #[allow(non_camel_case_types)]
-        enum Field {
+        enum __Grid {
             cells,
             dimensions,
             __ignore,
@@ -296,7 +296,7 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for Grid<T> {
 
         struct FieldVisitor;
         impl<'de> serde::de::Visitor<'de> for FieldVisitor {
-            type Value = Field;
+            type Value = __Grid;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> serde::__private::fmt::Result {
                 std::fmt::Formatter::write_str(formatter, "field identifier")
@@ -305,31 +305,31 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for Grid<T> {
             fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
             where E: serde::de::Error {
                 match value {
-                    0_u64 => Ok(Field::cells),
-                    1_u64 => Ok(Field::dimensions),
-                    _ => Ok(Field::__ignore),
+                    0_u64 => Ok(__Grid::cells),
+                    1_u64 => Ok(__Grid::dimensions),
+                    _ => Ok(__Grid::__ignore),
                 }
             }
 
             fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
             where E: serde::de::Error {
                 match value {
-                    "cells" => Ok(Field::cells),
-                    "dimensions" => Ok(Field::dimensions),
-                    _ => Ok(Field::__ignore),
+                    "cells" => Ok(__Grid::cells),
+                    "dimensions" => Ok(__Grid::dimensions),
+                    _ => Ok(__Grid::__ignore),
                 }
             }
 
             fn visit_bytes<E>(self, value: &[u8]) -> Result<Self::Value, E>
             where E: serde::de::Error {
                 match value {
-                    b"cells" => Ok(Field::cells),
-                    b"dimensions" => Ok(Field::dimensions),
-                    _ => Ok(Field::__ignore),
+                    b"cells" => Ok(__Grid::cells),
+                    b"dimensions" => Ok(__Grid::dimensions),
+                    _ => Ok(__Grid::__ignore),
                 }
             }
         }
-        impl<'de> serde::Deserialize<'de> for Field {
+        impl<'de> serde::Deserialize<'de> for __Grid {
             #[inline]
             fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
             where D: serde::Deserializer<'de> {
@@ -392,14 +392,14 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for Grid<T> {
             where A: serde::de::MapAccess<'de> {
                 let mut cells: Option<Vec<T>> = None;
                 let mut dimensions: Option<UVec2> = None;
-                while let Some(key) = match serde::de::MapAccess::next_key::<Field>(&mut map) {
+                while let Some(key) = match serde::de::MapAccess::next_key::<__Grid>(&mut map) {
                     Ok(val) => val,
                     Err(err) => {
                         return Err(err);
                     },
                 } {
                     match key {
-                        Field::cells => {
+                        __Grid::cells => {
                             if Option::is_some(&cells) {
                                 return Err(<A::Error as serde::de::Error>::duplicate_field("cells"));
                             }
@@ -410,7 +410,7 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for Grid<T> {
                                 },
                             });
                         },
-                        Field::dimensions => {
+                        __Grid::dimensions => {
                             if Option::is_some(&dimensions) {
                                 return Err(<A::Error as serde::de::Error>::duplicate_field(
                                     "dimensions",
