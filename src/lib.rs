@@ -1,39 +1,30 @@
-/// prelude
-pub mod prelude {
-    pub use yendor_distance::prelude::*;
-    #[cfg(feature = "fov")]
-    pub use yendor_fov::prelude::*;
-    pub use yendor_grid::prelude::*;
-    #[cfg(feature = "pathfinding")]
-    pub use yendor_pathfinding::prelude::*;
-    #[cfg(feature = "random")]
-    pub use yendor_random::prelude::*;
-    pub use yendor_utils::prelude::*;
-}
+// Clippy
+#![allow(clippy::module_inception)]
+// Features
+#![feature(trait_alias)]
 
-pub mod distance {
-    pub use yendor_distance::prelude::*;
-}
-
+pub mod directions;
+pub mod distance;
 #[cfg(feature = "fov")]
-pub mod fov {
-    pub use yendor_fov::prelude::*;
-}
-
-pub mod grid {
-    pub use yendor_grid::prelude::*;
-}
-
+pub mod fov;
+pub mod grid;
 #[cfg(feature = "pathfinding")]
-pub mod pathfinding {
-    pub use yendor_pathfinding::prelude::*;
-}
-
+pub mod pathfinding;
 #[cfg(feature = "random")]
-pub mod random {
-    pub use yendor_random::prelude::*;
-}
+pub mod random;
+pub mod utility;
 
-pub mod utils {
-    pub use yendor_utils::prelude::*;
+pub(crate) mod imports;
+
+pub mod prelude {
+    #[rustfmt::skip]
+    pub use crate::imports::*;
+
+    #[cfg(feature = "fov")]
+    pub use crate::fov::*;
+    #[cfg(feature = "pathfinding")]
+    pub use crate::pathfinding::*;
+    #[cfg(feature = "random")]
+    pub use crate::random::*;
+    pub use crate::{directions::*, distance::*, grid::*, utility::*};
 }

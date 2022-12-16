@@ -35,38 +35,6 @@ opt-level     = 'z'
 panic         = 'abort'
 
 #################################
-#########       Workspaces
-#################################
-[workspace]
-members = [
-    "yendor_pathfinding",
-    "yendor_grid",
-    "yendor_distance",
-    "yendor_random",
-    "yendor_fov",
-    "yendor_utils",
-]
-
-[workspace.dependencies]
-yendor_distance    = { path = "yendor_distance" }
-yendor_fov         = { path = "yendor_fov" }
-yendor_grid        = { path = "yendor_grid" }
-yendor_pathfinding = { path = "yendor_pathfinding" }
-yendor_random      = { path = "yendor_random" }
-yendor_utils       = { path = "yendor_utils" }
-
-#################################
-#########       Dependencies
-#################################
-[dependencies]
-yendor_distance    = { workspace = true }
-yendor_fov         = { workspace = true }
-yendor_grid        = { workspace = true }
-yendor_pathfinding = { workspace = true }
-yendor_random      = { workspace = true }
-yendor_utils       = { workspace = true }
-
-#################################
 #########       Features
 #################################
 [features]
@@ -80,17 +48,27 @@ pathfinding = []
 
 random = ["rand"]
 
-reflect = ["yendor_grid/reflect"]
+reflect = []
 
-serialize = ["serde", "bitvec/serde", "yendor_grid/serialize", "yendor_pathfinding/serialize"]
+serialize = ["serde", "bitvec/serde"]
+
+#################################
+#########       Dependencies
+#################################
 
 ######################################
 #########       Bevy
 ######################################
-[workspace.dependencies.bevy]
+[dependencies.bevy]
 default-features = false
 features         = []
 version          = "0.9"
+
+######################################
+#########       Pathfinding
+######################################
+[dependencies.pathfinding]
+version = "4"
 
 ######################################
 #########       Random
