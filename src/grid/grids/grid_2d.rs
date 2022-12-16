@@ -1,9 +1,5 @@
-use std::{
-    ops::{Index, IndexMut},
-    slice,
-};
-
 use crate::prelude::*;
+
 pub type GridIter<'a, T> = slice::Iter<'a, T>;
 pub type GridIterMut<'a, T> = slice::IterMut<'a, T>;
 pub type GridChunks<'a, T> = slice::Chunks<'a, T>;
@@ -20,6 +16,16 @@ impl<T> GridLayer<T> for Grid<T> {
     type MutableReturn<'a> = &'a mut T where T: 'a, Self: 'a;
 
     #[inline(always)]
+    fn new(dimensions: UVec2, cells: Vec<T>) -> Self {
+        let count = dimensions.size();
+        if cells.len() != count {
+            panic!("Dimensions({}) do not match cells({})", count, cells.len());
+        }
+
+        Self { cells, dimensions }
+    }
+
+    #[inline(always)]
     fn new_clone(dimensions: UVec2, value: T) -> Self
     where T: Clone {
         let count = dimensions.size();
@@ -29,10 +35,10 @@ impl<T> GridLayer<T> for Grid<T> {
     }
 
     #[inline(always)]
-    fn blit_clone(&mut self, to: UVec2, source: &Self, from: UVec2, size: UVec2)
+    fn blit_clone(&mut self, to: UVec2, source: &Self, from: UVec2, dimensions: UVec2)
     where T: Clone {
-        for y in 0..size.y {
-            for x in 0..size.x {
+        for y in 0..dimensions.y {
+            for x in 0..dimensions.x {
                 if let Some(val) = source.get((x + from.x, y + from.y).as_uvec2()) {
                     self.set((x + to.x, y + to.y).as_uvec2(), val.clone());
                 }
@@ -41,22 +47,19 @@ impl<T> GridLayer<T> for Grid<T> {
     }
 
     #[inline(always)]
-    fn new_copy(size: UVec2, value: T) -> Self
+    fn new_copy(dimensions: UVec2, value: T) -> Self
     where T: Copy {
-        let count = size.size();
+        let count = dimensions.size();
         let mut cells = Vec::with_capacity(count);
         cells.resize_with(count, || value);
-        Self {
-            cells,
-            dimensions: size,
-        }
+        Self { cells, dimensions }
     }
 
     #[inline(always)]
-    fn blit_copy(&mut self, to: UVec2, source: &Self, from: UVec2, size: UVec2)
+    fn blit_copy(&mut self, to: UVec2, source: &Self, from: UVec2, dimensions: UVec2)
     where T: Copy {
-        for y in 0..size.y {
-            for x in 0..size.x {
+        for y in 0..dimensions.y {
+            for x in 0..dimensions.x {
                 if let Some(val) = source.get((x + from.x, y + from.y).as_uvec2()) {
                     self.set((x + to.x, y + to.y).as_uvec2(), *val);
                 }
@@ -65,36 +68,20 @@ impl<T> GridLayer<T> for Grid<T> {
     }
 
     #[inline(always)]
-    fn new_default(size: UVec2) -> Self
+    fn new_default(dimensions: UVec2) -> Self
     where T: Default {
-        let count = size.size();
+        let count = dimensions.size();
         let mut cells = Vec::new();
         cells.resize_with(count, Default::default);
-        Self {
-            cells,
-            dimensions: size,
-        }
+        Self { cells, dimensions }
     }
 
     #[inline(always)]
-    fn new_fn(size: UVec2, f: impl Fn(UVec2) -> T) -> Self {
-        let count = size.size();
+    fn new_fn(dimensions: UVec2, f: impl Fn((usize, UVec2)) -> T) -> Self {
+        let count = dimensions.size();
         let mut cells = Vec::with_capacity(count);
-        for coord in size.iter() {
-            cells.push(f(coord));
-        }
-        Self {
-            cells,
-            dimensions: size,
-        }
-    }
-
-    #[inline(always)]
-    fn from_vec(size: UVec2, cells: Vec<T>) -> Self {
-        Self {
-            cells,
-            dimensions: size,
-        }
+        dimensions.iter().enumerate().for_each(|coord| cells.push(f(coord)));
+        Self { cells, dimensions }
     }
 
     #[inline]
@@ -114,30 +101,6 @@ impl<T> GridLayer<T> for Grid<T> {
 
     #[inline]
     fn is_empty(&self) -> bool { self.cells.is_empty() }
-
-    #[inline]
-    fn in_bounds(&self, pos: UVec2) -> bool { pos.is_valid(self.dimensions) }
-
-    #[inline]
-    fn get_idx(&self, pos: UVec2) -> Option<usize> {
-        if pos.is_valid(self.dimensions) { Some(self.get_idx_unchecked(pos)) } else { None }
-    }
-
-    #[inline]
-    fn get_idx_unchecked(&self, point: UVec2) -> usize { point.as_index_unchecked(self.width()) }
-
-    #[inline]
-    fn index_to_pt(&self, idx: usize) -> Option<UVec2> {
-        let pt = self.index_to_pt_unchecked(idx);
-        if pt.is_valid(self.dimensions) { Some(pt) } else { None }
-    }
-
-    #[inline]
-    fn index_to_pt_unchecked(&self, idx: usize) -> UVec2 {
-        let x = idx % self.width() as usize;
-        let y = idx / self.width() as usize;
-        (x, y).as_uvec2()
-    }
 
     #[inline]
     fn get(&self, index: UVec2) -> Option<&T> { self.get_idx(index).map(|idx| &self.cells[idx]) }
@@ -250,9 +213,23 @@ impl<T> Index<usize> for Grid<T> {
     fn index(&self, index: usize) -> &T { &self.cells[index] }
 }
 
-impl<T> std::ops::IndexMut<usize> for Grid<T> {
+impl<T> IndexMut<usize> for Grid<T> {
     #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output { &mut self.cells[index] }
+}
+
+impl<I: GridPoint, T> Index<I> for Grid<T> {
+    type Output = T;
+
+    #[inline]
+    fn index(&self, index: I) -> &T { &self.cells[index.as_index_unchecked(self.dimensions.x)] }
+}
+
+impl<I: GridPoint, T> IndexMut<I> for Grid<T> {
+    #[inline]
+    fn index_mut(&mut self, index: I) -> &mut Self::Output {
+        &mut self.cells[index.as_index_unchecked(self.dimensions.x)]
+    }
 }
 
 //#########################################################################

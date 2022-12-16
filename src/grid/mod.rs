@@ -23,9 +23,9 @@ pub mod grids {
     #[cfg(feature = "reflect")]
     pub use reflect::*;
 
-    #[cfg(feature = "bitvec")]
+    #[cfg(feature = "bitgrid")]
     mod bitgrid;
-    #[cfg(feature = "bitvec")]
+    #[cfg(feature = "bitgrid")]
     pub use bitgrid::*;
     mod grid_2d;
     pub use grid_2d::*;

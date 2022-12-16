@@ -1,6 +1,7 @@
 pub use std::{
     fmt::{Debug, Display},
-    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, RangeBounds, Sub, SubAssign},
+    ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, RangeBounds, Sub, SubAssign},
+    slice,
 };
 
 #[cfg(feature = "reflect")]

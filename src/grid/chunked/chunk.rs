@@ -16,7 +16,7 @@ impl<T> Chunk<T> {
         }
 
         Self {
-            grid: Grid::from_vec(dimensions, cells),
+            grid: Grid::new(dimensions, cells),
         }
     }
 }

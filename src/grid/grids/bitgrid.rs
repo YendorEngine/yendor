@@ -1,6 +1,10 @@
-use std::ops::Index;
-
-use bitvec::{bitvec, prelude::Lsb0, ptr::BitRef, slice, vec::BitVec};
+use bitvec::{
+    bitvec,
+    prelude::Lsb0,
+    ptr::BitRef,
+    slice::{self},
+    vec::BitVec,
+};
 
 use crate::prelude::*;
 
@@ -19,7 +23,16 @@ impl GridLayer<bool> for BitGrid {
     type MutableReturn<'a> = BitRef<'a, bitvec::ptr::Mut>;
 
     #[inline(always)]
-    fn new_clone(dimensions: impl Dimensions, value: bool) -> Self {
+    fn new(dimensions: UVec2, cells: Vec<bool>) -> Self {
+        let count = dimensions.size();
+        if cells.len() != count {
+            panic!("Dimensions({}) do not match cells({})", count, cells.len());
+        }
+        Self::new_fn(dimensions, |(i, _)| cells[i])
+    }
+
+    #[inline(always)]
+    fn new_clone(dimensions: UVec2, value: bool) -> Self {
         let count = dimensions.size();
         let mut cells = BitVec::with_capacity(count);
         cells.resize(count, value);
@@ -27,18 +40,18 @@ impl GridLayer<bool> for BitGrid {
     }
 
     #[inline(always)]
-    fn blit_clone(&mut self, to: impl Point, source: &Self, from: impl Point, dimensions: impl Dimensions) {
-        for y in 0..dimensions.height() {
-            for x in 0..dimensions.width() {
-                if let Some(val) = source.get((x + from.x_uint32(), y + from.y_uint32())) {
-                    self.set((x + to.x_uint32(), y + to.y_uint32()), *val);
+    fn blit_clone(&mut self, to: UVec2, source: &Self, from: UVec2, dimensions: UVec2) {
+        for y in 0..dimensions.x {
+            for x in 0..dimensions.y {
+                if let Some(val) = source.get((x + from.x, y + from.y).as_uvec2()) {
+                    self.set((x + to.x, y + to.y).as_uvec2(), *val);
                 }
             }
         }
     }
 
     #[inline(always)]
-    fn new_copy(dimensions: impl Dimensions, value: bool) -> Self {
+    fn new_copy(dimensions: UVec2, value: bool) -> Self {
         let count = dimensions.size();
         let mut cells = BitVec::with_capacity(count);
         cells.resize_with(count, |_| value);
@@ -46,18 +59,18 @@ impl GridLayer<bool> for BitGrid {
     }
 
     #[inline(always)]
-    fn blit_copy(&mut self, to: impl Point, source: &Self, from: impl Point, dimensions: impl Dimensions) {
-        for y in 0..dimensions.height() {
-            for x in 0..dimensions.width() {
-                if let Some(val) = source.get((x + from.x_uint32(), y + from.y_uint32())) {
-                    self.set((x + to.x_uint32(), y + to.y_uint32()), *val);
+    fn blit_copy(&mut self, to: UVec2, source: &Self, from: UVec2, dimensions: UVec2) {
+        for y in 0..dimensions.x {
+            for x in 0..dimensions.y {
+                if let Some(val) = source.get((x + from.x, y + from.y).as_uvec2()) {
+                    self.set((x + to.x, y + to.y).as_uvec2(), *val);
                 }
             }
         }
     }
 
     #[inline(always)]
-    fn new_default(dimensions: impl Dimensions) -> Self {
+    fn new_default(dimensions: UVec2) -> Self {
         let count = dimensions.size();
         Self {
             cells: bitvec![0_usize; count],
@@ -66,20 +79,21 @@ impl GridLayer<bool> for BitGrid {
     }
 
     #[inline(always)]
-    fn new_fn(dimensions: impl Dimensions, f: impl Fn(IVec2) -> bool) -> Self {
+    fn new_fn(dimensions: UVec2, f: impl Fn((usize, UVec2)) -> bool) -> Self {
         let count = dimensions.size();
         let mut cells = BitVec::with_capacity(count);
-        for coord in dimensions.iter() {
-            cells.push(f(coord));
-        }
+        dimensions.iter().enumerate().for_each(|coord| cells.push(f(coord)));
         Self { cells, dimensions }
     }
 
     #[inline]
-    fn width(&self) -> u32 { self.dimensions.width() }
+    fn take(&mut self) -> Vec<bool> { std::mem::take(&mut self.cells.iter().map(|b| *b).collect::<Vec<_>>()) }
 
     #[inline]
-    fn height(&self) -> u32 { self.dimensions.height() }
+    fn width(&self) -> u32 { self.dimensions.x }
+
+    #[inline]
+    fn height(&self) -> u32 { self.dimensions.y }
 
     #[inline]
     fn dimensions(&self) -> UVec2 { self.dimensions }
@@ -91,50 +105,26 @@ impl GridLayer<bool> for BitGrid {
     fn is_empty(&self) -> bool { self.cells.is_empty() }
 
     #[inline]
-    fn in_bounds(&self, point: impl Point) -> bool { point.is_valid(self.dimensions) }
+    fn get(&self, pos: UVec2) -> Option<&bool> { self.get_idx(pos).map(|idx| &self.cells[idx]) }
 
-    #[inline]
-    fn get_idx_unchecked(&self, point: impl Point) -> usize { point.as_index_unchecked(self.width()) }
-
-    #[inline]
-    fn get_idx(&self, coord: impl Point) -> Option<usize> {
-        if coord.is_valid(self.dimensions) { Some(self.get_idx_unchecked(coord)) } else { None }
-    }
-
-    #[inline]
-    fn index_to_pt_unchecked(&self, idx: usize) -> IVec2 {
-        let x = idx % self.width() as usize;
-        let y = idx / self.width() as usize;
-        IVec2::new(x as i32, y as i32)
-    }
-
-    #[inline]
-    fn index_to_pt(&self, idx: usize) -> Option<IVec2> {
-        let pt = self.index_to_pt_unchecked(idx);
-        if pt.is_valid(self.dimensions) { Some(pt) } else { None }
-    }
-
-    #[inline]
-    fn get(&self, pos: impl Point) -> Option<&bool> { self.get_idx(pos).map(|idx| &self.cells[idx]) }
-
-    fn get_mut(&mut self, pos: impl Point) -> Option<Self::MutableReturn<'_>> {
+    fn get_mut(&mut self, pos: UVec2) -> Option<Self::MutableReturn<'_>> {
         let w = self.width();
         self.cells.get_mut(pos.as_index_unchecked(w))
     }
 
-    fn get_unchecked(&self, pos: impl Point) -> &bool { self.cells.index(self.get_idx_unchecked(pos)) }
+    fn get_unchecked(&self, pos: UVec2) -> &bool { self.cells.index(self.get_idx_unchecked(pos)) }
 
     /// Gets a mutable reference corresponding to an index
     ///
     /// # Safety
     ///
     /// This function is unsafe because it does not check if the index is out of bounds.
-    fn get_mut_unchecked(&mut self, pos: impl Point) -> Self::MutableReturn<'_> {
+    fn get_mut_unchecked(&mut self, pos: UVec2) -> Self::MutableReturn<'_> {
         let w = self.width();
         unsafe { self.cells.get_unchecked_mut(pos.as_index_unchecked(w)) }
     }
 
-    fn set(&mut self, pos: impl Point, value: bool) -> Option<bool> {
+    fn set(&mut self, pos: UVec2, value: bool) -> Option<bool> {
         if pos.is_valid(self.dimensions) {
             let index = self.get_idx_unchecked(pos);
             Some(self.cells.replace(index, value))
@@ -143,7 +133,7 @@ impl GridLayer<bool> for BitGrid {
         }
     }
 
-    fn set_unchecked(&mut self, pos: impl Point, value: bool) -> bool {
+    fn set_unchecked(&mut self, pos: UVec2, value: bool) -> bool {
         let index = self.get_idx_unchecked(pos);
         self.cells.replace(index, value)
     }
@@ -168,19 +158,19 @@ impl GridIterable<bool> for BitGrid {
     fn enumerate(&self) -> GridEnumerate<Self::IterReturn<'_>> { self.point_iter().zip(self.iter()) }
 
     #[inline]
-    fn rows(&self) -> Self::IterChunkReturn<'_> { self.cells.chunks(self.dimensions.width() as usize) }
+    fn rows(&self) -> Self::IterChunkReturn<'_> { self.cells.chunks(self.dimensions.x as usize) }
 
     #[inline]
     fn rows_mut(&mut self) -> Self::IterChunkMutReturn<'_> {
-        self.cells.chunks_mut(self.dimensions.width() as usize)
+        self.cells.chunks_mut(self.dimensions.x as usize)
     }
 
     #[inline]
-    fn cols(&self) -> Self::IterChunkReturn<'_> { self.cells.chunks(self.dimensions.width() as usize) }
+    fn cols(&self) -> Self::IterChunkReturn<'_> { self.cells.chunks(self.dimensions.x as usize) }
 
     #[inline]
     fn cols_mut(&mut self) -> Self::IterChunkMutReturn<'_> {
-        self.cells.chunks_mut(self.dimensions.width() as usize)
+        self.cells.chunks_mut(self.dimensions.x as usize)
     }
 
     #[inline]
@@ -209,6 +199,13 @@ impl Index<usize> for BitGrid {
 
     #[inline]
     fn index(&self, index: usize) -> &bool { &self.cells[index] }
+}
+
+impl<I: GridPoint> Index<I> for BitGrid {
+    type Output = bool;
+
+    #[inline]
+    fn index(&self, index: I) -> &bool { &self.cells[index.as_index_unchecked(self.dimensions.x)] }
 }
 
 //#########################################################################
