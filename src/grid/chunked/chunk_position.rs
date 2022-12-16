@@ -14,8 +14,10 @@ pub struct ChunkPosition {
 impl ChunkPosition {
     pub const ZERO: Self = Self::new(0, 0, 0);
 
+    #[inline(always)]
     pub const fn new(x: i64, y: i64, z: i32) -> Self { Self { x, y, z } }
 
+    #[inline(always)]
     pub const fn from_absolute(x: i64, y: i64, z: i32) -> Self { Self::new(x, y, z) }
 }
 
@@ -23,25 +25,32 @@ impl ChunkPosition {
 //##################
 impl ChunkPosition {
     /// The x coordinate of the chunk.
+    #[inline]
     pub fn abs_x(&self) -> i64 { self.x }
 
     /// The y coordinate of the chunk.  
+    #[inline]
     pub fn abs_y(&self) -> i64 { self.y }
 
     /// The z coordinate of the chunk.
+    #[inline]
     pub fn abs_z(&self) -> i32 { self.z }
 
     /// Check dimensions first!!!
+    #[inline]
     pub fn as_absolute(&self) -> (i64, i64, i32) { (self.x, self.y, self.z) }
 }
 
 // Functions
 //##################
 impl ChunkPosition {
+    #[inline]
     pub fn distance(&self, other: Self) -> u32 { self.distance_x(other).max(self.distance_y(other)) }
 
+    #[inline]
     pub fn distance_x(&self, other: Self) -> u32 { (other.abs_x() - self.abs_x()) as u32 }
 
+    #[inline]
     pub fn distance_y(&self, other: Self) -> u32 { (other.abs_y() - self.abs_y()) as u32 }
 
     pub fn lerp(&self, other: Self, percent: f32) -> Self {
@@ -84,6 +93,7 @@ impl ChunkPosition {
 impl Add<ChunkOffset> for ChunkPosition {
     type Output = Self;
 
+    #[inline]
     fn add(self, rhs: ChunkOffset) -> Self::Output {
         Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
     }
@@ -92,6 +102,7 @@ impl Add<ChunkOffset> for ChunkPosition {
 impl Add<IVec2> for ChunkPosition {
     type Output = Self;
 
+    #[inline]
     fn add(self, rhs: IVec2) -> Self::Output {
         Self::new(self.x + rhs.x as i64, self.y + rhs.y as i64, self.z)
     }
@@ -100,12 +111,14 @@ impl Add<IVec2> for ChunkPosition {
 impl Add<UVec2> for ChunkPosition {
     type Output = Self;
 
+    #[inline]
     fn add(self, rhs: UVec2) -> Self::Output {
         Self::new(self.x + rhs.x as i64, self.y + rhs.y as i64, self.z)
     }
 }
 
 impl AddAssign<ChunkOffset> for ChunkPosition {
+    #[inline]
     fn add_assign(&mut self, rhs: ChunkOffset) {
         self.x += rhs.x;
         self.y += rhs.y;
@@ -114,6 +127,7 @@ impl AddAssign<ChunkOffset> for ChunkPosition {
 }
 
 impl AddAssign<IVec2> for ChunkPosition {
+    #[inline]
     fn add_assign(&mut self, rhs: IVec2) {
         self.x += rhs.x as i64;
         self.y += rhs.y as i64;
@@ -121,6 +135,7 @@ impl AddAssign<IVec2> for ChunkPosition {
 }
 
 impl AddAssign<UVec2> for ChunkPosition {
+    #[inline]
     fn add_assign(&mut self, rhs: UVec2) {
         self.x += rhs.x as i64;
         self.y += rhs.y as i64;
@@ -130,6 +145,7 @@ impl AddAssign<UVec2> for ChunkPosition {
 impl Sub<ChunkOffset> for ChunkPosition {
     type Output = Self;
 
+    #[inline]
     fn sub(self, rhs: ChunkOffset) -> Self::Output {
         Self::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
     }
@@ -138,6 +154,7 @@ impl Sub<ChunkOffset> for ChunkPosition {
 impl Sub<IVec2> for ChunkPosition {
     type Output = Self;
 
+    #[inline]
     fn sub(self, rhs: IVec2) -> Self::Output {
         Self::new(self.x - rhs.x as i64, self.y - rhs.y as i64, self.z)
     }
@@ -146,12 +163,14 @@ impl Sub<IVec2> for ChunkPosition {
 impl Sub<UVec2> for ChunkPosition {
     type Output = Self;
 
+    #[inline]
     fn sub(self, rhs: UVec2) -> Self::Output {
         Self::new(self.x - rhs.x as i64, self.y - rhs.y as i64, self.z)
     }
 }
 
 impl SubAssign<ChunkOffset> for ChunkPosition {
+    #[inline]
     fn sub_assign(&mut self, rhs: ChunkOffset) {
         self.x -= rhs.x;
         self.y -= rhs.y;
@@ -160,6 +179,7 @@ impl SubAssign<ChunkOffset> for ChunkPosition {
 }
 
 impl SubAssign<IVec2> for ChunkPosition {
+    #[inline]
     fn sub_assign(&mut self, rhs: IVec2) {
         self.x -= rhs.x as i64;
         self.y -= rhs.y as i64;
@@ -167,6 +187,7 @@ impl SubAssign<IVec2> for ChunkPosition {
 }
 
 impl SubAssign<UVec2> for ChunkPosition {
+    #[inline]
     fn sub_assign(&mut self, rhs: UVec2) {
         self.x -= rhs.x as i64;
         self.y -= rhs.y as i64;
@@ -190,5 +211,6 @@ impl Debug for ChunkPosition {
 }
 
 impl ToUVec2 for ChunkPosition {
+    #[inline]
     fn as_uvec2(&self) -> UVec2 { UVec2::new(self.x as u32, self.y as u32) }
 }

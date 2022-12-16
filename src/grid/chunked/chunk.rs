@@ -8,6 +8,7 @@ pub struct Chunk<T> {
 // Constructor
 //##################
 impl<T> Chunk<T> {
+    #[inline(always)]
     pub fn new(dimensions: UVec2, cells: Vec<T>) -> Self {
         let count = (dimensions.x * dimensions.y) as usize;
         if cells.len() != count {
@@ -23,22 +24,26 @@ impl<T> Chunk<T> {
 // Getters
 //##################
 impl<T> Chunk<T> {
+    #[inline]
     pub fn remove_cells(self) -> Vec<T> { self.grid.cells }
 }
 
 // Functions
 //##################
 impl<T> Chunk<T> {
+    #[inline]
     pub fn get(&self, position: ChunkLocalPosition) -> &T {
         let index = (position.y * self.grid.width() + position.x) as usize;
         &self.grid[index]
     }
 
+    #[inline]
     pub fn get_mut(&mut self, position: ChunkLocalPosition) -> &mut T {
         let index = (position.y * self.grid.width() + position.x) as usize;
         &mut self.grid[index]
     }
 
+    #[inline]
     pub fn set(&mut self, position: ChunkLocalPosition, value: T) -> T {
         let index = (position.y * self.grid.width() + position.x) as usize;
         std::mem::replace(&mut self.grid[index], value)

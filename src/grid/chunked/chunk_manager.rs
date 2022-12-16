@@ -16,6 +16,7 @@ unsafe impl<T> Sync for ChunkManager<T> {}
 // Constructor
 //##################
 impl<T> ChunkManager<T> {
+    #[inline(always)]
     pub fn new<D: Into<ChunkDimensions>>(
         dimensions: D,
         chunk_provider: impl ChunkProvider<T> + 'static,
@@ -32,6 +33,7 @@ impl<T> ChunkManager<T> {
 // Position Constructor
 //##################
 impl<T> ChunkManager<T> {
+    #[inline]
     pub fn new_position(
         &self,
         world_position: ChunkWorldPosition,
@@ -90,28 +92,35 @@ impl<T> ChunkManager<T> {
         )
     }
 
+    #[inline]
     pub fn world_position(&self, position: ChunkPosition) -> ChunkWorldPosition { self.position(position).0 }
 
+    #[inline]
     pub fn local_position(&self, position: ChunkPosition) -> ChunkLocalPosition { self.position(position).1 }
 }
 
 // Getters
 //##################
 impl<T> ChunkManager<T> {
+    #[inline]
     pub fn dimensions(&self) -> ChunkDimensions { self.dimensions }
 
+    #[inline]
     pub fn width(&self) -> u32 { self.dimensions.x }
 
+    #[inline]
     pub fn height(&self) -> u32 { self.dimensions.y }
 }
 
 // Load/Store Functions
 //##################
 impl<T> ChunkManager<T> {
+    #[inline]
     pub fn is_loaded_at(&self, position: ChunkPosition) -> bool {
         self.is_loaded(self.world_position(position))
     }
 
+    #[inline]
     pub fn is_loaded(&self, world_position: ChunkWorldPosition) -> bool {
         self.loaded_chunks.contains_key(&world_position)
     }
@@ -142,6 +151,7 @@ impl<T> ChunkManager<T> {
         self.get_no_load(position).expect("Chunk failed to load.")
     }
 
+    #[inline]
     pub fn get_no_load(&self, position: ChunkPosition) -> Option<&T> {
         let (world_position, local_position) = self.position(position);
         if let Some(chunk) = self.get_chunk(world_position) {
@@ -151,6 +161,7 @@ impl<T> ChunkManager<T> {
         }
     }
 
+    #[inline]
     pub fn get_mut(&mut self, position: ChunkPosition) -> &mut T {
         let (world_position, local_position) = self.position(position);
         self.load(world_position);
@@ -171,10 +182,12 @@ impl<T> ChunkManager<T> {
 // Private
 //##################
 impl<T> ChunkManager<T> {
+    #[inline]
     fn get_chunk(&self, world_position: ChunkWorldPosition) -> Option<&Chunk<T>> {
         self.loaded_chunks.get(&world_position)
     }
 
+    #[inline]
     fn get_chunk_mut(&mut self, world_position: ChunkWorldPosition) -> Option<&mut Chunk<T>> {
         self.loaded_chunks.get_mut(&world_position)
     }
