@@ -8,6 +8,7 @@ use crate::prelude::*;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "reflect", derive(Reflect))]
 enum DimensionType {
     Dimensions(UVec2),
     Modifier((i64, i64)),
