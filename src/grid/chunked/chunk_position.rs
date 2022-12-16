@@ -214,3 +214,8 @@ impl ToUVec2 for ChunkPosition {
     #[inline]
     fn as_uvec2(&self) -> UVec2 { UVec2::new(self.x as u32, self.y as u32) }
 }
+
+impl From<IVec3> for ChunkPosition {
+    #[inline]
+    fn from(v: IVec3) -> Self { Self::new(v.x as i64, v.y as i64, v.z) }
+}
