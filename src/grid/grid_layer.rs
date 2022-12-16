@@ -41,6 +41,9 @@ pub trait GridLayer<T> {
     /// Returns the height of the grid.
     fn height(&self) -> u32;
 
+    /// Returns the encapsulated cells of the grid
+    fn take(&mut self) -> Vec<T>;
+
     /// Returns the size of the grid as a 2D vector.
     fn dimensions(&self) -> UVec2;
 

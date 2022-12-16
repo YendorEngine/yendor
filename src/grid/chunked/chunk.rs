@@ -25,7 +25,7 @@ impl<T> Chunk<T> {
 //##################
 impl<T> Chunk<T> {
     #[inline]
-    pub fn remove_cells(self) -> Vec<T> { self.grid.cells }
+    pub fn remove_cells(mut self) -> Vec<T> { self.grid.take() }
 }
 
 // Functions
@@ -33,6 +33,7 @@ impl<T> Chunk<T> {
 impl<T> Chunk<T> {
     #[inline]
     pub fn get(&self, position: ChunkLocalPosition) -> &T {
+        position.as_index(self.grid.dimensions());
         let index = (position.y * self.grid.width() + position.x) as usize;
         &self.grid[index]
     }

@@ -11,8 +11,8 @@ pub type GridChunksMut<'a, T> = slice::ChunksMut<'a, T>;
 
 #[derive(Default, Debug, Clone, Hash, PartialEq, Eq)]
 pub struct Grid<T> {
-    pub cells: Vec<T>,
-    pub dimensions: UVec2,
+    pub(crate) cells: Vec<T>,
+    pub(crate) dimensions: UVec2,
 }
 
 // Grid Layer
@@ -102,6 +102,9 @@ impl<T> GridLayer<T> for Grid<T> {
 
     #[inline]
     fn height(&self) -> u32 { self.dimensions.y }
+
+    #[inline]
+    fn take(&mut self) -> Vec<T> { std::mem::take(&mut self.cells) }
 
     #[inline]
     fn dimensions(&self) -> UVec2 { self.dimensions }
