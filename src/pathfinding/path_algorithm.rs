@@ -2,9 +2,9 @@ use crate::prelude::*;
 
 pub trait PathAlgorithm {
     fn compute_path<T>(
-        origin: UVec2,
-        destination: UVec2,
+        origin: IVec2,
+        destination: IVec2,
         provider: &mut impl PathProvider<T>,
         pass_through_data: T,
-    ) -> Vec<UVec2>;
+    ) -> Vec<IVec2>;
 }

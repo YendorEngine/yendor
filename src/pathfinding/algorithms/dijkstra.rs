@@ -4,11 +4,11 @@ pub struct Dijkstra;
 
 impl PathAlgorithm for Dijkstra {
     fn compute_path<T>(
-        origin: UVec2,
-        destination: UVec2,
+        origin: IVec2,
+        destination: IVec2,
         provider: &mut impl PathProvider<T>,
         mut pass_through_data: T,
-    ) -> Vec<UVec2> {
+    ) -> Vec<IVec2> {
         let dijkstra_path = dijkstra(
             &origin,
             |&p| provider.generate_successors(p, &mut pass_through_data),
