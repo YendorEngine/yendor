@@ -4,11 +4,11 @@ pub struct AdamsFov;
 
 impl FovAlgorithm for AdamsFov {
     fn compute_fov<T>(
-        origin: ChunkPosition,
+        origin: IVec2,
         range: u32,
         provider: &mut impl FovProvider<T>,
         mut pass_through_data: T,
-    ) -> HashSet<ChunkPosition> {
+    ) -> HashSet<IVec2> {
         let mut visible_points = HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
 
         visible_points.insert(origin);
@@ -35,14 +35,14 @@ impl AdamsFov {
     #[allow(clippy::too_many_arguments)]
     fn compute_octant<T>(
         octant: i32,
-        origin: ChunkPosition,
+        origin: IVec2,
         range: i32,
         x: i32,
         mut top: Slope,
         mut bottom: Slope,
         provider: &mut impl FovProvider<T>,
         pass_through_data: &mut T,
-        visible_points: &mut HashSet<ChunkPosition>,
+        visible_points: &mut HashSet<IVec2>,
     ) {
         for x in x..=range {
             let y_coords = Self::compute_y(
@@ -78,7 +78,7 @@ impl AdamsFov {
 
     fn compute_y<T>(
         octant: i32,
-        origin: ChunkPosition,
+        origin: IVec2,
         x: i32,
         top: &mut Slope,
         bottom: &mut Slope,
@@ -138,13 +138,13 @@ impl AdamsFov {
         bottom_y: i32,
         range: i32,
         octant: i32,
-        origin: ChunkPosition,
+        origin: IVec2,
         x: i32,
         top: &mut Slope,
         bottom: &mut Slope,
         provider: &mut impl FovProvider<T>,
         pass_through_data: &mut T,
-        visible_points: &mut HashSet<ChunkPosition>,
+        visible_points: &mut HashSet<IVec2>,
     ) -> bool {
         let mut was_opaque = -1;
 
@@ -218,33 +218,25 @@ impl AdamsFov {
         x: i32,
         y: i32,
         octant: i32,
-        origin: ChunkPosition,
+        origin: IVec2,
         provider: &mut impl FovProvider<T>,
         pass_through_data: &mut T,
     ) -> bool {
         let xy = Self::transform(x, y, octant, origin);
-        let cp = ChunkPosition::new(xy.x as i64, xy.y as i64, origin.abs_z());
-        provider.is_opaque(cp, pass_through_data)
+        provider.is_opaque(xy, pass_through_data)
     }
 
-    fn set_visible(
-        x: i32,
-        y: i32,
-        octant: i32,
-        origin: ChunkPosition,
-        visible_points: &mut HashSet<ChunkPosition>,
-    ) {
+    fn set_visible(x: i32, y: i32, octant: i32, origin: IVec2, visible_points: &mut HashSet<IVec2>) {
         let xy = Self::transform(x, y, octant, origin);
-        let cp = ChunkPosition::new(xy.x as i64, xy.y as i64, origin.abs_z());
-        visible_points.insert(cp);
+        visible_points.insert(xy);
     }
 
-    fn transform(x: i32, y: i32, octant: i32, origin: ChunkPosition) -> UVec2 {
-        let (mx, my, _z) = origin.as_absolute();
-        let mut nx = mx as i32;
-        let mut ny = my as i32;
+    fn transform(x: i32, y: i32, octant: i32, origin: IVec2) -> IVec2 {
+        let IVec2 {
+            x: mut nx,
+            y: mut ny,
+        } = origin;
 
-        // let (mut nx, mut ny): (i32, i32) = origin.gridpoint().as_ivec2().into();
         match octant {
             0 => {
                 nx += x;
@@ -281,6 +273,6 @@ impl AdamsFov {
             _ => {},
         }
 
-        IVec2::new(nx, ny).as_uvec2()
+        IVec2::new(nx, ny)
     }
 }

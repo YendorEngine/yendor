@@ -7,11 +7,11 @@ pub struct Shadowcast;
 
 impl FovAlgorithm for Shadowcast {
     fn compute_fov<T>(
-        origin: ChunkPosition,
+        origin: IVec2,
         range: u32,
         provider: &mut impl FovProvider<T>,
         mut pass_through_data: T,
-    ) -> HashSet<ChunkPosition> {
+    ) -> HashSet<IVec2> {
         let mut visible_points = HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
 
         visible_points.insert(origin);
@@ -28,12 +28,12 @@ impl FovAlgorithm for Shadowcast {
 
 impl Shadowcast {
     pub fn compute_direction<T>(
-        origin: ChunkPosition,
+        origin: IVec2,
         range: u32,
         provider: &mut impl FovProvider<T>,
         direction: Direction,
         mut pass_through_data: T,
-    ) -> HashSet<ChunkPosition> {
+    ) -> HashSet<IVec2> {
         let mut visible_points = HashSet::with_capacity(((range * 2) * (range * 2)) as usize);
         visible_points.insert(origin);
 
@@ -48,7 +48,7 @@ impl Shadowcast {
         range: u32,
         quadrant: &mut Quadrant<T>,
         row: &mut Row,
-        visible_points: &mut HashSet<ChunkPosition>,
+        visible_points: &mut HashSet<IVec2>,
     ) {
         let mut prev_tile = None;
         for tile in row.tiles() {

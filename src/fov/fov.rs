@@ -16,11 +16,11 @@ pub enum Fov {
 impl Fov {
     pub fn compute<FovRange: Into<u32>, T>(
         &self,
-        origin: ChunkPosition,
+        origin: IVec2,
         range: FovRange,
         provider: &mut impl FovProvider<T>,
         pass_through_data: T,
-    ) -> HashSet<ChunkPosition> {
+    ) -> HashSet<IVec2> {
         let range = range.into();
         match self {
             Self::Adams => AdamsFov::compute_fov(origin, range, provider, pass_through_data),
@@ -33,8 +33,8 @@ impl Fov {
 
     pub fn within_fov<FovRange: Into<u32>, T>(
         &self,
-        origin: ChunkPosition,
-        target: ChunkPosition,
+        origin: IVec2,
+        target: IVec2,
         range: FovRange,
         provider: &mut impl FovProvider<T>,
         pass_through_data: T,

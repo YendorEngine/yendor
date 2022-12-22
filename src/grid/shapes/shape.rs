@@ -1,10 +1,10 @@
 use crate::prelude::*;
 
 pub type BoxedShape = Box<dyn Shape>;
-pub type BoxedShapeIter = Box<dyn Iterator<Item = ChunkPosition>>;
+pub type BoxedShapeIter = Box<dyn Iterator<Item = IVec2>>;
 
 pub trait ShapeIter {
-    type Iterator: Iterator<Item = ChunkPosition>;
+    type Iterator: Iterator<Item = IVec2>;
 
     /// returns an iterator over all points in the shape, inclusively
     fn iter(&self) -> Self::Iterator;
@@ -15,10 +15,10 @@ pub trait Shape {
     fn get_count(&self) -> u32;
 
     /// returns `true` if the point is inside the shape
-    fn contains(&self, point: ChunkPosition) -> bool;
+    fn contains(&self, point: IVec2) -> bool;
 
     /// returns an iterator over all of the points
-    fn get_positions(&self) -> HashSet<ChunkPosition>;
+    fn get_positions(&self) -> HashSet<IVec2>;
 
     fn boxed_iter(&self) -> BoxedShapeIter;
 }
@@ -28,8 +28,8 @@ pub trait ShapeWithBorder: Shape {
     fn get_border_count(&self) -> usize;
 
     /// returns `true` if the point is inside the shape
-    fn border_contains(&self, point: ChunkPosition) -> bool;
+    fn border_contains(&self, point: IVec2) -> bool;
 
     /// returns an iterator over all of the points
-    fn get_border_positions(&self) -> HashSet<ChunkPosition>;
+    fn get_border_positions(&self) -> HashSet<IVec2>;
 }

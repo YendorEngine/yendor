@@ -36,6 +36,21 @@ pub trait GridPoint: Clone + Copy {
         x >= 0 && y >= 0 && (x as u32) < size.x && (y as u32) < size.y
     }
 
+    #[inline]
+    fn mid_point(&self, point: impl GridPoint) -> IVec2 {
+        IVec2 {
+            x: (self.x_int32() + point.x_int32()) / 2,
+            y: (self.y_int32() + point.y_int32()) / 2,
+        }
+    }
+
+    #[inline]
+    fn distance(&self, point: impl GridPoint) -> u32 {
+        let start = UVec2::new(self.x_uint32(), self.y_uint32());
+        let end = UVec2::new(point.x_uint32(), point.y_uint32());
+        start.sub(end).max_element()
+    }
+
     /// Returns an iterator over all points within the size.
     fn iter(self) -> PointIterRowMajor {
         PointIterRowMajor::new(UVec2::new(self.x_uint32(), self.y_uint32()))

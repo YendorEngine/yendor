@@ -4,11 +4,11 @@ pub struct AStar;
 
 impl PathAlgorithm for AStar {
     fn compute_path<T>(
-        origin: ChunkPosition,
-        destination: ChunkPosition,
+        origin: UVec2,
+        destination: UVec2,
         provider: &mut impl PathProvider<T>,
         mut pass_through_data: T,
-    ) -> Vec<ChunkPosition> {
+    ) -> Vec<UVec2> {
         let result = astar(
             &origin,
             |&p| provider.generate_successors(p, &mut pass_through_data),

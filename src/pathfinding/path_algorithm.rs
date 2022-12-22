@@ -2,9 +2,9 @@ use crate::prelude::*;
 
 pub trait PathAlgorithm {
     fn compute_path<T>(
-        origin: ChunkPosition,
-        destination: ChunkPosition,
+        origin: UVec2,
+        destination: UVec2,
         provider: &mut impl PathProvider<T>,
         pass_through_data: T,
-    ) -> Vec<ChunkPosition>;
+    ) -> Vec<UVec2>;
 }

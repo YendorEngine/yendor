@@ -7,13 +7,12 @@ use crate::prelude::*;
 /// Line-drawing iterator
 #[derive(Debug, Clone)]
 pub struct BresenhamLineIter {
-    abs_x: i64,      // Absolute start.x
-    abs_y: i64,      // Absolute start.y
-    abs_z: i32,      // Absolute start.z
-    end_x: i64,      // Offset end.x
-    delta_step: i64, // number of steps before we need to change y
-    delta_x: i64,
-    delta_y: i64,
+    abs_x: i32,      // Absolute start.x
+    abs_y: i32,      // Absolute start.y
+    end_x: i32,      // Offset end.x
+    delta_step: i32, // number of steps before we need to change y
+    delta_x: i32,
+    delta_y: i32,
     octant: Octant,
 }
 
@@ -21,9 +20,9 @@ impl BresenhamLineIter {
     /// Creates a new iterator.Yields intermediate points between `start`
     /// and `end`. Does include `start` but not `end`.
     #[inline]
-    pub fn new(start: ChunkPosition, end: ChunkPosition) -> Self {
+    pub fn new(start: IVec2, end: IVec2) -> Self {
         // figure out which octant `end` is relative to `start`
-        let octant = start.octant_to(end);
+        let octant = Octant::new(start, end);
 
         let start_offset = octant.to_offset(start);
         // convert end to a relative offset in `Octant(0)`
@@ -41,14 +40,13 @@ impl BresenhamLineIter {
             end_x: end_offset.0,
             abs_x: start_offset.0,
             abs_y: start_offset.1,
-            abs_z: start.abs_z(),
             delta_step: delta_y - delta_x,
         }
     }
 
     /// Return the next point without checking if we are past `end`.
     #[inline]
-    pub fn advance(&mut self) -> ChunkPosition {
+    pub fn advance(&mut self) -> IVec2 {
         let current_point = (self.abs_x, self.abs_y);
         if self.delta_step >= 0 {
             self.abs_y += 1; // we can add because self.end_x is to the right and up(Octant(0))
@@ -61,12 +59,12 @@ impl BresenhamLineIter {
         self.abs_x += 1; // we can add because self.end_x is to the right and up(Octant(0))
         // we are moving towards the `end` offset into `Octant()`, so now we must wrap this new
         // coordinate back around to the original direction.
-        self.octant.from_offset(current_point, self.abs_z)
+        self.octant.from_offset(current_point)
     }
 }
 
 impl Iterator for BresenhamLineIter {
-    type Item = ChunkPosition;
+    type Item = IVec2;
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
@@ -84,15 +82,15 @@ pub struct BresenhamLineInclusiveIter(BresenhamLineIter);
 impl BresenhamLineInclusiveIter {
     /// Creates a new iterator. Yields points `start..=end`.
     #[inline]
-    pub fn new(start: ChunkPosition, end: ChunkPosition) -> Self { Self(BresenhamLineIter::new(start, end)) }
+    pub fn new(start: IVec2, end: IVec2) -> Self { Self(BresenhamLineIter::new(start, end)) }
 
     /// Return the next point without checking if we are past `end`.
     #[inline]
-    pub fn advance(&mut self) -> ChunkPosition { self.0.advance() }
+    pub fn advance(&mut self) -> IVec2 { self.0.advance() }
 }
 
 impl Iterator for BresenhamLineInclusiveIter {
-    type Item = ChunkPosition;
+    type Item = IVec2;
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {

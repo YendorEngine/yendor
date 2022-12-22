@@ -13,11 +13,11 @@ pub enum PathFinder {
 impl PathFinder {
     pub fn compute<T>(
         &self,
-        origin: ChunkPosition,
-        destination: ChunkPosition,
+        origin: UVec2,
+        destination: UVec2,
         provider: &mut impl PathProvider<T>,
         pass_through_data: T,
-    ) -> Vec<ChunkPosition> {
+    ) -> Vec<UVec2> {
         match self {
             Self::Astar => AStar::compute_path(origin, destination, provider, pass_through_data),
             Self::Bfs => Bfs::compute_path(origin, destination, provider, pass_through_data),

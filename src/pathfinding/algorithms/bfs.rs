@@ -4,11 +4,11 @@ pub struct Bfs;
 
 impl PathAlgorithm for Bfs {
     fn compute_path<T>(
-        origin: ChunkPosition,
-        destination: ChunkPosition,
+        origin: UVec2,
+        destination: UVec2,
         provider: &mut impl PathProvider<T>,
         mut pass_through_data: T,
-    ) -> Vec<ChunkPosition> {
+    ) -> Vec<UVec2> {
         let result = bfs(
             &origin,
             |&p| provider.get_neighbors(p, &mut pass_through_data),

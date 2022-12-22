@@ -1,19 +1,3 @@
-pub mod chunked {
-    mod chunk;
-    pub use chunk::*;
-    mod chunk_manager;
-    pub use chunk_manager::*;
-    mod chunk_offset;
-    pub use chunk_offset::*;
-    mod chunk_position;
-    pub use chunk_position::*;
-    mod chunk_provider;
-    pub use chunk_provider::*;
-    mod octant;
-    pub use octant::*;
-}
-pub use chunked::*;
-
 pub mod grids {
     #[cfg(feature = "reflect")]
     mod reflect {
@@ -53,13 +37,14 @@ pub mod shapes {
     }
     pub(crate) use iter::*;
 
+    mod octant;
+    pub use octant::*;
     mod circle;
     pub use circle::*;
     mod line;
     pub use line::*;
     mod rectangle;
     pub use rectangle::*;
-
     mod shape;
     pub use shape::*;
 }

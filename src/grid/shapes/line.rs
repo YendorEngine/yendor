@@ -1,18 +1,14 @@
-use std::fmt::Display;
-
-use super::*;
 use crate::prelude::*;
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
-#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, Eq, PartialEq)]
 pub struct Line {
-    end: ChunkPosition,
-    start: ChunkPosition,
+    end: IVec2,
+    start: IVec2,
 }
 
 impl Line {
     #[inline(always)]
-    pub const fn new(start: ChunkPosition, end: ChunkPosition) -> Self { Self { start, end } }
+    pub const fn new(start: IVec2, end: IVec2) -> Self { Self { start, end } }
 
     #[allow(dead_code)]
     #[inline]
@@ -21,13 +17,13 @@ impl Line {
 
 impl Shape for Line {
     #[inline]
-    fn get_count(&self) -> u32 { self.start.distance(self.end) }
+    fn get_count(&self) -> u32 { (self.end - self.start).abs().max_element() as u32 }
 
     #[inline]
-    fn contains(&self, position: ChunkPosition) -> bool { self.get_positions().contains(&position) }
+    fn contains(&self, position: IVec2) -> bool { self.get_positions().contains(&position) }
 
     #[inline]
-    fn get_positions(&self) -> HashSet<ChunkPosition> { self.iter().collect() }
+    fn get_positions(&self) -> HashSet<IVec2> { self.iter().collect() }
 
     #[inline]
     fn boxed_iter(&self) -> BoxedShapeIter { Box::new(self.into_iter()) }
@@ -42,7 +38,7 @@ impl ShapeIter for Line {
 
 impl IntoIterator for Line {
     type IntoIter = BresenhamLineInclusiveIter;
-    type Item = ChunkPosition;
+    type Item = IVec2;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter { BresenhamLineInclusiveIter::new(self.start, self.end) }

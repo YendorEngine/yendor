@@ -1,16 +1,16 @@
 use crate::prelude::*;
 
 pub struct Quadrant<'a, T> {
+    origin: IVec2,
     direction: Direction,
     pass_through_data: &'a mut T,
     provider: &'a mut dyn FovProvider<T>,
-    origin: ChunkPosition,
 }
 
 impl<'a, T> Quadrant<'a, T> {
     pub fn new(
         direction: Direction,
-        origin: ChunkPosition,
+        origin: IVec2,
         provider: &'a mut dyn FovProvider<T>,
         pass_through_data: &'a mut T,
     ) -> Self {
@@ -38,7 +38,7 @@ impl<'a, T> Quadrant<'a, T> {
     pub fn distance_squared(&self, tile: IVec2) -> u64 { (tile.x * tile.x + tile.y * tile.y) as u64 }
 
     // mark this tile as visible
-    pub fn set_visible(&mut self, visible_points: &mut HashSet<ChunkPosition>, tile: IVec2) {
+    pub fn set_visible(&mut self, visible_points: &mut HashSet<IVec2>, tile: IVec2) {
         visible_points.insert(self.origin + self.transform(tile));
     }
 
