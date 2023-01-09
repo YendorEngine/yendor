@@ -2,4 +2,4 @@
     <img src="./assets/logo.png">
 </p>
 
-<h4 style="text-align: center;">A work-in-progress, meta-engine built on Bevy</h4>1
+<h4 style="text-align: center;">A work-in-progress, meta-engine built on Bevy</h4>
