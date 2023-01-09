@@ -1,0 +1,16 @@
+[package]
+authors     = ["Jacob LeCoq (BigBanana) <lecoqjacob@gmail.com>"]
+description = "Small crate providing 2D camera shake for bevy_ecs."
+edition     = "2021"
+license     = "MIT OR Apache-2.0"
+name        = "yendor_camera_shake"
+repository  = "https://github.com/YendorEngine/yendor"
+version     = "0.1.0"
+
+[dependencies]
+bevy = { workspace = true }
+# For now we are pointing at a git branch `dev` but this should be rectified when a new release is made.
+noise = { git = "https://github.com/Razaekel/noise-rs", branch = "develop" }
+
+[dev-dependencies]
+bevy_core_pipeline = "0.9"

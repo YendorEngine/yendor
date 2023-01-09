@@ -1,0 +1,14 @@
+[package]
+authors = ["Jacob LeCoq (BigBanana) <lecoqjacob@gmail.com>"]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+name    = "yendor_has_load_progress_macros"
+version = "0.1.0"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+quote       = "1"
+syn         = { version = "1", features = ["extra-traits"] }

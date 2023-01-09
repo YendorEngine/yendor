@@ -1,0 +1,11 @@
+[package]
+authors    = ["Jacob LeCoq (BigBanana) <lecoqjacob@gmail.com>"]
+edition    = "2021"
+license    = "MIT OR Apache-2.0"
+name       = "yendor_bevy_utils"
+repository = "https://github.com/YendorEngine/yendor"
+version    = "0.1.0"
+
+[dependencies]
+bevy_ecs         = "0.9.1"
+yendor_type_ulid = { path = "../yendor_type_ulid" }

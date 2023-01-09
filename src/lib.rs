@@ -1,30 +1,21 @@
-// Clippy
-#![allow(clippy::module_inception)]
-// Features
-#![feature(trait_alias)]
+//! Opinionated game meta-engine built on Bevy.
 
-pub mod directions;
-pub mod distance;
-#[cfg(feature = "fov")]
-pub mod fov;
-pub mod grid;
-#[cfg(feature = "pathfinding")]
-pub mod pathfinding;
-#[cfg(feature = "random")]
-pub mod random;
-pub mod utility;
+#[doc(inline)]
+pub use {yendor_asset as asset, yendor_bevy_utils as bevy_utils};
 
-pub(crate) mod imports;
-
+/// Yendor lib prelude
 pub mod prelude {
-    #[rustfmt::skip]
-    pub use crate::imports::*;
+    pub use crate::{asset::prelude::*, bevy_utils::*};
+}
 
-    #[cfg(feature = "fov")]
-    pub use crate::fov::*;
-    #[cfg(feature = "pathfinding")]
-    pub use crate::pathfinding::*;
-    #[cfg(feature = "random")]
-    pub use crate::random::*;
-    pub use crate::{directions::*, distance::*, grid::*, utility::*};
+/// This crate provides 2D camera shake using the methodology described in this excellent [GDC
+/// talk](https://www.youtube.com/watch?v=tu-Qe66AvtY) by Squirrel Eiserloh.
+#[cfg(feature = "camera_shake")]
+pub mod camera_shake {
+    pub use yendor_camera_shake::*;
+}
+
+#[cfg(feature = "roguelike")]
+pub mod roguelike {
+    pub use yendor_rl::*;
 }

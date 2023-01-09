@@ -1,0 +1,25 @@
+[package]
+authors    = ["Jacob LeCoq (BigBanana) <lecoqjacob@gmail.com>"]
+edition    = "2021"
+license    = "MIT OR Apache-2.0"
+name       = "yendor_bevy_asset"
+repository = "https://github.com/YendorEngine/yendor"
+version    = "0.1.0"
+
+[dependencies]
+bevy = { workspace = true }
+
+serde      = { version = "1.0.0", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+uuid       = "1"
+
+yendor_bevy_asset_macros = { path = "./macros" }
+yendor_bevy_utils        = { path = "../yendor_bevy_utils" }
+yendor_lib               = { path = "../../", features = [] }
+yendor_type_ulid         = { path = "../yendor_type_ulid" }
+
+[dev-dependencies.bevy]
+default-features = false
+features         = ["x11", "bevy_winit", "bevy_asset"]
+version          = "0.9.0"

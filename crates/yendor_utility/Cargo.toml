@@ -1,0 +1,10 @@
+[package]
+authors = ["Jacob LeCoq (BigBanana) <lecoqjacob@gmail.com>"]
+edition = "2021"
+name    = "yendor_utility"
+version = "0.1.0"
+
+[dependencies]
+bevy             = { workspace = true }
+fxhash           = "0.2"
+yendor_type_ulid = { version = "0.1.0", path = "../yendor_type_ulid" }

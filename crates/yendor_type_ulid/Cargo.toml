@@ -1,0 +1,15 @@
+[package]
+authors    = ["Jacob LeCoq (BigBanana) <lecoqjacob@gmail.com>"]
+edition    = "2021"
+name       = "yendor_type_ulid"
+repository = "https://github.com/YendorEngine/yendor"
+version    = "0.1.0"
+
+[features]
+default = ["std"]
+# Implement TypeUlid for basic types in the standard library
+std = []
+
+[dependencies]
+ulid                    = { version = "1.0.0", default-features = false }
+yendor_type_ulid_macros = { version = "0.1.0", path = "./macros" }

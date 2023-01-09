@@ -1,0 +1,30 @@
+[package]
+authors = ["Jacob LeCoq (BigBanana) <lecoqjacob@gmail.com>"]
+edition = "2021"
+name    = "yendor_rl"
+version = "0.1.0"
+
+[features]
+default = ["fov", "pathfinding", "random", "serialize"]
+
+debug = []
+
+bitgrid = []
+
+fov = []
+
+pathfinding = ["dep:pathfinding"]
+
+random = ["dep:rand"]
+
+reflect = []
+
+serialize = ["dep:serde", "bitvec/serde"]
+
+[dependencies]
+bevy = { workspace = true }
+
+bitvec      = { version = "1", optional = true }
+pathfinding = { version = "4", optional = true }
+rand        = { version = "0.8", optional = true }
+serde       = { version = "1", features = ["derive"], optional = true }

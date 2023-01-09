@@ -1,0 +1,17 @@
+[package]
+authors    = ["Jacob LeCoq (BigBanana) <lecoqjacob@gmail.com>"]
+edition    = "2021"
+license    = "MIT OR Apache-2.0"
+name       = "yendor_bevy_asset_macros"
+repository = "https://github.com/YendorEngine/yendor"
+version    = "0.1.0"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0.43"
+quote       = "1.0.21"
+regex       = "1.0.0"
+syn         = { version = "1.0.100", features = ["extra-traits"] }
+ulid        = { version = "1.0.0", default-features = false }
