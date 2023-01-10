@@ -404,9 +404,9 @@ impl<'de> serde::de::Visitor<'de> for UntypedHandleVisitor {
 
 #[cfg(feature = "has_load_progress")]
 mod has_load_progress {
-    use bevy_asset::LoadState;
-    use type_ulid::TypeUlid;
+    use bevy::asset::LoadState;
     use yendor_has_load_progress::{HasLoadProgress, LoadProgress};
+    use yendor_type_ulid::TypeUlid;
 
     impl<T: TypeUlid> HasLoadProgress for super::Handle<T> {
         fn load_progress(
@@ -456,7 +456,7 @@ mod bevy {
     }
 
     impl<T: Asset + TypeUlid> super::Handle<T> {
-        /// Get a Bevy weak [`Handle`] from from this bones asset handle.
+        /// Get a Bevy weak [`Handle`] from from this yendor asset handle.
         pub fn get_bevy_handle(&self) -> Handle<T> {
             let asset_path = AssetPath::new(
                 self.path.path.to_path_buf(),
@@ -467,7 +467,7 @@ mod bevy {
     }
 
     impl<T: TypeUlid> super::Handle<T> {
-        /// Get a Bevy weak [`HandleUntyped`] from this bones asset handle.
+        /// Get a Bevy weak [`HandleUntyped`] from this yendor asset handle.
         pub fn get_bevy_handle_untyped(&self) -> HandleUntyped {
             let asset_path = AssetPath::new(
                 self.path.path.to_path_buf(),
@@ -477,7 +477,7 @@ mod bevy {
         }
     }
     impl super::UntypedHandle {
-        /// Get a Bevy weak [`HandleUntyped`] from this bones asset handle.
+        /// Get a Bevy weak [`HandleUntyped`] from this yendor asset handle.
         pub fn get_bevy_handle(&self) -> HandleUntyped {
             let asset_path = AssetPath::new(
                 self.path.path.to_path_buf(),

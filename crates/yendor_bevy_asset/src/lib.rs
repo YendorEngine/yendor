@@ -1,6 +1,6 @@
-//! An asset integration between Bevy and bones.
+//! An asset integration between Bevy and Yendor.
 //!
-//! Provides an easy way to load metadata for bones games using Bevy assets.
+//! Provides an easy way to load metadata for yendor games using Bevy assets.
 
 #![warn(missing_docs)]
 // This cfg_attr is needed because `rustdoc::all` includes lints not supported on stable
@@ -15,16 +15,19 @@ use bevy::{
 };
 use bevy_asset::Asset;
 
+mod loading;
+pub use loading::*;
+
 /// The prelude.
 pub mod prelude {
-    pub use yendor_lib::prelude as bones;
+    pub use yendor_lib::prelude as yendor;
     pub use yendor_type_ulid::TypeUlid;
 
     pub use crate::*;
 }
 
 use prelude::*;
-pub use yendor_bevy_asset_macros::{BonesBevyAsset, BonesBevyAssetLoad};
+pub use yendor_bevy_asset_macros::{YendorBevyAsset, YendorBevyAssetLoad};
 
 #[doc(hidden)]
 pub mod _private {
@@ -39,29 +42,29 @@ pub mod _private {
 struct DummyAsset;
 
 /// Trait that may be derived to implement a Bevy asset type.
-// TODO: Integrate or move HasLoadProgress with BonesBevyAsset.
-pub trait BonesBevyAsset: TypeUlid + Asset {
+// TODO: Integrate or move HasLoadProgress with YendorBevyAsset.
+pub trait YendorBevyAsset: TypeUlid + Asset {
     /// Install the asset loader for this type.
     fn install_asset(app: &mut App);
 }
 
-/// Extension trait for [`App`] that makes it easy to register bones assets.
-pub trait BonesBevyAssetAppExt {
-    /// Adds a [`BonesBevyAsset`] to the app, including it's asset loader.
-    fn add_yendor_asset<T: BonesBevyAsset>(&mut self) -> &mut Self;
+/// Extension trait for [`App`] that makes it easy to register yendor assets.
+pub trait YendorBevyAssetAppExt {
+    /// Adds a [`YendorBevyAsset`] to the app, including it's asset loader.
+    fn add_yendor_asset<T: YendorBevyAsset>(&mut self) -> &mut Self;
 }
 
-impl BonesBevyAssetAppExt for App {
-    fn add_yendor_asset<T: BonesBevyAsset>(&mut self) -> &mut Self {
+impl YendorBevyAssetAppExt for App {
+    fn add_yendor_asset<T: YendorBevyAsset>(&mut self) -> &mut Self {
         T::install_asset(self);
 
         self
     }
 }
 
-/// Trait implemented for types that may appear in the fields of a [`BonesBevyAsset`] and may
+/// Trait implemented for types that may appear in the fields of a [`YendorBevyAsset`] and may
 /// need to perform aditional loading with the bevy load context.
-pub trait BonesBevyAssetLoad {
+pub trait YendorBevyAssetLoad {
     /// Allows the field to do any extra loading that it might need to do from the Bevy load
     /// context when the asset is loaded.
     fn load(
@@ -73,7 +76,7 @@ pub trait BonesBevyAssetLoad {
     }
 }
 
-impl<T: TypeUlid> BonesBevyAssetLoad for bones::Handle<T> {
+impl<T: TypeUlid> YendorBevyAssetLoad for yendor::Handle<T> {
     fn load(
         &mut self,
         load_context: &mut bevy_asset::LoadContext,
@@ -82,7 +85,7 @@ impl<T: TypeUlid> BonesBevyAssetLoad for bones::Handle<T> {
         // Convert this path to a path relative to the parent asset
         self.path.normalize_relative_to(load_context.path());
 
-        // Create a bevy asset path from this bones handle
+        // Create a bevy asset path from this yendor handle
         let asset_path = bevy_asset::AssetPath::new(
             self.path.path.to_path_buf(),
             self.path.clone().label.map(|x| x.to_string()),
@@ -98,7 +101,7 @@ impl<T: TypeUlid> BonesBevyAssetLoad for bones::Handle<T> {
     }
 }
 
-impl<T: BonesBevyAssetLoad> BonesBevyAssetLoad for Vec<T> {
+impl<T: YendorBevyAssetLoad> YendorBevyAssetLoad for Vec<T> {
     fn load(
         &mut self,
         load_context: &mut bevy_asset::LoadContext,
@@ -112,7 +115,7 @@ impl<T: BonesBevyAssetLoad> BonesBevyAssetLoad for Vec<T> {
 macro_rules! impl_default_traits {
     ( $($type:ty),* $(,)? ) => {
         $(
-            impl BonesBevyAssetLoad for $type {}
+            impl YendorBevyAssetLoad for $type {}
         )*
     };
 }

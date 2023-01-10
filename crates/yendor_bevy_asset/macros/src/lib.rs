@@ -4,7 +4,7 @@ use quote::{format_ident, quote, quote_spanned};
 use syn::{parse_quote, spanned::Spanned};
 
 /// Derive macro for the `YendorBevyAsset` trait.
-#[proc_macro_derive(BonesBevyAsset, attributes(asset_id, asset))]
+#[proc_macro_derive(YendorBevyAsset, attributes(asset_id, asset))]
 pub fn yendor_bevy_asset(input: TokenStream) -> TokenStream {
     let input = syn::parse(input).unwrap();
 
@@ -70,7 +70,7 @@ fn impl_yendor_bevy_asset(input: &syn::DeriveInput) -> TokenStream2 {
         }
         let field_ident = field.ident.as_ref().expect("Field identifier missing");
         field_loads.push(quote_spanned! { field_ident.span() =>
-            ::yendor_bevy_asset::BonesBevyAssetLoad::load(
+            ::yendor_bevy_asset::YendorBevyAssetLoad::load(
                 &mut meta.#field_ident,
                 load_context,
                 &mut dependencies
@@ -80,12 +80,12 @@ fn impl_yendor_bevy_asset(input: &syn::DeriveInput) -> TokenStream2 {
 
     quote! {
         mod #module_ident {
-            use ::type_ulid::TypeUlid;
+            use ::yendor_type_ulid::TypeUlid;
             use ::bevy::asset::AddAsset;
             use super::#item_ident;
 
             // Make sure `TypeUlid` is implemented
-            trait RequiredBounds: type_ulid::TypeUlid + for<'de> ::serde::Deserialize<'de> {}
+            trait RequiredBounds: yendor_type_ulid::TypeUlid + for<'de> ::serde::Deserialize<'de> {}
             impl RequiredBounds for #item_ident {}
 
             impl ::bevy::reflect::TypeUuid for #item_ident {
@@ -128,7 +128,7 @@ fn impl_yendor_bevy_asset(input: &syn::DeriveInput) -> TokenStream2 {
                 }
             }
 
-            impl ::yendor_bevy_asset::BonesBevyAsset for #item_ident {
+            impl ::yendor_bevy_asset::YendorBevyAsset for #item_ident {
                 fn install_asset(app: &mut ::bevy::app::App) {
                     app
                         .add_asset::<Self>()
@@ -139,8 +139,8 @@ fn impl_yendor_bevy_asset(input: &syn::DeriveInput) -> TokenStream2 {
     }
 }
 
-/// Derive macro for the `BonesBevyAssetLoad` trait.
-#[proc_macro_derive(BonesBevyAssetLoad, attributes(asset))]
+/// Derive macro for the `YendorBevyAssetLoad` trait.
+#[proc_macro_derive(YendorBevyAssetLoad, attributes(asset))]
 pub fn yendor_bevy_asset_load(input: TokenStream) -> TokenStream {
     let input = syn::parse(input).unwrap();
 
@@ -171,7 +171,7 @@ fn impl_yendor_bevy_asset_load(input: &syn::DeriveInput) -> TokenStream2 {
                 }
                 let field_ident = field.ident.as_ref().expect("Field identifier missing");
                 field_loads.push(quote_spanned! { field_ident.span() =>
-                    ::yendor_bevy_asset::BonesBevyAssetLoad::load(
+                    ::yendor_bevy_asset::YendorBevyAssetLoad::load(
                         &mut self.#field_ident,
                         load_context,
                         dependencies
@@ -192,7 +192,7 @@ fn impl_yendor_bevy_asset_load(input: &syn::DeriveInput) -> TokenStream2 {
                             .collect::<Vec<_>>();
                         let loads = ids.iter().map(|id| {
                             quote! {
-                                ::yendor_bevy_asset::BonesBevyAssetLoad::load(#id, load_context, dependencies);
+                                ::yendor_bevy_asset::YendorBevyAssetLoad::load(#id, load_context, dependencies);
                             }
                         });
 
@@ -211,7 +211,7 @@ fn impl_yendor_bevy_asset_load(input: &syn::DeriveInput) -> TokenStream2 {
                             .collect::<Vec<_>>();
                         let loads = ids.iter().map(|id| {
                             quote! {
-                                ::yendor_bevy_asset::BonesBevyAssetLoad::load(#id, load_context, dependencies);
+                                ::yendor_bevy_asset::YendorBevyAssetLoad::load(#id, load_context, dependencies);
                             }
                         });
 
@@ -241,13 +241,120 @@ fn impl_yendor_bevy_asset_load(input: &syn::DeriveInput) -> TokenStream2 {
     };
 
     quote! {
-        impl ::yendor_bevy_asset::BonesBevyAssetLoad for #item_ident {
+        impl ::yendor_bevy_asset::YendorBevyAssetLoad for #item_ident {
             fn load(
                 &mut self,
                 load_context: &mut bevy::asset::LoadContext,
                 dependencies: &mut Vec<bevy::asset::AssetPath<'static>>,
             ) {
                 #(#field_loads)*
+            }
+        }
+    }
+}
+
+/// Derive macro for `HasLoadProgress`
+///
+/// May be used to implement `HasLoadProgress` on structs where all fields implement
+/// `HasLoadProgress`.
+///
+/// Fields not implementing `HasLoadProgress` may be skipped with `#[has_load_progress(none)]`
+/// added to the field.
+///
+/// `#[has_load_progress(none)]` may also be added to the struct itself to use the default
+/// implementation of `HasLoadProgress` which returns no progress and nothing to load.
+///
+/// `#[has_load_progress(none)]` could also be added to enums to derive the default
+/// implementation with no load progress, but cannot be added to enum variants.
+#[proc_macro_derive(HasLoadProgress, attributes(has_load_progress))]
+pub fn has_load_progress(input: TokenStream) -> TokenStream {
+    let input = syn::parse(input).unwrap();
+
+    impl_has_load_progress(&input).into()
+}
+
+fn impl_has_load_progress(input: &syn::DeriveInput) -> TokenStream2 {
+    // The attribute that may be added to skip fields or use the default implementation.
+    let no_load_attr: syn::Attribute = parse_quote! {
+        #[has_load_progress(none)]
+    };
+
+    let item_ident = &input.ident;
+    let mut impl_function_body = quote! {};
+
+    // Check for `#[has_load_progress(none)]` on the item itself
+    let mut skip_all_fields = false;
+    for attr in &input.attrs {
+        if attr.path == parse_quote!(has_load_progress) {
+            if attr == &no_load_attr {
+                skip_all_fields = true;
+            } else {
+                return quote_spanned!(attr.span() =>
+                    compile_error!("Attribute must be `#[has_load_progress(none)]` if specified");
+                );
+            }
+        }
+    }
+
+    // If we are skipping all fields
+    if skip_all_fields {
+        impl_function_body = quote! {
+            yendor_bevy_asset::LoadProgress::default()
+        };
+
+    // If we should process struct fields
+    } else {
+        // Parse the struct
+        let in_struct = match &input.data {
+            syn::Data::Struct(s) => s,
+            syn::Data::Enum(_) | syn::Data::Union(_) => {
+                return quote_spanned! { input.ident.span() =>
+                    compile_error!("You may only derive HasLoadProgress on structs");
+                };
+            },
+        };
+
+        // Start a list of the progresses for each field
+        let mut progresses = Vec::new();
+        'field: for field in &in_struct.fields {
+            // Skip this field if it has `#[has_load_progress(none)]`
+            for attr in &field.attrs {
+                if attr.path == parse_quote!(has_load_progress) {
+                    if attr == &no_load_attr {
+                        continue 'field;
+                    } else {
+                        impl_function_body = quote_spanned! { attr.span() =>
+                            compile_error!("Attribute be `#[has_load_progress(none)]` if specified");
+                        }
+                    }
+                }
+            }
+
+            // Add this fields load progress to the list of progresses
+            let field_ident = field.ident.as_ref().expect("Field ident");
+            progresses.push(quote_spanned! { field_ident.span() =>
+                yendor_bevy_asset::HasLoadProgress::load_progress(
+                    &self.#field_ident,
+                    loading_resources
+                )
+            })
+        }
+
+        // Retrun the merged progress result
+        impl_function_body = quote! {
+            #impl_function_body
+            yendor_bevy_asset::LoadProgress::merged([ #( #progresses),* ])
+        };
+    }
+
+    // Fill out rest of impl block
+    quote! {
+        impl yendor_bevy_asset::HasLoadProgress for #item_ident {
+            fn load_progress(
+                &self,
+                loading_resources: &yendor_bevy_asset::LoadingResources
+            ) -> yendor_bevy_asset::LoadProgress {
+                #impl_function_body
             }
         }
     }

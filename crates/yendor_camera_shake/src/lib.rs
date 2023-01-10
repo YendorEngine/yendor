@@ -5,7 +5,7 @@
 //! ```
 //! # use bevy_core_pipeline::prelude::*;
 //! use bevy::prelude::*;
-//! use bones_camera_shake::*;
+//! use yendor_camera_shake::*;
 //!
 //! fn main() {
 //!     App::new()
@@ -103,7 +103,7 @@ impl CameraShake {
 ///
 /// ```
 /// # use bevy::prelude::*;
-/// # use bones_camera_shake::*;
+/// # use yendor_camera_shake::*;
 /// fn my_system(mut ev_trauma: EventWriter<CameraTrauma>) {
 ///     /* some traumatic event... */
 ///     ev_trauma.send(CameraTrauma(0.5));
