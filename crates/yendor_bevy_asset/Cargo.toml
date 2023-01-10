@@ -7,17 +7,18 @@ repository = "https://github.com/YendorEngine/yendor"
 version    = "0.1.0"
 
 [dependencies]
-bevy = { workspace = true }
+yendor_bevy_asset_macros = { path = "./macros" }
+yendor_bevy_utils        = { path = "../yendor_bevy_utils" }
+yendor_lib               = { path = "../../", features = [] }
+yendor_type_ulid         = { path = "../yendor_type_ulid" }
+
+bevy      = { workspace = true }
+bevy_egui = { version = "0.18.0", optional = true }
 
 serde      = { version = "1.0.0", features = ["derive"] }
 serde_json = "1"
 serde_yaml = "0.9"
 uuid       = "1"
-
-yendor_bevy_asset_macros = { path = "./macros" }
-yendor_bevy_utils        = { path = "../yendor_bevy_utils" }
-yendor_lib               = { path = "../../", features = [] }
-yendor_type_ulid         = { path = "../yendor_type_ulid" }
 
 [dev-dependencies.bevy]
 default-features = false
