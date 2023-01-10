@@ -15,8 +15,10 @@ use bevy::{
 };
 use bevy_asset::Asset;
 
-mod loading;
-pub use loading::*;
+#[cfg(feature = "load_progress")]
+mod load_progress;
+#[cfg(feature = "load_progress")]
+pub use load_progress::*;
 
 /// The prelude.
 pub mod prelude {

@@ -7,16 +7,16 @@ repository = "https://github.com/YendorEngine/yendor"
 version    = "0.1.0"
 
 [dependencies]
-atomic_refcell = "0.1"
-bevy           = { workspace = true, default-features = true, features = ["bevy_asset"] }
-serde          = "1"
-ulid           = { workspace = true }
+yendor_bevy_utils = { path = "../yendor_bevy_utils", optional = true }
+yendor_type_ulid  = { path = "../yendor_type_ulid" }
+yendor_utility    = { path = "../yendor_utility" }
 
-yendor_bevy_utils        = { path = "../yendor_bevy_utils" }
-yendor_has_load_progress = { path = "../yendor_has_load_progress", optional = true }
-yendor_type_ulid         = { path = "../yendor_type_ulid" }
-yendor_utility           = { path = "../yendor_utility" }
+bevy = { workspace = true, default-features = true, features = ["bevy_asset"], optional = true }
+ulid = { workspace = true }
+
+atomic_refcell = "0.1"
+serde          = "1"
 
 [features]
-default           = []
-has_load_progress = ["dep:yendor_has_load_progress"]
+bevy    = ["dep:bevy", "dep:yendor_bevy_utils"]
+default = []

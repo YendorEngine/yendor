@@ -13,6 +13,7 @@ use std::{
     sync::Arc,
 };
 
+#[cfg(feature = "bevy")]
 use ::bevy::prelude::{Deref, DerefMut, Res};
 use yendor_utility::ulid::{TypeUlid, UlidMap};
 
@@ -40,12 +41,14 @@ pub struct AssetProviders {
     type_ids: UlidMap<TypeId>,
 }
 
+#[cfg(feature = "bevy")]
 /// Type alias for getting the [`AssetProviders`] resource.
 pub type ResAssetProviders<'a> = Res<'a, AssetProvidersResource>;
 
 /// The type of the [`AssetProviders`] resource.
 // TODO: Make a custom system parameter to prevent needing to manualy .borrow() this resource.
-#[derive(Deref, DerefMut, Clone, TypeUlid)]
+#[derive(Clone, TypeUlid)]
+#[cfg_attr(feature = "bevy", derive(Deref, DerefMut))]
 #[ulid = "01GNWY5HKV5JZQRKG20ANJXHCK"]
 pub struct AssetProvidersResource(pub Arc<atomic_refcell::AtomicRefCell<AssetProviders>>);
 
@@ -402,50 +405,14 @@ impl<'de> serde::de::Visitor<'de> for UntypedHandleVisitor {
     }
 }
 
-#[cfg(feature = "has_load_progress")]
-mod has_load_progress {
-    use bevy::asset::LoadState;
-    use yendor_has_load_progress::{HasLoadProgress, LoadProgress};
-    use yendor_type_ulid::TypeUlid;
-
-    impl<T: TypeUlid> HasLoadProgress for super::Handle<T> {
-        fn load_progress(
-            &self,
-            loading_resources: &yendor_has_load_progress::LoadingResources,
-        ) -> yendor_has_load_progress::LoadProgress {
-            let bevy_handle = self.get_bevy_handle_untyped();
-            let state = loading_resources.asset_server.get_load_state(&bevy_handle);
-            let loaded = state == LoadState::Loaded;
-
-            LoadProgress {
-                #[allow(clippy::bool_to_int_with_if)]
-                loaded: if loaded { 1 } else { 0 },
-                total: 1,
-            }
-        }
-    }
-
-    impl HasLoadProgress for super::UntypedHandle {
-        fn load_progress(
-            &self,
-            loading_resources: &yendor_has_load_progress::LoadingResources,
-        ) -> LoadProgress {
-            let bevy_handle = self.get_bevy_handle();
-            let state = loading_resources.asset_server.get_load_state(&bevy_handle);
-            let loaded = state == LoadState::Loaded;
-
-            LoadProgress {
-                #[allow(clippy::bool_to_int_with_if)]
-                loaded: if loaded { 1 } else { 0 },
-                total: 1,
-            }
-        }
-    }
-}
-
 /// Implement bevy conversions
+#[cfg(feature = "bevy")]
+#[path = ""]
 mod bevy {
-    use bevy::asset::{prelude::*, Asset, AssetPath};
+    pub use bevy::{
+        asset::{prelude::*, Asset, AssetPath},
+        ecs::system::SystemParam,
+    };
     use yendor_bevy_utils::*;
     use yendor_type_ulid::TypeUlid;
 
@@ -476,6 +443,7 @@ mod bevy {
             HandleUntyped::weak(asset_path.into())
         }
     }
+
     impl super::UntypedHandle {
         /// Get a Bevy weak [`HandleUntyped`] from this yendor asset handle.
         pub fn get_bevy_handle(&self) -> HandleUntyped {

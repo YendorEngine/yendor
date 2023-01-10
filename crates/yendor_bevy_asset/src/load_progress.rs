@@ -9,12 +9,12 @@ use bevy::{
     asset::{Asset, LoadState},
     ecs::system::SystemParam,
     math::{UVec2, Vec2, Vec3},
-    prelude::{AssetServer, Entity, Res},
+    prelude::{AssetServer, Entity, Handle, HandleUntyped, Res},
     utils::HashMap,
 };
 // Export the derive macro
 pub use yendor_bevy_asset_macros::HasLoadProgress;
-use yendor_lib::prelude::{Handle, UntypedHandle};
+use yendor_utility::ulid::TypeUlid;
 
 /// A progress indicator holding how many items must be loaded and how many items have been
 /// loaded
@@ -34,6 +34,7 @@ impl std::fmt::Display for LoadProgress {
 
 impl LoadProgress {
     /// Get the load progress as a percentage
+    #[allow(dead_code)]
     pub fn as_percent(&self) -> f32 { self.loaded as f32 / self.total as f32 }
 
     /// Get a total load progress from an iterator of [`LoadProgress`]s
@@ -62,6 +63,10 @@ pub struct LoadingResources<'w, 's> {
     _phantom: PhantomData<&'s ()>,
 }
 
+// ========================= //
+// === HasLoadProgress
+// ========================= //
+
 /// Trait implemented on items that can report their load progress from the
 /// [`LoadingResources`].
 pub trait HasLoadProgress {
@@ -72,8 +77,7 @@ pub trait HasLoadProgress {
 // Implement `HasLoadProgress` for asset handles
 impl<T: Asset + yendor_type_ulid::TypeUlid> HasLoadProgress for Handle<T> {
     fn load_progress(&self, loading_resources: &LoadingResources) -> LoadProgress {
-        let loaded =
-            loading_resources.asset_server.get_load_state(self.get_bevy_handle()) == LoadState::Loaded;
+        let loaded = loading_resources.asset_server.get_load_state(self) == LoadState::Loaded;
 
         LoadProgress {
             total: 1,
@@ -82,10 +86,9 @@ impl<T: Asset + yendor_type_ulid::TypeUlid> HasLoadProgress for Handle<T> {
     }
 }
 
-impl HasLoadProgress for UntypedHandle {
+impl HasLoadProgress for HandleUntyped {
     fn load_progress(&self, loading_resources: &LoadingResources) -> LoadProgress {
-        let loaded =
-            loading_resources.asset_server.get_load_state(self.get_bevy_handle()) == LoadState::Loaded;
+        let loaded = loading_resources.asset_server.get_load_state(self) == LoadState::Loaded;
 
         LoadProgress {
             total: 1,
@@ -93,6 +96,10 @@ impl HasLoadProgress for UntypedHandle {
         }
     }
 }
+
+// ========================= //
+// === Impls
+// ========================= //
 
 // Impelement default `HasLoadProgress` for various basic types
 macro_rules! impl_default_load_progress {
@@ -121,5 +128,33 @@ impl<T: HasLoadProgress> HasLoadProgress for Vec<T> {
 impl<K, T: HasLoadProgress> HasLoadProgress for HashMap<K, T> {
     fn load_progress(&self, loading_resources: &LoadingResources) -> LoadProgress {
         LoadProgress::merged(self.values().map(|x| x.load_progress(loading_resources)))
+    }
+}
+
+impl<T: TypeUlid> HasLoadProgress for yendor_lib::prelude::Handle<T> {
+    fn load_progress(&self, loading_resources: &LoadingResources) -> LoadProgress {
+        let bevy_handle = self.get_bevy_handle_untyped();
+        let state = loading_resources.asset_server.get_load_state(&bevy_handle);
+        let loaded = state == LoadState::Loaded;
+
+        LoadProgress {
+            #[allow(clippy::bool_to_int_with_if)]
+            loaded: if loaded { 1 } else { 0 },
+            total: 1,
+        }
+    }
+}
+
+impl HasLoadProgress for yendor_lib::prelude::UntypedHandle {
+    fn load_progress(&self, loading_resources: &LoadingResources) -> LoadProgress {
+        let bevy_handle = self.get_bevy_handle();
+        let state = loading_resources.asset_server.get_load_state(&bevy_handle);
+        let loaded = state == LoadState::Loaded;
+
+        LoadProgress {
+            #[allow(clippy::bool_to_int_with_if)]
+            loaded: if loaded { 1 } else { 0 },
+            total: 1,
+        }
     }
 }

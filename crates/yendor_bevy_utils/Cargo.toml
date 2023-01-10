@@ -7,5 +7,5 @@ repository = "https://github.com/YendorEngine/yendor"
 version    = "0.1.0"
 
 [dependencies]
-bevy_ecs         = "0.9.1"
+bevy_ecs         = "0.9"
 yendor_type_ulid = { path = "../yendor_type_ulid" }

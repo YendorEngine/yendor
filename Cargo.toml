@@ -17,6 +17,7 @@ members  = [".", "crates/*"]
 resolver = "2"
 
 [features]
+bevy         = ["yendor_asset/bevy"]
 camera_shake = ["dep:yendor_camera_shake"]
 roguelike    = ["yendor_rl"]
 
