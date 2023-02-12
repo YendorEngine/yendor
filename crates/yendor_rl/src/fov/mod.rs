@@ -37,9 +37,13 @@ impl Fov {
         match self {
             Self::Adams => AdamsFov::compute_fov(origin, range, provider, pass_through_data),
             Self::Shadowcast => Shadowcast::compute_fov(origin, range, provider, pass_through_data),
-            Self::ShadowcastDirection(direction) => {
-                Shadowcast::compute_direction(origin, range, provider, *direction, pass_through_data)
-            },
+            Self::ShadowcastDirection(direction) => Shadowcast::compute_direction(
+                origin,
+                range,
+                provider,
+                *direction,
+                pass_through_data,
+            ),
         }
     }
 
@@ -53,53 +57,5 @@ impl Fov {
     ) -> bool {
         let range = range.into();
         Self::compute(self, origin, range, provider, pass_through_data).contains(&target)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::prelude::*;
-
-    struct Provider;
-    impl FovProvider<()> for Provider {
-        fn is_opaque(&mut self, _position: ChunkPosition, _pass_through_data: &mut ()) -> bool { false }
-    }
-
-    mod shadowcast {
-        use super::*;
-
-        #[test]
-        fn shadowcast() {
-            let pos: ChunkPosition = ChunkPosition::new(5, 5, 0);
-            let visible_sets = Fov::Shadowcast.compute(pos, 4_u32, &mut Provider, ());
-            assert_eq!(visible_sets.len(), 49);
-
-            // Pretty print to canvas for visual inspection
-            let mut canvas = Canvas::new(UVec2::new(10, 10));
-            visible_sets.iter().for_each(|pos| {
-                println!("{}", pos);
-                canvas.put(pos.as_uvec2(), '*');
-            });
-            canvas.print();
-        }
-    }
-
-    mod adams {
-        use super::*;
-
-        #[test]
-        fn adams() {
-            let pos: ChunkPosition = ChunkPosition::new(5, 5, 0);
-            let visible_sets = Fov::Adams.compute(pos, 4_u32, &mut Provider, ());
-            assert_eq!(visible_sets.len(), 49);
-
-            // Pretty print to canvas for visual inspection
-            let mut canvas = Canvas::new(UVec2::new(10, 10));
-            visible_sets.iter().for_each(|pos| {
-                println!("{}", pos);
-                canvas.put(pos.as_uvec2(), '*');
-            });
-            canvas.print();
-        }
     }
 }

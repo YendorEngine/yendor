@@ -13,7 +13,8 @@ impl Canvas {
 
     pub fn put(&mut self, pos: IVec2, glyph: char) {
         let i = pos.y as usize * self.size.x as usize + pos.x as usize;
-        self.string.replace_range(i..i + 1, std::str::from_utf8(&[glyph as u8]).unwrap());
+        self.string
+            .replace_range(i..i + 1, std::str::from_utf8(&[glyph as u8]).unwrap());
     }
 
     pub fn print(&self) {
@@ -34,13 +35,15 @@ impl Canvas {
 mod tests {
     use crate::prelude::*;
 
+    use super::Canvas;
+
     #[test]
     fn print_test() {
         let mut canvas = Canvas::new(UVec2::new(10, 5));
-        canvas.put(UVec2::new(1, 1), '*');
-        canvas.put(UVec2::new(2, 2), '*');
-        canvas.put(UVec2::new(3, 3), '*');
-        canvas.put(UVec2::new(4, 4), '*');
+        canvas.put(IVec2::new(1, 1), '*');
+        canvas.put(IVec2::new(2, 2), '*');
+        canvas.put(IVec2::new(3, 3), '*');
+        canvas.put(IVec2::new(4, 4), '*');
         canvas.print();
     }
 }

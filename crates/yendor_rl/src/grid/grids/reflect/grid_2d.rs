@@ -10,7 +10,8 @@ impl<T: FromReflect> GetTypeRegistration for Grid<T> {
         let mut registration = TypeRegistration::of::<Grid<T>>();
         registration.insert::<ReflectFromPtr>(FromType::<Grid<T>>::from_type());
         let ignored_indices = [].into_iter();
-        registration.insert::<serde::SerializationData>(serde::SerializationData::new(ignored_indices));
+        registration
+            .insert::<serde::SerializationData>(serde::SerializationData::new(ignored_indices));
         registration
     }
 }
@@ -71,9 +72,13 @@ impl<T: FromReflect> Struct for Grid<T> {
         }
     }
 
-    fn field_len(&self) -> usize { 2usize }
+    fn field_len(&self) -> usize {
+        2usize
+    }
 
-    fn iter_fields(&self) -> FieldIter { FieldIter::new(self) }
+    fn iter_fields(&self) -> FieldIter {
+        FieldIter::new(self)
+    }
 
     fn clone_dynamic(&self) -> DynamicStruct {
         let mut dynamic = DynamicStruct::default();
@@ -86,31 +91,49 @@ impl<T: FromReflect> Struct for Grid<T> {
 
 impl<T: FromReflect> Reflect for Grid<T> {
     #[inline]
-    fn type_name(&self) -> &str { std::any::type_name::<Self>() }
+    fn type_name(&self) -> &str {
+        std::any::type_name::<Self>()
+    }
 
     #[inline]
-    fn get_type_info(&self) -> &'static TypeInfo { <Self as Typed>::type_info() }
+    fn get_type_info(&self) -> &'static TypeInfo {
+        <Self as Typed>::type_info()
+    }
 
     #[inline]
-    fn into_any(self: Box<Self>) -> Box<dyn std::any::Any> { self }
+    fn into_any(self: Box<Self>) -> Box<dyn std::any::Any> {
+        self
+    }
 
     #[inline]
-    fn as_any(&self) -> &dyn std::any::Any { self }
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
 
     #[inline]
-    fn as_any_mut(&mut self) -> &mut dyn std::any::Any { self }
+    fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
+        self
+    }
 
     #[inline]
-    fn into_reflect(self: Box<Self>) -> Box<dyn Reflect> { self }
+    fn into_reflect(self: Box<Self>) -> Box<dyn Reflect> {
+        self
+    }
 
     #[inline]
-    fn as_reflect(&self) -> &dyn Reflect { self }
+    fn as_reflect(&self) -> &dyn Reflect {
+        self
+    }
 
     #[inline]
-    fn as_reflect_mut(&mut self) -> &mut dyn Reflect { self }
+    fn as_reflect_mut(&mut self) -> &mut dyn Reflect {
+        self
+    }
 
     #[inline]
-    fn clone_value(&self) -> Box<dyn Reflect> { Box::new(Struct::clone_dynamic(self)) }
+    fn clone_value(&self) -> Box<dyn Reflect> {
+        Box::new(Struct::clone_dynamic(self))
+    }
 
     #[inline]
     fn set(&mut self, value: Box<dyn Reflect>) -> Result<(), Box<dyn Reflect>> {
@@ -132,11 +155,19 @@ impl<T: FromReflect> Reflect for Grid<T> {
         }
     }
 
-    fn reflect_ref(&self) -> ReflectRef { ReflectRef::Struct(self) }
+    fn reflect_ref(&self) -> ReflectRef {
+        ReflectRef::Struct(self)
+    }
 
-    fn reflect_mut(&mut self) -> ReflectMut { ReflectMut::Struct(self) }
+    fn reflect_mut(&mut self) -> ReflectMut {
+        ReflectMut::Struct(self)
+    }
 
-    fn reflect_owned(self: Box<Self>) -> ReflectOwned { ReflectOwned::Struct(self) }
+    fn reflect_owned(self: Box<Self>) -> ReflectOwned {
+        ReflectOwned::Struct(self)
+    }
 
-    fn reflect_partial_eq(&self, value: &dyn Reflect) -> Option<bool> { struct_partial_eq(self, value) }
+    fn reflect_partial_eq(&self, value: &dyn Reflect) -> Option<bool> {
+        struct_partial_eq(self, value)
+    }
 }

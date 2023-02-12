@@ -11,23 +11,28 @@ pub trait GridLayer<T> {
 
     /// Create a new grid layer with the given dimensions (clone the given value).
     fn new_clone(dimensions: UVec2, value: T) -> Self
-    where T: Clone;
+    where
+        T: Clone;
 
     /// Clone a region of the grid onto a new grid.
     fn blit_clone(&mut self, to: UVec2, source: &Self, from: UVec2, dimensions: UVec2)
-    where T: Clone;
+    where
+        T: Clone;
 
     /// Create a new grid with the given dimensions (copy the given value).
     fn new_copy(dimensions: UVec2, value: T) -> Self
-    where T: Copy;
+    where
+        T: Copy;
 
     /// Copy a region from another grid into this grid.
     fn blit_copy(&mut self, to: UVec2, source: &Self, from: UVec2, dimensions: UVec2)
-    where T: Copy;
+    where
+        T: Copy;
 
     /// Create a new grid with the given dimensions and default values.
     fn new_default(dimensions: UVec2) -> Self
-    where T: Default;
+    where
+        T: Default;
 
     /// Create a new grid with the given dimensions and a function to generate values.
     fn new_fn(dimensions: UVec2, f: impl Fn((usize, IVec2)) -> T) -> Self;
@@ -55,7 +60,9 @@ pub trait GridLayer<T> {
 
     /// Tests whether a point is in bounds.
     #[inline]
-    fn in_bounds(&self, point: UVec2) -> bool { point.is_valid(self.dimensions()) }
+    fn in_bounds(&self, point: UVec2) -> bool {
+        point.is_valid(self.dimensions())
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Getter/Setter Functionality
@@ -65,7 +72,11 @@ pub trait GridLayer<T> {
     /// Returns `None` if the index is out of bounds.
     #[inline]
     fn get_idx(&self, coord: UVec2) -> Option<usize> {
-        if coord.is_valid(self.dimensions()) { Some(self.get_idx_unchecked(coord)) } else { None }
+        if coord.is_valid(self.dimensions()) {
+            Some(self.get_idx_unchecked(coord))
+        } else {
+            None
+        }
     }
 
     /// Gets the index corresponding to a coordinate, which is row-wise.
@@ -74,7 +85,9 @@ pub trait GridLayer<T> {
     ///
     /// Panics if the coordinate is out of bounds.
     #[inline]
-    fn get_idx_unchecked(&self, point: UVec2) -> usize { point.as_index_unchecked(self.width()) }
+    fn get_idx_unchecked(&self, point: UVec2) -> usize {
+        point.as_index_unchecked(self.width())
+    }
 
     /// Try Gets the `Point` corresponding to an index
     ///
@@ -82,7 +95,11 @@ pub trait GridLayer<T> {
     #[inline]
     fn index_to_pt(&self, idx: usize) -> Option<UVec2> {
         let pt = self.index_to_pt_unchecked(idx);
-        if pt.is_valid(self.dimensions()) { Some(pt) } else { None }
+        if pt.is_valid(self.dimensions()) {
+            Some(pt)
+        } else {
+            None
+        }
     }
 
     /// Gets the `Point` corresponding to an index

@@ -22,11 +22,15 @@ impl PathFinder {
             Self::Astar => AStar::compute_path(origin, destination, provider, pass_through_data),
             Self::Bfs => Bfs::compute_path(origin, destination, provider, pass_through_data),
             Self::Dfs => Dfs::compute_path(origin, destination, provider, pass_through_data),
-            Self::Dijkstra => Dijkstra::compute_path(origin, destination, provider, pass_through_data),
+            Self::Dijkstra => {
+                Dijkstra::compute_path(origin, destination, provider, pass_through_data)
+            }
             Self::DijkstraPartial => {
                 DijkstraPartial::compute_path(origin, destination, provider, pass_through_data)
-            },
-            Self::IDAstar => IDAstar::compute_path(origin, destination, provider, pass_through_data),
+            }
+            Self::IDAstar => {
+                IDAstar::compute_path(origin, destination, provider, pass_through_data)
+            }
             Self::IDDfs => IDDfs::compute_path(origin, destination, provider, pass_through_data),
         }
     }

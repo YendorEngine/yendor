@@ -57,8 +57,8 @@ impl BresenhamLineIter {
 
         // loop inc
         self.abs_x += 1; // we can add because self.end_x is to the right and up(Octant(0))
-        // we are moving towards the `end` offset into `Octant()`, so now we must wrap this new
-        // coordinate back around to the original direction.
+                         // we are moving towards the `end` offset into `Octant()`, so now we must wrap this new
+                         // coordinate back around to the original direction.
         self.octant.from_offset(current_point)
     }
 }
@@ -68,7 +68,11 @@ impl Iterator for BresenhamLineIter {
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        if self.abs_x >= self.end_x { None } else { Some(self.advance()) }
+        if self.abs_x >= self.end_x {
+            None
+        } else {
+            Some(self.advance())
+        }
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -82,11 +86,15 @@ pub struct BresenhamLineInclusiveIter(BresenhamLineIter);
 impl BresenhamLineInclusiveIter {
     /// Creates a new iterator. Yields points `start..=end`.
     #[inline]
-    pub fn new(start: IVec2, end: IVec2) -> Self { Self(BresenhamLineIter::new(start, end)) }
+    pub fn new(start: IVec2, end: IVec2) -> Self {
+        Self(BresenhamLineIter::new(start, end))
+    }
 
     /// Return the next point without checking if we are past `end`.
     #[inline]
-    pub fn advance(&mut self) -> IVec2 { self.0.advance() }
+    pub fn advance(&mut self) -> IVec2 {
+        self.0.advance()
+    }
 }
 
 impl Iterator for BresenhamLineInclusiveIter {
@@ -94,6 +102,10 @@ impl Iterator for BresenhamLineInclusiveIter {
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
-        if self.0.abs_x > self.0.end_x { None } else { Some(self.0.advance()) }
+        if self.0.abs_x > self.0.end_x {
+            None
+        } else {
+            Some(self.0.advance())
+        }
     }
 }

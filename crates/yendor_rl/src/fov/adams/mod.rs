@@ -92,8 +92,15 @@ impl AdamsFov {
             top_y = ((x * 2 - 1) * top.y + top.x) / (top.x * 2);
 
             if Self::blocks_light(x, top_y, octant, origin, provider, pass_through_data) {
-                if top.greater_or_equal(top_y * 2 + 1, x * 2) &&
-                    !Self::blocks_light(x, top_y + 1, octant, origin, provider, pass_through_data)
+                if top.greater_or_equal(top_y * 2 + 1, x * 2)
+                    && !Self::blocks_light(
+                        x,
+                        top_y + 1,
+                        octant,
+                        origin,
+                        provider,
+                        pass_through_data,
+                    )
                 {
                     top_y += 1;
                 }
@@ -121,9 +128,9 @@ impl AdamsFov {
         } else {
             bottom_y = ((x * 2 - 1) * bottom.y + bottom.x) / (bottom.x * 2);
 
-            if bottom.greater_or_equal(bottom_y * 2 + 1, x * 2) &&
-                Self::blocks_light(x, bottom_y, octant, origin, provider, pass_through_data) &&
-                !Self::blocks_light(x, bottom_y + 1, octant, origin, provider, pass_through_data)
+            if bottom.greater_or_equal(bottom_y * 2 + 1, x * 2)
+                && Self::blocks_light(x, bottom_y, octant, origin, provider, pass_through_data)
+                && !Self::blocks_light(x, bottom_y + 1, octant, origin, provider, pass_through_data)
             {
                 bottom_y += 1;
             }
@@ -150,7 +157,8 @@ impl AdamsFov {
 
         for y in (bottom_y..=top_y).rev() {
             if range < 0 || (x * x + y * y) <= (range * range) {
-                let is_opaque = Self::blocks_light(x, y, octant, origin, provider, pass_through_data);
+                let is_opaque =
+                    Self::blocks_light(x, y, octant, origin, provider, pass_through_data);
 
                 // Better symmetry
                 let is_visible = is_opaque || // Remove is_opaque check for full symmetry but more artifacts in hallways
@@ -168,7 +176,14 @@ impl AdamsFov {
                         if was_opaque == 0 {
                             let mut nx = x * 2;
                             let ny = y * 2 + 1;
-                            if Self::blocks_light(x, y + 1, octant, origin, provider, pass_through_data) {
+                            if Self::blocks_light(
+                                x,
+                                y + 1,
+                                octant,
+                                origin,
+                                provider,
+                                pass_through_data,
+                            ) {
                                 nx -= 1;
                             }
                             if top.greater(ny, nx) {
@@ -197,7 +212,14 @@ impl AdamsFov {
                         if was_opaque > 0 {
                             let mut nx = x * 2;
                             let ny = y * 2 + 1;
-                            if Self::blocks_light(x + 1, y + 1, octant, origin, provider, pass_through_data) {
+                            if Self::blocks_light(
+                                x + 1,
+                                y + 1,
+                                octant,
+                                origin,
+                                provider,
+                                pass_through_data,
+                            ) {
                                 nx += 1;
                             }
                             if bottom.greater_or_equal(ny, nx) {
@@ -226,7 +248,13 @@ impl AdamsFov {
         provider.is_opaque(xy, pass_through_data)
     }
 
-    fn set_visible(x: i32, y: i32, octant: i32, origin: IVec2, visible_points: &mut HashSet<IVec2>) {
+    fn set_visible(
+        x: i32,
+        y: i32,
+        octant: i32,
+        origin: IVec2,
+        visible_points: &mut HashSet<IVec2>,
+    ) {
         let xy = Self::transform(x, y, octant, origin);
         visible_points.insert(xy);
     }
@@ -241,36 +269,36 @@ impl AdamsFov {
             0 => {
                 nx += x;
                 ny -= y;
-            },
+            }
             1 => {
                 nx += y;
                 ny -= x;
-            },
+            }
             2 => {
                 nx -= y;
                 ny -= x;
-            },
+            }
             3 => {
                 nx -= x;
                 ny -= y;
-            },
+            }
             4 => {
                 nx -= x;
                 ny += y;
-            },
+            }
             5 => {
                 nx -= y;
                 ny += x;
-            },
+            }
             6 => {
                 nx += y;
                 ny += x;
-            },
+            }
             7 => {
                 nx += x;
                 ny += y;
-            },
-            _ => {},
+            }
+            _ => {}
         }
 
         IVec2::new(nx, ny)

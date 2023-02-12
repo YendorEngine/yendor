@@ -10,5 +10,7 @@ impl VerticalDirection {
     pub const UP: Direction = Direction::UP;
 
     /// Returns an iterator over the [`Direction`]s (`Up`, `Down`)
-    pub const fn all() -> DirectionIter { DirectionIter::vertical() }
+    pub const fn all() -> DirectionIter {
+        DirectionIter::vertical()
+    }
 }

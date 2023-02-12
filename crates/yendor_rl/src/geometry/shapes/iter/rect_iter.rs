@@ -38,5 +38,7 @@ impl Iterator for RectIter {
 }
 
 impl From<Rectangle> for RectIter {
-    fn from(rect: Rectangle) -> Self { rect.into_iter() }
+    fn from(rect: Rectangle) -> Self {
+        rect.into_iter()
+    }
 }

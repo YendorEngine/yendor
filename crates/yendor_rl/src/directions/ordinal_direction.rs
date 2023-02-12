@@ -18,5 +18,7 @@ impl OrdinalDirection {
 impl DirectionIterator for OrdinalDirection {
     /// Returns an iterator over the [`Direction`]s (`NorthEast`, `SouthEast`, `SouthWest`,
     /// `NorthWest`)
-    fn all() -> DirectionIter { DirectionIter::ordinal() }
+    fn all() -> DirectionIter {
+        DirectionIter::ordinal()
+    }
 }

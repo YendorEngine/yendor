@@ -9,7 +9,9 @@ pub struct DirectionIter {
 impl DirectionIter {
     /// Returns an iterator over the [`Direction`]s (`North`, `East`, `South`, `West`,
     /// `NorthEast`, `SouthEast`, `SouthWest`, `NorthWest`)
-    pub const fn all_2d() -> Self { Self { current: 0, end: 8 } }
+    pub const fn all_2d() -> Self {
+        Self { current: 0, end: 8 }
+    }
 
     /// Returns an iterator over all [`Direction`]s
     pub const fn all_3d() -> Self {
@@ -20,11 +22,15 @@ impl DirectionIter {
     }
 
     /// Returns an iterator over the [`Direction`]s (`North`, `East`, `South`, `West`)
-    pub const fn cardinal() -> Self { Self { current: 0, end: 4 } }
+    pub const fn cardinal() -> Self {
+        Self { current: 0, end: 4 }
+    }
 
     /// Returns an iterator over the [`Direction`]s (`NorthEast`, `SouthEast`, `SouthWest`,
     /// `NorthWest`)
-    pub const fn ordinal() -> Self { Self { current: 4, end: 8 } }
+    pub const fn ordinal() -> Self {
+        Self { current: 4, end: 8 }
+    }
 
     /// Returns an iterator over the [`Direction`]s (`Left`, `Right`)
     pub const fn vertical() -> Self {
@@ -48,7 +54,11 @@ impl Iterator for DirectionIter {
     fn next(&mut self) -> Option<Self::Item> {
         let next = self.current;
         self.current += 1;
-        if self.current > self.end { None } else { Some(DIRECTION_TABLE[next]) }
+        if self.current > self.end {
+            None
+        } else {
+            Some(DIRECTION_TABLE[next])
+        }
     }
 }
 

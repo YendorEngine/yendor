@@ -5,7 +5,7 @@
 //! ```
 //! # use bevy_core_pipeline::prelude::*;
 //! use bevy::prelude::*;
-//! use bones_camera_shake::*;
+//! use yendor_camera_shake::*;
 //!
 //! fn main() {
 //!     App::new()
@@ -103,7 +103,7 @@ impl CameraShake {
 ///
 /// ```
 /// # use bevy::prelude::*;
-/// # use bones_camera_shake::*;
+/// # use yendor_camera_shake::*;
 /// fn my_system(mut ev_trauma: EventWriter<CameraTrauma>) {
 ///     /* some traumatic event... */
 ///     ev_trauma.send(CameraTrauma(0.5));
@@ -130,11 +130,17 @@ fn decay_trauma(mut q: Query<&mut CameraShake>, time: Res<Time>) {
 struct ShakeNoise(Perlin);
 
 /// System to apply camera shake based on the current trauma.
-fn apply_shake(mut q: Query<(&CameraShake, &mut Transform)>, time: Res<Time>, noise: Res<ShakeNoise>) {
+fn apply_shake(
+    mut q: Query<(&CameraShake, &mut Transform)>,
+    time: Res<Time>,
+    noise: Res<ShakeNoise>,
+) {
     const SHAKE_SPEED: f32 = 3.0;
     macro_rules! offset_noise {
         ($offset:expr) => {
-            noise.0.get([((time.elapsed_seconds() + $offset) * SHAKE_SPEED).into()]) as f32
+            noise
+                .0
+                .get([((time.elapsed_seconds() + $offset) * SHAKE_SPEED).into()]) as f32
         };
     }
 

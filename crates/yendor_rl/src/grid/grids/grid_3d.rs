@@ -16,7 +16,9 @@ pub struct Grid3d<T, const LAYER_COUNT: usize> {
 impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
     #[inline(always)]
     pub fn new_clone(dimensions: UVec2, value: T) -> Self
-    where T: Clone {
+    where
+        T: Clone,
+    {
         let mut layers = Vec::new();
         for _ in 0..LAYER_COUNT {
             let layer = Grid::new_clone(dimensions, value.clone());
@@ -25,13 +27,17 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
 
         Self {
             dimensions,
-            layers: layers.try_into().unwrap_or_else(|_v| panic!("Something went wrong!")),
+            layers: layers
+                .try_into()
+                .unwrap_or_else(|_v| panic!("Something went wrong!")),
         }
     }
 
     #[inline(always)]
     pub fn new_copy(dimensions: UVec2, value: T) -> Self
-    where T: Copy {
+    where
+        T: Copy,
+    {
         let mut layers = Vec::new();
         for _ in 0..LAYER_COUNT {
             let layer = Grid::new_copy(dimensions, value);
@@ -40,13 +46,17 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
 
         Self {
             dimensions,
-            layers: layers.try_into().unwrap_or_else(|_v| panic!("Something went wrong!")),
+            layers: layers
+                .try_into()
+                .unwrap_or_else(|_v| panic!("Something went wrong!")),
         }
     }
 
     #[inline(always)]
     pub fn new_default(dimensions: UVec2) -> Self
-    where T: Default {
+    where
+        T: Default,
+    {
         let mut layers = Vec::new();
         for _ in 0..LAYER_COUNT {
             let layer = Grid::new_default(dimensions);
@@ -55,7 +65,9 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
 
         Self {
             dimensions,
-            layers: layers.try_into().unwrap_or_else(|_v| panic!("Something went wrong!")),
+            layers: layers
+                .try_into()
+                .unwrap_or_else(|_v| panic!("Something went wrong!")),
         }
     }
 
@@ -73,7 +85,9 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
 
         Self {
             dimensions,
-            layers: layers.try_into().unwrap_or_else(|_v| panic!("Something went wrong!")),
+            layers: layers
+                .try_into()
+                .unwrap_or_else(|_v| panic!("Something went wrong!")),
         }
     }
 
@@ -180,16 +194,24 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
     }
 
     #[inline]
-    pub const fn width(&self) -> u32 { self.dimensions.x }
+    pub const fn width(&self) -> u32 {
+        self.dimensions.x
+    }
 
     #[inline]
-    pub const fn height(&self) -> u32 { self.dimensions.y }
+    pub const fn height(&self) -> u32 {
+        self.dimensions.y
+    }
 
     #[inline]
-    pub const fn dimensions(&self) -> UVec2 { self.dimensions }
+    pub const fn dimensions(&self) -> UVec2 {
+        self.dimensions
+    }
 
     #[inline]
-    pub fn in_bounds(&self, pos: IVec2) -> bool { pos.is_valid(self.dimensions()) }
+    pub fn in_bounds(&self, pos: IVec2) -> bool {
+        pos.is_valid(self.dimensions())
+    }
 
     #[inline]
     pub fn is_layer<LayerId: Into<usize>>(&self, layer_id: LayerId) -> bool {
@@ -198,16 +220,26 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
 
     #[inline]
     pub fn get_idx(&self, pos: IVec2) -> Option<usize> {
-        if pos.is_valid(self.dimensions()) { Some(self.get_idx_unchecked(pos)) } else { None }
+        if pos.is_valid(self.dimensions()) {
+            Some(self.get_idx_unchecked(pos))
+        } else {
+            None
+        }
     }
 
     #[inline]
-    pub fn get_idx_unchecked(&self, point: IVec2) -> usize { point.as_index_unchecked(self.width()) }
+    pub fn get_idx_unchecked(&self, point: IVec2) -> usize {
+        point.as_index_unchecked(self.width())
+    }
 
     #[inline]
     pub fn index_to_pt(&self, idx: usize) -> Option<UVec2> {
         let pt = self.index_to_pt_unchecked(idx);
-        if pt.is_valid(self.dimensions()) { Some(pt) } else { None }
+        if pt.is_valid(self.dimensions()) {
+            Some(pt)
+        } else {
+            None
+        }
     }
 
     #[inline]
@@ -219,12 +251,18 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
 
     #[inline]
     pub fn get<LayerId: Into<usize>>(&self, layer_id: LayerId, index: UVec2) -> Option<&T> {
-        self.get_grid_by_layer(layer_id).and_then(|layer| layer.get(index))
+        self.get_grid_by_layer(layer_id)
+            .and_then(|layer| layer.get(index))
     }
 
     #[inline]
-    pub fn get_mut<LayerId: Into<usize>>(&mut self, layer_id: LayerId, index: UVec2) -> Option<&mut T> {
-        self.get_grid_by_layer_mut(layer_id).and_then(|layer| layer.get_mut(index))
+    pub fn get_mut<LayerId: Into<usize>>(
+        &mut self,
+        layer_id: LayerId,
+        index: UVec2,
+    ) -> Option<&mut T> {
+        self.get_grid_by_layer_mut(layer_id)
+            .and_then(|layer| layer.get_mut(index))
     }
 
     #[inline]
@@ -233,28 +271,54 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
     }
 
     #[inline]
-    pub fn get_mut_unchecked<LayerId: Into<usize>>(&mut self, layer_id: LayerId, index: UVec2) -> &mut T {
+    pub fn get_mut_unchecked<LayerId: Into<usize>>(
+        &mut self,
+        layer_id: LayerId,
+        index: UVec2,
+    ) -> &mut T {
         self.layers[layer_id.into()].get_mut_unchecked(index)
     }
 
     #[inline]
-    pub fn set<LayerId: Into<usize>>(&mut self, layer_id: LayerId, index: UVec2, value: T) -> Option<T> {
-        self.get_grid_by_layer_mut(layer_id).and_then(|layer| layer.set(index, value))
+    pub fn set<LayerId: Into<usize>>(
+        &mut self,
+        layer_id: LayerId,
+        index: UVec2,
+        value: T,
+    ) -> Option<T> {
+        self.get_grid_by_layer_mut(layer_id)
+            .and_then(|layer| layer.set(index, value))
     }
 
     #[inline]
-    pub fn set_unchecked<LayerId: Into<usize>>(&mut self, layer_id: LayerId, index: UVec2, value: T) -> T {
+    pub fn set_unchecked<LayerId: Into<usize>>(
+        &mut self,
+        layer_id: LayerId,
+        index: UVec2,
+        value: T,
+    ) -> T {
         self.layers[layer_id.into()].set_unchecked(index, value)
     }
 
     pub fn get_grid_by_layer<LayerId: Into<usize>>(&self, layer_id: LayerId) -> Option<&Grid<T>> {
         let layer_id = layer_id.into();
-        if self.is_layer(layer_id) { Some(&self.layers[layer_id]) } else { None }
+        if self.is_layer(layer_id) {
+            Some(&self.layers[layer_id])
+        } else {
+            None
+        }
     }
 
-    pub fn get_grid_by_layer_mut<LayerId: Into<usize>>(&mut self, layer_id: LayerId) -> Option<&mut Grid<T>> {
+    pub fn get_grid_by_layer_mut<LayerId: Into<usize>>(
+        &mut self,
+        layer_id: LayerId,
+    ) -> Option<&mut Grid<T>> {
         let layer_id = layer_id.into();
-        if self.is_layer(layer_id) { Some(&mut self.layers[layer_id]) } else { None }
+        if self.is_layer(layer_id) {
+            Some(&mut self.layers[layer_id])
+        } else {
+            None
+        }
     }
 }
 
@@ -265,19 +329,29 @@ impl<T, const LAYER_COUNT: usize> GridIterable<T> for Grid3d<T, LAYER_COUNT> {
     type IterReturn<'a> = GridIter<'a, Grid<T>> where T: 'a, Self: 'a;
 
     #[inline]
-    fn iter(&self) -> Self::IterReturn<'_> { self.layers.iter() }
+    fn iter(&self) -> Self::IterReturn<'_> {
+        self.layers.iter()
+    }
 
     #[inline]
-    fn iter_mut(&mut self) -> Self::IterMutReturn<'_> { self.layers.iter_mut() }
+    fn iter_mut(&mut self) -> Self::IterMutReturn<'_> {
+        self.layers.iter_mut()
+    }
 
     #[inline]
-    fn point_iter(&self) -> PointIterRowMajor { self.dimensions.iter() }
+    fn point_iter(&self) -> PointIterRowMajor {
+        self.dimensions.iter()
+    }
 
     #[inline]
-    fn enumerate(&self) -> GridEnumerate<Self::IterReturn<'_>> { self.point_iter().zip(self.iter()) }
+    fn enumerate(&self) -> GridEnumerate<Self::IterReturn<'_>> {
+        self.point_iter().zip(self.iter())
+    }
 
     #[inline]
-    fn rows(&self) -> Self::IterChunkReturn<'_> { self.layers.chunks(self.dimensions.x as usize) }
+    fn rows(&self) -> Self::IterChunkReturn<'_> {
+        self.layers.chunks(self.dimensions.x as usize)
+    }
 
     #[inline]
     fn rows_mut(&mut self) -> Self::IterChunkMutReturn<'_> {
@@ -285,7 +359,9 @@ impl<T, const LAYER_COUNT: usize> GridIterable<T> for Grid3d<T, LAYER_COUNT> {
     }
 
     #[inline]
-    fn cols(&self) -> Self::IterChunkReturn<'_> { self.layers.chunks(self.dimensions.x as usize) }
+    fn cols(&self) -> Self::IterChunkReturn<'_> {
+        self.layers.chunks(self.dimensions.x as usize)
+    }
 
     #[inline]
     fn cols_mut(&mut self) -> Self::IterChunkMutReturn<'_> {
@@ -315,27 +391,36 @@ impl<T, const LAYER_COUNT: usize> GridIterable<T> for Grid3d<T, LAYER_COUNT> {
 #[cfg(feature = "serialize")]
 impl<T: Serialize + Clone, const LAYER_COUNT: usize> Serialize for Grid3d<T, LAYER_COUNT> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where S: serde::Serializer {
+    where
+        S: serde::Serializer,
+    {
         let mut serde_state = match serde::Serializer::serialize_struct(serializer, "Grid3d", 2) {
             Ok(val) => val,
             Err(err) => {
                 return Err(err);
-            },
+            }
         };
 
-        match serde::ser::SerializeStruct::serialize_field(&mut serde_state, "dimensions", &self.dimensions) {
+        match serde::ser::SerializeStruct::serialize_field(
+            &mut serde_state,
+            "dimensions",
+            &self.dimensions,
+        ) {
             Ok(val) => val,
             Err(err) => {
                 return Err(err);
-            },
+            }
         };
 
-        match serde::ser::SerializeStruct::serialize_field(&mut serde_state, "layers", &self.layers.to_vec())
-        {
+        match serde::ser::SerializeStruct::serialize_field(
+            &mut serde_state,
+            "layers",
+            &self.layers.to_vec(),
+        ) {
             Ok(val) => val,
             Err(err) => {
                 return Err(err);
-            },
+            }
         };
 
         serde::ser::SerializeStruct::end(serde_state)

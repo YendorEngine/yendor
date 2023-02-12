@@ -1,11 +1,11 @@
 //! Opinionated game meta-engine built on Bevy.
 
 #[doc(inline)]
-pub use {yendor_asset as asset, yendor_bevy_utils as bevy_utils};
+pub use yendor_bevy_utils as bevy_utils;
 
 /// Yendor lib prelude
 pub mod prelude {
-    pub use crate::{asset::prelude::*, bevy_utils::*};
+    pub use crate::bevy_utils::*;
 }
 
 /// This crate provides 2D camera shake using the methodology described in this excellent [GDC

@@ -61,7 +61,7 @@ fn impl_has_load_progress(input: &syn::DeriveInput) -> TokenStream2 {
                 return quote_spanned! { input.ident.span() =>
                     compile_error!("You may only derive HasLoadProgress on structs");
                 };
-            },
+            }
         };
 
         // Start a list of the progresses for each field

@@ -32,11 +32,15 @@ impl std::fmt::Display for LoadProgress {
 
 impl LoadProgress {
     /// Get the load progress as a percentage
-    pub fn as_percent(&self) -> f32 { self.loaded as f32 / self.total as f32 }
+    pub fn as_percent(&self) -> f32 {
+        self.loaded as f32 / self.total as f32
+    }
 
     /// Get a total load progress from an iterator of [`LoadProgress`]s
     pub fn merged<I>(iter: I) -> Self
-    where I: IntoIterator<Item = LoadProgress> {
+    where
+        I: IntoIterator<Item = LoadProgress>,
+    {
         let mut loaded = 0;
         let mut total = 0;
         for progress in iter {
@@ -63,7 +67,9 @@ pub struct LoadingResources<'w, 's> {
 /// [`LoadingResources`].
 pub trait HasLoadProgress {
     // Default implementation returns no progress and nothing to load
-    fn load_progress(&self, _loading_resources: &LoadingResources) -> LoadProgress { LoadProgress::default() }
+    fn load_progress(&self, _loading_resources: &LoadingResources) -> LoadProgress {
+        LoadProgress::default()
+    }
 }
 
 // Implement `HasLoadProgress` for asset handles
@@ -105,7 +111,9 @@ impl_default_load_progress!(bevy_egui::egui::TextureId);
 // Implement `HasLoadProgress` for container types
 impl<T: HasLoadProgress> HasLoadProgress for Option<T> {
     fn load_progress(&self, loading_resources: &LoadingResources) -> LoadProgress {
-        self.as_ref().map(|x| x.load_progress(loading_resources)).unwrap_or_default()
+        self.as_ref()
+            .map(|x| x.load_progress(loading_resources))
+            .unwrap_or_default()
     }
 }
 impl<T: HasLoadProgress> HasLoadProgress for Vec<T> {

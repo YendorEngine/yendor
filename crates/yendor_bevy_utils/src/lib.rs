@@ -10,7 +10,7 @@ pub mod prelude {
     pub use crate::*;
 }
 
-/// Helper trait for converting bones types to Bevy types.
+/// Helper trait for converting to Bevy types.
 pub trait IntoBevy<To> {
     /// Convert the type to a Bevy type.
     fn into_bevy(self) -> To;

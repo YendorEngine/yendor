@@ -25,7 +25,7 @@ pub use vertical_direction::*;
 /// `Direction` represents a direction in space.
 /// `Direction`s can be selected by:
 /// ```
-/// Direction::NORTH 
+/// Direction::NORTH
 /// ```
 /// where `NORTH` is the direction you want. You may limit the list available by using
 /// `YYYDirection::XXX` where `YYY` is one of: `Cardinal / Ordinal / Vertical`
@@ -84,11 +84,15 @@ impl Direction {
     pub const UP: Self = Self(DirectionFlags::UP);
     pub const UP_EAST: Self = Self(DirectionFlags::UP | DirectionFlags::EAST);
     pub const UP_NORTH: Self = Self(DirectionFlags::UP | DirectionFlags::NORTH);
-    pub const UP_NORTH_EAST: Self = Self(DirectionFlags::UP | DirectionFlags::NORTH | DirectionFlags::EAST);
-    pub const UP_NORTH_WEST: Self = Self(DirectionFlags::UP | DirectionFlags::NORTH | DirectionFlags::WEST);
+    pub const UP_NORTH_EAST: Self =
+        Self(DirectionFlags::UP | DirectionFlags::NORTH | DirectionFlags::EAST);
+    pub const UP_NORTH_WEST: Self =
+        Self(DirectionFlags::UP | DirectionFlags::NORTH | DirectionFlags::WEST);
     pub const UP_SOUTH: Self = Self(DirectionFlags::UP | DirectionFlags::SOUTH);
-    pub const UP_SOUTH_EAST: Self = Self(DirectionFlags::UP | DirectionFlags::SOUTH | DirectionFlags::EAST);
-    pub const UP_SOUTH_WEST: Self = Self(DirectionFlags::UP | DirectionFlags::SOUTH | DirectionFlags::WEST);
+    pub const UP_SOUTH_EAST: Self =
+        Self(DirectionFlags::UP | DirectionFlags::SOUTH | DirectionFlags::EAST);
+    pub const UP_SOUTH_WEST: Self =
+        Self(DirectionFlags::UP | DirectionFlags::SOUTH | DirectionFlags::WEST);
     pub const UP_WEST: Self = Self(DirectionFlags::UP | DirectionFlags::WEST);
     pub const WEST: Self = Self(DirectionFlags::WEST);
 }
@@ -157,7 +161,9 @@ impl Direction {
     /// `North` = `1` on the `Y` axis
     ///
     /// `South` = `-1` on the `Y` axis
-    pub fn from_coord(coord: IVec2) -> Self { Self::from_ivec3(coord.extend(0)) }
+    pub fn from_coord(coord: IVec2) -> Self {
+        Self::from_ivec3(coord.extend(0))
+    }
 
     // TODO: Point3d
     /// Retrieves the [`Direction`] from a 3d coordinate value where:
@@ -184,14 +190,14 @@ impl Direction {
 
         // Check Y
         match coord.y.cmp(&0) {
-            std::cmp::Ordering::Equal => {},
+            std::cmp::Ordering::Equal => {}
             std::cmp::Ordering::Less => direction += Self::SOUTH,
             std::cmp::Ordering::Greater => direction += Self::NORTH,
         }
 
         // Check Z
         match coord.z.cmp(&0) {
-            std::cmp::Ordering::Equal => {},
+            std::cmp::Ordering::Equal => {}
             std::cmp::Ordering::Less => direction += Self::DOWN,
             std::cmp::Ordering::Greater => direction += Self::UP,
         }
@@ -293,7 +299,9 @@ impl Direction {
     /// `North` becomes `SouthWest`
     ///
     /// etc...
-    pub fn left135(self) -> Self { self.left90().left45() }
+    pub fn left135(self) -> Self {
+        self.left90().left45()
+    }
 
     /// Retrieves the opposite (rotated by four steps) [`Direction`] from another [`Direction`]
     /// where:
@@ -304,11 +312,23 @@ impl Direction {
     ///
     /// `Up` and `Down` are opposite:
     pub fn opposite(self) -> Self {
-        let x = if self.has_east() { -1 } else { i32::from(self.has_west()) };
+        let x = if self.has_east() {
+            -1
+        } else {
+            i32::from(self.has_west())
+        };
 
-        let y = if self.has_north() { -1 } else { i32::from(self.has_south()) };
+        let y = if self.has_north() {
+            -1
+        } else {
+            i32::from(self.has_south())
+        };
 
-        let z = if self.has_up() { -1 } else { i32::from(self.has_down()) };
+        let z = if self.has_up() {
+            -1
+        } else {
+            i32::from(self.has_down())
+        };
 
         Self::from_ivec3(IVec3::new(x, y, z))
     }
@@ -321,7 +341,9 @@ impl Direction {
     /// `North` becomes `SouthEast`
     ///
     /// etc...
-    pub fn right135(self) -> Self { self.right90().right45() }
+    pub fn right135(self) -> Self {
+        self.right90().right45()
+    }
 
     // OPTIMIZE: rewrite like `Self::left45()`
     /// Rotates a [`Direction`] clockwise by two steps:
@@ -331,7 +353,9 @@ impl Direction {
     /// `North` becomes `East`
     ///
     /// etc...
-    pub fn right90(self) -> Self { self.left90().left90().left90() }
+    pub fn right90(self) -> Self {
+        self.left90().left90().left90()
+    }
 
     // OPTIMIZE: rewrite like `Self::left45()`
     /// Rotates a [`Direction`] clockwise by one step:
@@ -341,37 +365,51 @@ impl Direction {
     /// `North` becomes `NorthEast`
     ///
     /// etc...
-    pub fn right45(self) -> Self { self.right90().left45() }
+    pub fn right45(self) -> Self {
+        self.right90().left45()
+    }
 
     /// Checks a [`Position`] to determine if it is marked as `North`
     ///
     /// Returns: `true` if [`Position`] is marked `North`
-    pub const fn has_north(self) -> bool { self.0 & Self::NORTH.0 != 0 }
+    pub const fn has_north(self) -> bool {
+        self.0 & Self::NORTH.0 != 0
+    }
 
     /// Checks a [`Position`] to determine if it is marked as `South`
     ///
     /// Returns: `true` if [`Position`] is marked `South`
-    pub const fn has_south(self) -> bool { self.0 & Self::SOUTH.0 != 0 }
+    pub const fn has_south(self) -> bool {
+        self.0 & Self::SOUTH.0 != 0
+    }
 
     /// Checks a [`Position`] to determine if it is marked as `East`
     ///
     /// Returns: `true` if [`Position`] is marked `East`
-    pub const fn has_east(self) -> bool { self.0 & Self::EAST.0 != 0 }
+    pub const fn has_east(self) -> bool {
+        self.0 & Self::EAST.0 != 0
+    }
 
     /// Checks a [`Position`] to determine if it is marked as `West`
     ///
     /// Returns: `true` if [`Position`] is marked `West`
-    pub const fn has_west(self) -> bool { self.0 & Self::WEST.0 != 0 }
+    pub const fn has_west(self) -> bool {
+        self.0 & Self::WEST.0 != 0
+    }
 
     /// Checks a [`Position`] to determine if it is marked as `Up`
     ///
     /// Returns: `true` if [`Position`] is marked `Up`
-    pub const fn has_up(self) -> bool { self.0 & Self::UP.0 != 0 }
+    pub const fn has_up(self) -> bool {
+        self.0 & Self::UP.0 != 0
+    }
 
     /// Checks a [`Position`] to determine if it is marked as `Down`
     ///
     /// Returns: `true` if [`Position`] is marked `Down`
-    pub const fn has_down(self) -> bool { self.0 & Self::DOWN.0 != 0 }
+    pub const fn has_down(self) -> bool {
+        self.0 & Self::DOWN.0 != 0
+    }
 
     /// Checks a [`Position`] to determine if it is a [`CardinalDirection`]
     ///
@@ -379,8 +417,8 @@ impl Direction {
     /// NOTE: This function has no reguard for `Up` or `Down` therefore `Direction::UP_NORTH`
     /// will return `true`
     pub const fn is_cardinal(self) -> bool {
-        (self.has_north() || self.has_south()) && !(self.has_east() || self.has_west()) ||
-            (self.has_east() || self.has_west()) && !(self.has_north() || self.has_south())
+        (self.has_north() || self.has_south()) && !(self.has_east() || self.has_west())
+            || (self.has_east() || self.has_west()) && !(self.has_north() || self.has_south())
     }
 
     /// Checks a [`Position`] to determine if it is a [`OrdinalDirection`]
@@ -394,7 +432,9 @@ impl Direction {
 
     /// Creates an iterator over all `CardinalDirection`s, `OrdinalDirection`s, and
     /// `VerticalDirection`s
-    pub const fn all_3d() -> DirectionIter { DirectionIter::all_3d() }
+    pub const fn all_3d() -> DirectionIter {
+        DirectionIter::all_3d()
+    }
 
     // /// Creates a [`Direction`] from a [`Octant`]
     // pub fn from_octant(octant: Octant) -> Direction {
@@ -415,13 +455,19 @@ impl Direction {
 
 impl DirectionIterator for Direction {
     /// Creates an iterator over all `CardinalDirection`s and `OridinalDirection`s
-    fn all() -> DirectionIter { DirectionIter::all_2d() }
+    fn all() -> DirectionIter {
+        DirectionIter::all_2d()
+    }
 }
 
 impl Display for Direction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fn append(old_string: String, next: &str, first: bool) -> String {
-            if first { next.to_string() } else { format!("{old_string}, {next}") }
+            if first {
+                next.to_string()
+            } else {
+                format!("{old_string}, {next}")
+            }
         }
 
         let mut s = String::new();
@@ -465,20 +511,28 @@ impl Display for Direction {
 impl Add<Self> for Direction {
     type Output = Self;
 
-    fn add(self, rhs: Self) -> Self::Output { Self(self.0 | *rhs) }
+    fn add(self, rhs: Self) -> Self::Output {
+        Self(self.0 | *rhs)
+    }
 }
 
 #[allow(clippy::suspicious_op_assign_impl)]
 impl AddAssign<Self> for Direction {
-    fn add_assign(&mut self, rhs: Self) { self.0 |= *rhs; }
+    fn add_assign(&mut self, rhs: Self) {
+        self.0 |= *rhs;
+    }
 }
 
 impl Sub<Self> for Direction {
     type Output = Self;
 
-    fn sub(self, rhs: Self) -> Self::Output { Self(self.0 & !*rhs) }
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self(self.0 & !*rhs)
+    }
 }
 
 impl SubAssign<Self> for Direction {
-    fn sub_assign(&mut self, rhs: Self) { self.0 &= !*rhs }
+    fn sub_assign(&mut self, rhs: Self) {
+        self.0 &= !*rhs
+    }
 }

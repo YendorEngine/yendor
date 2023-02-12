@@ -35,7 +35,9 @@ impl<'a, T> Quadrant<'a, T> {
         }
     }
 
-    pub const fn distance_squared(&self, tile: IVec2) -> u64 { (tile.x * tile.x + tile.y * tile.y) as u64 }
+    pub const fn distance_squared(&self, tile: IVec2) -> u64 {
+        (tile.x * tile.x + tile.y * tile.y) as u64
+    }
 
     // mark this tile as visible
     pub fn set_visible(&mut self, visible_points: &mut HashSet<IVec2>, tile: IVec2) {
@@ -44,8 +46,11 @@ impl<'a, T> Quadrant<'a, T> {
 
     // check if this tile is opaque
     pub fn is_opaque(&mut self, tile: IVec2) -> bool {
-        self.provider.is_opaque(self.origin + self.transform(tile), self.pass_through_data)
+        self.provider
+            .is_opaque(self.origin + self.transform(tile), self.pass_through_data)
     }
 
-    pub fn is_clear(&mut self, tile: IVec2) -> bool { !self.is_opaque(tile) }
+    pub fn is_clear(&mut self, tile: IVec2) -> bool {
+        !self.is_opaque(tile)
+    }
 }

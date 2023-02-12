@@ -17,5 +17,7 @@ impl CardinalDirection {
 
 impl DirectionIterator for CardinalDirection {
     /// Returns an iterator over the [`Direction`]s (`NORTH`, `EAST`, `SOUTH`, `WEST`)
-    fn all() -> DirectionIter { DirectionIter::cardinal() }
+    fn all() -> DirectionIter {
+        DirectionIter::cardinal()
+    }
 }

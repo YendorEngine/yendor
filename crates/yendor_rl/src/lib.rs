@@ -15,7 +15,10 @@ pub mod random;
 pub(crate) mod imports {
     pub use std::{
         fmt::{Debug, Display},
-        ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, RangeBounds, Sub, SubAssign},
+        ops::{
+            Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, RangeBounds, Sub,
+            SubAssign,
+        },
         slice,
     };
 
@@ -29,7 +32,9 @@ pub(crate) mod imports {
         utils::{HashMap, HashSet},
     };
     #[cfg(feature = "pathfinding")]
-    pub use pathfinding::prelude::{astar, bfs, build_path, dfs, dijkstra, dijkstra_partial, idastar, iddfs};
+    pub use pathfinding::prelude::{
+        astar, bfs, build_path, dfs, dijkstra, dijkstra_partial, idastar, iddfs,
+    };
     #[cfg(feature = "random")]
     pub use rand::{
         distributions::{Distribution, Standard},

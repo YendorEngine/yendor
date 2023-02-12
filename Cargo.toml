@@ -25,7 +25,6 @@ bevy = { version = "0.9", default-features = false, features = [] }
 ulid = { version = "1", default-features = false }
 
 [dependencies]
-yendor_asset        = { path = "./crates/yendor_asset" }
-yendor_bevy_utils   = { path = "./crates/yendor_bevy_utils" }
-yendor_camera_shake = { path = "./crates/yendor_camera_shake", optional = true }
-yendor_rl           = { path = "./crates/yendor_rl", optional = true }
+yendor_bevy_utils   = { path = "./crates/yendor_bevy_utils", version = "0.1" }
+yendor_camera_shake = { path = "./crates/yendor_camera_shake", optional = true, version = "0.1" }
+yendor_rl           = { path = "./crates/yendor_rl", optional = true, version = "0.1" }
