@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// Trait to implement 2D path algorithms.
 pub struct Dijkstra;
 
 impl PathAlgorithm for Dijkstra {

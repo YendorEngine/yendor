@@ -1,6 +1,8 @@
 //######################
 // Impl Macros
 //######################
+
+/// Implement `As` for a type
 #[macro_export]
 macro_rules! impl_as {
     ($trait:ty, $fn:ident, $return:ty, $cast:ty,$type:ty) => {
@@ -12,6 +14,7 @@ macro_rules! impl_as {
     };
 }
 
+/// Implement type as an array
 #[macro_export]
 macro_rules! impl_as_array {
     ($trait:ty, $fn:ident, $return:ty, $cast:ty,$type:ty) => {
@@ -23,6 +26,7 @@ macro_rules! impl_as_array {
     };
 }
 
+/// Implement type as a tuple
 #[macro_export]
 macro_rules! impl_as_tuple {
     ($trait:ty, $fn:ident, $return:ty, $cast:ty,$type:ty) => {

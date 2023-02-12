@@ -3,12 +3,14 @@ use crate::prelude::*;
 ////////////////////////////////////////////////////////////
 // Point Iter
 ////////////////////////////////////////////////////////////
+/// Iterator over all points
 pub struct PointIterRowMajor {
     coord: IVec2,
     size: UVec2,
 }
 
 impl PointIterRowMajor {
+    /// Creates a new iterator over all points.
     pub const fn new(size: UVec2) -> Self {
         Self {
             size,
@@ -37,6 +39,7 @@ impl Iterator for PointIterRowMajor {
 ////////////////////////////////////////////////////////////
 // Adjacent Iter
 ////////////////////////////////////////////////////////////
+/// Iterator over all adjacent points
 pub struct AdjIterator {
     i: usize,
     p: IVec2,
@@ -45,6 +48,7 @@ pub struct AdjIterator {
 }
 
 impl AdjIterator {
+    /// Creates a new iterator over all adjacent points.
     pub fn new(p: IVec2, dir_iter: DirectionIter) -> Self {
         Self {
             p,

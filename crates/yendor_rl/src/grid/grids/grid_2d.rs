@@ -5,6 +5,7 @@ pub type GridIterMut<'a, T> = slice::IterMut<'a, T>;
 pub type GridChunks<'a, T> = slice::Chunks<'a, T>;
 pub type GridChunksMut<'a, T> = slice::ChunksMut<'a, T>;
 
+/// 2D Grid layer implementation.
 #[derive(Default, Debug, Clone, Hash, PartialEq, Eq)]
 pub struct Grid<T> {
     pub(crate) cells: Vec<T>,

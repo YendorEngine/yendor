@@ -44,7 +44,10 @@ fn main() {
         } else {
             println!(
                 "Invalid argument: {arg:?}.\nEnter one of: {}.",
-                arguments[1..].iter().map(|(s, _)| s).fold(arguments[0].0.to_owned(), |c, v| c + ", " + v)
+                arguments[1..]
+                    .iter()
+                    .map(|(s, _)| s)
+                    .fold(arguments[0].0.to_owned(), |c, v| c + ", " + v)
             );
             return;
         }
@@ -96,6 +99,8 @@ fn main() {
     }
 
     if what_to_run.contains(Check::COMPILE_CHECK) {
-        cmd!(sh, "cargo check --workspace").run().expect("Please fix compiler errors in above output.");
+        cmd!(sh, "cargo check --workspace")
+            .run()
+            .expect("Please fix compiler errors in above output.");
     }
 }

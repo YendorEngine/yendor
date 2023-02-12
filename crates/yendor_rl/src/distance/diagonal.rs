@@ -3,11 +3,12 @@ use std::{f32::consts::SQRT_2, ops::Sub};
 use crate::prelude::*;
 
 const CARDINAL_COST: f32 = 1.0;
+
+/// The diagonal cost.
 pub const DIAGONAL_COST: f32 = SQRT_2;
 
 /// Calculates a Chebyshev distance between two points.
 pub struct Diagonal;
-
 impl DistanceAlgorithm for Diagonal {
     // Calculates a diagonal distance between two 2D points.
     fn distance2d(self, start: IVec2, end: IVec2) -> f32 {
@@ -15,8 +16,8 @@ impl DistanceAlgorithm for Diagonal {
     }
 }
 
+/// Calculates a diagonal distance between two points.
 pub struct DiagonalWithCosts(pub f32, pub f32);
-
 impl DistanceAlgorithm for DiagonalWithCosts {
     // Calculates a diagonal distance with cost between two 2D points.
     fn distance2d(self, start: IVec2, end: IVec2) -> f32 {

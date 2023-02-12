@@ -5,8 +5,8 @@ use quadrant::*;
 mod row;
 use row::*;
 
-// FoV implementation taken from:
-// https://www.albertford.com/shadowcasting/
+/// FoV implementation taken from:
+/// [Shadowcasting](https://www.albertford.com/shadowcasting)
 pub struct Shadowcast;
 
 impl FovAlgorithm for Shadowcast {
@@ -31,6 +31,7 @@ impl FovAlgorithm for Shadowcast {
 }
 
 impl Shadowcast {
+    /// Computes the field of view in a single direction.
     pub fn compute_direction<T>(
         origin: IVec2,
         range: u32,

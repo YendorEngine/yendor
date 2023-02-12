@@ -1,5 +1,7 @@
+//! This crate provides an assortment of opinionated utilities for roguelike development.
+
 #![warn(clippy::nursery)]
-// #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
+#![warn(missing_docs)]
 
 pub mod directions;
 pub mod distance;
@@ -45,6 +47,7 @@ pub(crate) mod imports {
     pub use serde::{Deserialize, Serialize};
 }
 
+/// A prelude for crates using `yendor-rl`.
 pub mod prelude {
     #[rustfmt::skip]
     pub use crate::imports::*;

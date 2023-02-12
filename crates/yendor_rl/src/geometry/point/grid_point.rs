@@ -1,25 +1,32 @@
 use crate::prelude::*;
 
+/// Trait to implement a 2D point within a grid.
 pub trait GridPoint: Clone + Copy {
+    /// Returns the x coordinate.
     fn x(&self) -> i32;
 
+    /// Returns the y coordinate.
     fn y(&self) -> i32;
 
+    /// Returns the point as an [`IVec2`].
     #[inline]
     fn as_ivec2(&self) -> IVec2 {
         IVec2::new(self.x(), self.y())
     }
 
+    /// Returns the point as an [`UVec2`].
     #[inline]
     fn as_uvec2(&self) -> UVec2 {
         self.as_ivec2().as_uvec2()
     }
 
+    /// Returns the point as an [`Vec2`].
     #[inline]
     fn as_vec2(&self) -> Vec2 {
         self.as_ivec2().as_vec2()
     }
 
+    /// Returns the size of the point
     #[inline]
     fn size(&self) -> usize {
         (self.x() * self.y()) as usize
@@ -34,6 +41,7 @@ pub trait GridPoint: Clone + Copy {
         self.y() as usize * width + self.x() as usize
     }
 
+    /// Get the point's corresponding 1d index.
     #[inline(always)]
     fn as_index(&self, size: UVec2) -> Option<usize> {
         if self.is_valid(size) {
@@ -51,6 +59,7 @@ pub trait GridPoint: Clone + Copy {
         x >= 0 && y >= 0 && (x as u32) < size.x && (y as u32) < size.y
     }
 
+    /// Returns the mid point between this point and another
     #[inline]
     fn mid_point(&self, point: impl GridPoint) -> IVec2 {
         IVec2 {

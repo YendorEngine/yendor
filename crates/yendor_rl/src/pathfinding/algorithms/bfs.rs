@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// Breadth-first search algorithm.
 pub struct Bfs;
 
 impl PathAlgorithm for Bfs {

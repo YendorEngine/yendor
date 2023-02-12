@@ -1,3 +1,4 @@
+//! Provides an api for dealing with 2D field of view.
 use crate::prelude::*;
 
 mod adams;
@@ -19,13 +20,19 @@ pub use shadowcast::*;
 // TODO: Half-width walls (point-to-tile or point-to-point)
 // TODO: Permissive field of view (tile-to-tile)
 // TODO: Digital field of view (diamond-to-diamond)
+
+/// Different algorithms for computing field of view
 pub enum Fov {
+    /// Use the Adams algorithm for computing field of view
     Adams,
+    /// Use the Shadowcast algorithm for computing field of view
     Shadowcast,
+    /// Use the Shadowcast algorithm for computing field of view, but only in a single direction
     ShadowcastDirection(Direction),
 }
 
 impl Fov {
+    /// Computes the field of view for the specified origin, range, and provider.
     pub fn compute<FovRange: Into<u32>, T>(
         &self,
         origin: IVec2,
@@ -47,6 +54,7 @@ impl Fov {
         }
     }
 
+    /// Returns true if the target is within the field of view of the origin, using the specified
     pub fn within_fov<FovRange: Into<u32>, T>(
         &self,
         origin: IVec2,

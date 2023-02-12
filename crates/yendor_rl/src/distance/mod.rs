@@ -1,3 +1,5 @@
+//! Provides a number of distance algorithms for use in pathfinding and other alogrithms.
+
 use crate::prelude::*;
 
 mod chebyshev;

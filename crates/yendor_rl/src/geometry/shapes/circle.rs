@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// A Grid based circle
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Circle {
@@ -8,6 +9,7 @@ pub struct Circle {
 }
 
 impl Circle {
+    /// Creates a new circle.
     pub fn new<R: Into<u32>>(center: IVec2, radius: R) -> Self {
         Self {
             center,
@@ -17,41 +19,49 @@ impl Circle {
 }
 
 impl Circle {
+    /// Get the center of the circle
     #[inline]
     pub const fn center(&self) -> IVec2 {
         self.center
     }
 
+    /// Get the left point of the circle
     #[inline]
     pub fn left(&self) -> IVec2 {
         self.center - IVec2::new(self.radius as i32, 0)
     }
 
+    /// Get the right point of the circle
     #[inline]
     pub fn right(&self) -> IVec2 {
         self.center + IVec2::new(self.radius as i32, 0)
     }
 
+    /// Get the top point of the circle
     #[inline]
     pub fn top(&self) -> IVec2 {
         self.center + IVec2::new(0, self.radius as i32)
     }
 
+    /// Get the bottom point of the circle
     #[inline]
     pub fn bottom(&self) -> IVec2 {
         self.center + IVec2::new(0, self.radius as i32)
     }
 
+    /// Return a line from the left to the right of the circle
     #[inline]
     pub fn as_horizontal_line(&self) -> Line {
         Line::new(self.left(), self.right())
     }
 
+    /// Return a line from the top to the bottom of the circle
     #[inline]
     pub fn as_vertical_line(&self) -> Line {
         Line::new(self.bottom(), self.top())
     }
 
+    /// Get the circumfrence of the circle
     pub fn get_circumfrence(&self) -> HashSet<IVec2> {
         let mut discovered = HashSet::new();
         let mut d = (5 - (self.radius as i32 * 4)) / 4;

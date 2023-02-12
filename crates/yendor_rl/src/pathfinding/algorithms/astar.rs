@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// A* algorithm.
 pub struct AStar;
 
 impl PathAlgorithm for AStar {

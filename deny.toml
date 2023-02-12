@@ -1,0 +1,30 @@
+[advisories]
+db-path       = "~/.cargo/advisory-db"
+db-urls       = ["https://github.com/rustsec/advisory-db"]
+ignore        = []
+notice        = "deny"
+unmaintained  = "deny"
+vulnerability = "deny"
+yanked        = "deny"
+
+[licenses]
+allow      = ["MIT", "Apache-2.0", "Zlib", "BSD-3-Clause"]
+copyleft   = "deny"
+default    = "deny"
+exceptions = [{ name = "unicode-ident", allow = ["Unicode-DFS-2016"] }]
+unlicensed = "deny"
+
+[bans]
+highlight         = "all"
+multiple-versions = "deny"
+wildcards         = "deny"
+# Certain crates/versions that will be skipped when doing duplicate detection.
+skip = [
+    { name = "concurrent-queue", version = "1.2.4" }, # from bevy_tasks v0.9.1
+]
+
+[sources]
+allow-git        = []
+allow-registry   = ["https://github.com/rust-lang/crates.io-index"]
+unknown-git      = "deny"
+unknown-registry = "deny"

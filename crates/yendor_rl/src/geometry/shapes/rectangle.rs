@@ -2,10 +2,13 @@
 
 use crate::prelude::*;
 
+/// A 2D rectangle.
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Rectangle {
+    /// The minimum coordinates of the rectangle.
     pub min: IVec2,
+    /// The maximum coordinates of the rectangle.
     pub max: IVec2,
 }
 
@@ -16,6 +19,7 @@ impl Default for Rectangle {
 }
 
 impl Rectangle {
+    /// Creates a new rectangle.
     #[inline]
     pub fn new(min: IVec2, max: IVec2) -> Self {
         Self {
@@ -24,6 +28,7 @@ impl Rectangle {
         }
     }
 
+    /// Creates a new rectangle with the given size.
     #[inline]
     pub fn new_with_size(min: IVec2, dimensions: UVec2) -> Self {
         Self::new(min, min + dimensions.as_ivec2())
@@ -31,26 +36,31 @@ impl Rectangle {
 }
 
 impl Rectangle {
+    /// Get the width of the rectangle.
     #[inline]
     pub const fn width(&self) -> i32 {
         self.max.x - self.min.x
     }
 
+    /// Get the height of the rectangle.
     #[inline]
     pub const fn height(&self) -> i32 {
         self.max.y - self.min.y
     }
 
+    /// Get the minimum point of the rectangle.
     #[inline]
     pub const fn min(&self) -> IVec2 {
         self.min
     }
 
+    /// Get the maximum point of the rectangle.
     #[inline]
     pub const fn max(&self) -> IVec2 {
         self.max
     }
 
+    /// Check if the rectangle is square.
     #[inline]
     pub fn is_square(&self) -> bool {
         let diff = self.max - self.min;

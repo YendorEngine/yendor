@@ -7,6 +7,7 @@ pub type GridIterMut<'a, T> = slice::IterMut<'a, T>;
 pub type GridChunks<'a, T> = slice::Chunks<'a, T>;
 pub type GridChunksMut<'a, T> = slice::ChunksMut<'a, T>;
 
+/// A 3D grid layer
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct Grid3d<T, const LAYER_COUNT: usize> {
     dimensions: UVec2,
@@ -15,6 +16,7 @@ pub struct Grid3d<T, const LAYER_COUNT: usize> {
 
 impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
     #[inline(always)]
+    /// Create a new grid with the given dimensions and cells (clone the given value).
     pub fn new_clone(dimensions: UVec2, value: T) -> Self
     where
         T: Clone,
@@ -33,6 +35,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Create a new grid with the given dimensions (copy the given value).
     #[inline(always)]
     pub fn new_copy(dimensions: UVec2, value: T) -> Self
     where
@@ -52,6 +55,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Create a new grid with the given dimensions and default values.
     #[inline(always)]
     pub fn new_default(dimensions: UVec2) -> Self
     where
@@ -71,6 +75,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Create a new grid with the given dimensions and a function to generate values.
     #[inline(always)]
     pub fn new_fn(dimensions: UVec2, f: impl Fn((usize, IVec2)) -> T) -> Self {
         let count = dimensions.size();
@@ -91,6 +96,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Clone a region of the grid onto a new grid.
     #[inline(always)]
     pub fn blit_clone<ToLayerId: Into<usize>, FromLayerId: Into<usize>>(
         &mut self,
@@ -110,6 +116,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Copy a region of the grid onto a new grid.
     #[inline(always)]
     pub fn blit_copy<ToLayerId: Into<usize>, FromLayerId: Into<usize>>(
         &mut self,
@@ -129,6 +136,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Clone a region of the 2d grid onto a new grid.
     #[inline(always)]
     pub fn blit_clone_from_2d<ToLayerId: Into<usize>>(
         &mut self,
@@ -145,6 +153,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Copy a region of the 2d grid onto a new grid.
     #[inline(always)]
     pub fn blit_copy_from_2d<ToLayerId: Into<usize>>(
         &mut self,
@@ -161,6 +170,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Clone a region of the 3d grid onto a new 2d grid.
     #[inline(always)]
     pub fn blit_clone_to_2d<FromLayerId: Into<usize>>(
         &self,
@@ -177,6 +187,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Copy a region of the 3d grid onto a new 2d grid.
     #[inline(always)]
     pub fn blit_copy_to_2d<FromLayerId: Into<usize>>(
         &self,
@@ -193,31 +204,37 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Grid width.
     #[inline]
     pub const fn width(&self) -> u32 {
         self.dimensions.x
     }
 
+    /// Grid height.
     #[inline]
     pub const fn height(&self) -> u32 {
         self.dimensions.y
     }
 
+    /// Grid demensions.
     #[inline]
     pub const fn dimensions(&self) -> UVec2 {
         self.dimensions
     }
 
+    /// Is the point within the grid bounds?
     #[inline]
     pub fn in_bounds(&self, pos: IVec2) -> bool {
         pos.is_valid(self.dimensions())
     }
 
+    /// Is the Layer valid?
     #[inline]
-    pub fn is_layer<LayerId: Into<usize>>(&self, layer_id: LayerId) -> bool {
+    pub fn is_layer<Layer: Into<usize>>(&self, layer_id: Layer) -> bool {
         layer_id.into() < self.layers.len()
     }
 
+    /// Get the idx for a point.
     #[inline]
     pub fn get_idx(&self, pos: IVec2) -> Option<usize> {
         if pos.is_valid(self.dimensions()) {
@@ -227,11 +244,13 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Get the idx for a point (unchecked)
     #[inline]
     pub fn get_idx_unchecked(&self, point: IVec2) -> usize {
         point.as_index_unchecked(self.width())
     }
 
+    /// Get the point for an idx.
     #[inline]
     pub fn index_to_pt(&self, idx: usize) -> Option<UVec2> {
         let pt = self.index_to_pt_unchecked(idx);
@@ -242,6 +261,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Get the point for an idx (unchecked)
     #[inline]
     pub const fn index_to_pt_unchecked(&self, idx: usize) -> UVec2 {
         let x = idx % self.width() as usize;
@@ -249,12 +269,14 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         UVec2::new(x as u32, y as u32)
     }
 
+    /// Get the item for a layer at an index
     #[inline]
     pub fn get<LayerId: Into<usize>>(&self, layer_id: LayerId, index: UVec2) -> Option<&T> {
         self.get_grid_by_layer(layer_id)
             .and_then(|layer| layer.get(index))
     }
 
+    /// Get the mutable item for a layer at an index
     #[inline]
     pub fn get_mut<LayerId: Into<usize>>(
         &mut self,
@@ -265,11 +287,13 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
             .and_then(|layer| layer.get_mut(index))
     }
 
+    /// Get the item for a layer at an index (unchecked)
     #[inline]
     pub fn get_unchecked<LayerId: Into<usize>>(&self, layer_id: LayerId, index: UVec2) -> &T {
         self.layers[layer_id.into()].get_unchecked(index)
     }
 
+    /// Get the mutable item for a layer at an index (unchecked)
     #[inline]
     pub fn get_mut_unchecked<LayerId: Into<usize>>(
         &mut self,
@@ -279,6 +303,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         self.layers[layer_id.into()].get_mut_unchecked(index)
     }
 
+    /// Set the item for a layer at an index
     #[inline]
     pub fn set<LayerId: Into<usize>>(
         &mut self,
@@ -290,6 +315,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
             .and_then(|layer| layer.set(index, value))
     }
 
+    /// Set the item for a layer at an index (unchecked)
     #[inline]
     pub fn set_unchecked<LayerId: Into<usize>>(
         &mut self,
@@ -300,6 +326,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         self.layers[layer_id.into()].set_unchecked(index, value)
     }
 
+    /// Get the grid for a layer at an index
     pub fn get_grid_by_layer<LayerId: Into<usize>>(&self, layer_id: LayerId) -> Option<&Grid<T>> {
         let layer_id = layer_id.into();
         if self.is_layer(layer_id) {
@@ -309,6 +336,7 @@ impl<T, const LAYER_COUNT: usize> Grid3d<T, LAYER_COUNT> {
         }
     }
 
+    /// Get the mutable grid for a layer at an index
     pub fn get_grid_by_layer_mut<LayerId: Into<usize>>(
         &mut self,
         layer_id: LayerId,

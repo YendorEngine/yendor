@@ -1,16 +1,25 @@
 use crate::prelude::*;
 
+/// Different pathfinding algorithms.
 pub enum PathFinder {
+    /// Breadth-first search algorithm.
     Bfs,
+    /// Depth-first search algorithm.
     Dfs,
+    /// Iterative deepening depth-first search algorithm.
     IDDfs,
+    /// A* algorithm.
     Astar,
+    /// Iterative deepening A* algorithm.
     IDAstar,
+    /// Dijkstra algorithm that computes the full path.
     Dijkstra,
+    /// Dijkstra algorithm that provides partial paths to destination.
     DijkstraPartial,
 }
 
 impl PathFinder {
+    /// Computes a path from the origin to the destination using the specified algorithm.
     pub fn compute<T>(
         &self,
         origin: IVec2,

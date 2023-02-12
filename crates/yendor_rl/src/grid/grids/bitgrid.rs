@@ -8,14 +8,21 @@ use bitvec::{
 
 use crate::prelude::*;
 
+/// Iterator over a [`BitGrid`].
 pub type BitIter<'a> = slice::Iter<'a, usize, Lsb0>;
+/// Mutable iterator over a [`BitGrid`].
 pub type BitIterMut<'a> = slice::IterMut<'a, usize, Lsb0>;
+/// Chunks of a [`BitGrid`].
 pub type BitChunk<'a> = slice::Chunks<'a, usize, Lsb0>;
+/// Mutable chunks of a [`BitGrid`].
 pub type BitChunkMut<'a> = slice::ChunksMut<'a, usize, Lsb0>;
 
+/// A grid of bits.
 #[derive(Default, Debug, Clone, Hash, PartialEq, Eq)]
 pub struct BitGrid {
+    /// The cells of the grid.
     pub cells: BitVec,
+    /// The dimensions of the grid.
     pub dimensions: UVec2,
 }
 

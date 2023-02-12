@@ -1,3 +1,4 @@
+//! Provides an api for dealing with 2D grid-based pathfinding.
 mod algorithms;
 pub use algorithms::*;
 mod path_algorithm;

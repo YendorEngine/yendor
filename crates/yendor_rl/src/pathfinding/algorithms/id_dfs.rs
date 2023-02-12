@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// Iterative deepening depth-first search algorithm.
 pub struct IDDfs;
 
 impl PathAlgorithm for IDDfs {

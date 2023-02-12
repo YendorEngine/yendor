@@ -2,9 +2,12 @@ use std::iter;
 
 use crate::prelude::*;
 
+/// Iterator over the coumns of the grid.
 pub type GridIterCol<'a, T> = iter::StepBy<T>;
+/// Iterator over The grid data with its corresponding point index.
 pub type GridEnumerate<'a, T> = iter::Zip<PointIterRowMajor, T>;
 
+/// Trait to implement for grid types that can be iterated.
 pub trait GridIterable<T> {
     /// iterator over the cells of the grid.
     type IterReturn<'a>

@@ -1,8 +1,9 @@
 #![doc = include_str!("../README.md")]
 // This cfg_attr is needed because `rustdoc::all` includes lints not supported on stable
 #![cfg_attr(doc, allow(unknown_lints))]
-#![deny(rustdoc::all)]
 #![allow(clippy::bool_to_int_with_if)]
+#![forbid(unsafe_code)]
+#![warn(missing_docs)]
 
 use std::marker::PhantomData;
 
@@ -20,7 +21,9 @@ pub use macros::HasLoadProgress;
 /// loaded
 #[derive(Clone, Copy, Default, Debug)]
 pub struct LoadProgress {
+    /// The number of items that have been loaded
     pub loaded: u32,
+    /// The total number of items that must be loaded
     pub total: u32,
 }
 
@@ -58,6 +61,7 @@ impl LoadProgress {
 /// scripting engine once script loading is implemented.
 #[derive(SystemParam)]
 pub struct LoadingResources<'w, 's> {
+    /// The bevy asset server
     pub asset_server: Res<'w, AssetServer>,
     #[system_param(ignore)]
     _phantom: PhantomData<&'s ()>,
@@ -66,7 +70,7 @@ pub struct LoadingResources<'w, 's> {
 /// Trait implemented on items that can report their load progress from the
 /// [`LoadingResources`].
 pub trait HasLoadProgress {
-    // Default implementation returns no progress and nothing to load
+    /// Default implementation returns no progress and nothing to load
     fn load_progress(&self, _loading_resources: &LoadingResources) -> LoadProgress {
         LoadProgress::default()
     }

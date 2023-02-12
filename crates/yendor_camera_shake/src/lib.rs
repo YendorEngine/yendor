@@ -25,6 +25,9 @@
 //!     /* some traumatic event... */
 //!     ev_trauma.send(CameraTrauma(0.5));
 //! }
+#![forbid(unsafe_code)]
+#![warn(missing_docs)]
+
 use bevy::prelude::*;
 use noise::{NoiseFn, Perlin};
 

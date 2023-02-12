@@ -1,5 +1,9 @@
+/// Trait for types that can be used as random values.
 pub trait RandomValue: Copy {
+    /// Convert the value to a u64.
     fn to_u64(self) -> u64;
+
+    /// Convert a u64 to the value.
     fn from_u64(value: u64) -> Self;
 }
 

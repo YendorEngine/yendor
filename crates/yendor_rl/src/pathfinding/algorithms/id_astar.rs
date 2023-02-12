@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// Iterative deepening A* algorithm.
 pub struct IDAstar;
 
 impl PathAlgorithm for IDAstar {

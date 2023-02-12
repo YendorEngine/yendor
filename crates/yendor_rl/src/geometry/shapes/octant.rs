@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// An octant
 #[derive(Debug, Clone)]
 pub struct Octant(pub u8);
 
@@ -40,6 +41,7 @@ impl Octant {
         IVec2::new(p.0, p.1)
     }
 
+    /// Creates a new `Octant` from two points
     #[inline(always)]
     pub const fn new(position: IVec2, other: IVec2) -> Self {
         // adapted from <http://codereview.stackexchange.com/a/95551>

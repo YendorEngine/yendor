@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// A line.
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Line {
@@ -8,6 +9,7 @@ pub struct Line {
 }
 
 impl Line {
+    /// Creates a new line.
     #[inline(always)]
     pub const fn new(start: IVec2, end: IVec2) -> Self {
         Self { start, end }

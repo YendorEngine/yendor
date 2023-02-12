@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// Depth-first search algorithm.
 pub struct Dfs;
 
 impl PathAlgorithm for Dfs {

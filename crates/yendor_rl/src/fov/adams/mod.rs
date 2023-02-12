@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+/// Computes the field of view using the Adams algorithm.
+/// [Adams Fov](http://www.adammil.net/blog/v125_Roguelike_Vision_Algorithms.html#mine)
 pub struct AdamsFov;
 
 impl FovAlgorithm for AdamsFov {

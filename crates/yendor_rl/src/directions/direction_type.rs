@@ -1,2 +1,2 @@
-/// A type for defining [`Direction`]s
+/// A type for defining a `Direction`
 pub type DirectionType = u8;

@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// Dijkstra algorithm that provides partial paths to destination.
 pub struct DijkstraPartial;
 
 impl PathAlgorithm for DijkstraPartial {

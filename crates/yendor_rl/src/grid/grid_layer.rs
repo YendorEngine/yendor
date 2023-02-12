@@ -1,6 +1,8 @@
 use crate::prelude::*;
 
+/// Trait to implement grid layers.
 pub trait GridLayer<T> {
+    /// Returns a mutable reference to the element at the given index
     type MutableReturn<'a>
     where
         T: 'a,

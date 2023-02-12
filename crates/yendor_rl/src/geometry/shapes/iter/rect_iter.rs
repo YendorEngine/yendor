@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// An iterator over a rectangle.
 #[derive(Debug, Clone)]
 pub struct RectIter {
     offset: IVec2,
@@ -10,6 +11,7 @@ pub struct RectIter {
 }
 
 impl RectIter {
+    /// Creates a new rectangle iterator.
     pub fn new(min: IVec2, max: IVec2) -> Self {
         let size = max - min;
         Self {
