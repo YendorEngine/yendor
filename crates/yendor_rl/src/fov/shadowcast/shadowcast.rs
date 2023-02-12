@@ -1,4 +1,4 @@
-// FoV implementation taken from:
+// FOV implementation taken from:
 // https://www.albertford.com/shadowcasting/
 use super::{quadrant::*, row::*};
 use crate::prelude::*;

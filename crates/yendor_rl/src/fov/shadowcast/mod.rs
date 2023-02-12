@@ -5,7 +5,7 @@ use quadrant::*;
 mod row;
 use row::*;
 
-/// FoV implementation taken from:
+/// FOV implementation taken from:
 /// [Shadowcasting](https://www.albertford.com/shadowcasting)
 pub struct Shadowcast;
 

@@ -52,7 +52,7 @@ pub fn map_range_f64(source_value: f64, from_range: (f64, f64), to_range: (f64, 
     .clamp(to_range.0, to_range.1)
 }
 
-/// Gets RangeBounds as a tuple of (start, end)
+/// Gets [`RangeBounds`] as a tuple of (start, end)
 pub fn get_range_bounds<T: Copy, R: RangeBounds<T>>(
     range: R,
     lower_unbounded: T,

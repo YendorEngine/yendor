@@ -79,93 +79,93 @@ pub use vertical_direction::*;
 pub struct Direction(DirectionType);
 
 impl Direction {
-    /// Returns the Down [`Direction`]
+    /// Returns the `Down` [`Direction`]
     pub const DOWN: Self = Self(DirectionFlags::DOWN);
 
-    /// Returns the DownEast [`Direction`]
+    /// Returns the `DownEast` [`Direction`]
     pub const DOWN_EAST: Self = Self(DirectionFlags::DOWN | DirectionFlags::EAST);
 
-    /// Returns the DownNorth [`Direction`]
+    /// Returns the `DownNorth` [`Direction`]
     pub const DOWN_NORTH: Self = Self(DirectionFlags::DOWN | DirectionFlags::NORTH);
 
-    /// Returns the DownNorthEast [`Direction`]
+    /// Returns the `DownNorthEast` [`Direction`]
     pub const DOWN_NORTH_EAST: Self =
         Self(DirectionFlags::DOWN | DirectionFlags::NORTH | DirectionFlags::EAST);
 
-    /// Returns the DownNorthWest [`Direction`]
+    /// Returns the `DownNorthWest` [`Direction`]
     pub const DOWN_NORTH_WEST: Self =
         Self(DirectionFlags::DOWN | DirectionFlags::NORTH | DirectionFlags::WEST);
 
-    /// Returns the DownSouth [`Direction`]
+    /// Returns the `DownSouth` [`Direction`]
     pub const DOWN_SOUTH: Self = Self(DirectionFlags::DOWN | DirectionFlags::SOUTH);
 
-    /// Returns the DownSouthEast [`Direction`]
+    /// Returns the `DownSouthEast` [`Direction`]
     pub const DOWN_SOUTH_EAST: Self =
         Self(DirectionFlags::DOWN | DirectionFlags::SOUTH | DirectionFlags::EAST);
 
-    /// Returns the DownSouthWest [`Direction`]
+    /// Returns the `DownSouthWest` [`Direction`]
     pub const DOWN_SOUTH_WEST: Self =
         Self(DirectionFlags::DOWN | DirectionFlags::SOUTH | DirectionFlags::WEST);
 
-    /// Returns the DownWest [`Direction`]
+    /// Returns the `DownWest` [`Direction`]
     pub const DOWN_WEST: Self = Self(DirectionFlags::DOWN | DirectionFlags::WEST);
 
-    /// Returns the East [`Direction`]
+    /// Returns the `East` [`Direction`]
     pub const EAST: Self = Self(DirectionFlags::EAST);
 
-    /// Returns the Invalid [`Direction`]
+    /// Returns the `Invalid` [`Direction`]
     pub const NONE: Self = Self(0);
 
-    /// Returns the North [`Direction`]
+    /// Returns the `North` [`Direction`]
     pub const NORTH: Self = Self(DirectionFlags::NORTH);
 
-    /// Returns the NorthEast [`Direction`]
+    /// Returns the `NorthEast` [`Direction`]
     pub const NORTH_EAST: Self = Self(DirectionFlags::NORTH | DirectionFlags::EAST);
 
-    /// Returns the NorthWest [`Direction`]
+    /// Returns the `NorthWest` [`Direction`]
     pub const NORTH_WEST: Self = Self(DirectionFlags::NORTH | DirectionFlags::WEST);
 
-    /// Returns the South [`Direction`]
+    /// Returns the `South` [`Direction`]
     pub const SOUTH: Self = Self(DirectionFlags::SOUTH);
 
-    /// Returns the SouthEast [`Direction`]
+    /// Returns the `SouthEast` [`Direction`]
     pub const SOUTH_EAST: Self = Self(DirectionFlags::SOUTH | DirectionFlags::EAST);
 
-    /// Returns the SouthWest [`Direction`]
+    /// Returns the `SouthWest` [`Direction`]
     pub const SOUTH_WEST: Self = Self(DirectionFlags::SOUTH | DirectionFlags::WEST);
 
-    /// Returns the Up [`Direction`]
+    /// Returns the `Up` [`Direction`]
     pub const UP: Self = Self(DirectionFlags::UP);
 
-    /// Returns the UpEast [`Direction`]
+    /// Returns the `UpEast` [`Direction`]
     pub const UP_EAST: Self = Self(DirectionFlags::UP | DirectionFlags::EAST);
 
-    /// Returns the UpNorth [`Direction`]
+    /// Returns the `UpNorth` [`Direction`]
     pub const UP_NORTH: Self = Self(DirectionFlags::UP | DirectionFlags::NORTH);
 
-    /// Returns the UpNorthEast [`Direction`]
+    /// Returns the `UpNorthEast` [`Direction`]
     pub const UP_NORTH_EAST: Self =
         Self(DirectionFlags::UP | DirectionFlags::NORTH | DirectionFlags::EAST);
 
-    /// Returns the UpNorthWest [`Direction`]
+    /// Returns the `UpNorthWest` [`Direction`]
     pub const UP_NORTH_WEST: Self =
         Self(DirectionFlags::UP | DirectionFlags::NORTH | DirectionFlags::WEST);
 
-    /// Returns the UpSouth [`Direction`]
+    /// Returns the `UpSouth` [`Direction`]
     pub const UP_SOUTH: Self = Self(DirectionFlags::UP | DirectionFlags::SOUTH);
 
-    /// Returns the UpSouthEast [`Direction`]
+    /// Returns the `UpSouthEast` [`Direction`]
     pub const UP_SOUTH_EAST: Self =
         Self(DirectionFlags::UP | DirectionFlags::SOUTH | DirectionFlags::EAST);
 
-    /// Returns the UpSouthWest [`Direction`]
+    /// Returns the `UpSouthWest` [`Direction`]
     pub const UP_SOUTH_WEST: Self =
         Self(DirectionFlags::UP | DirectionFlags::SOUTH | DirectionFlags::WEST);
 
-    /// Returns the UpWest [`Direction`]
+    /// Returns the `UpWest` [`Direction`]
     pub const UP_WEST: Self = Self(DirectionFlags::UP | DirectionFlags::WEST);
 
-    /// Returns the West [`Direction`]
+    /// Returns the `West` [`Direction`]
     pub const WEST: Self = Self(DirectionFlags::WEST);
 }
 
