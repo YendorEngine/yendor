@@ -13,7 +13,13 @@ repository  = "https://github.com/YendorEngine/yendor"
 version     = "0.1.0"
 
 [workspace]
-members  = [".", "crates/*"]
+members = [
+    "tools/ci",
+    # "tools/build-example-pages",
+    # "tools/build-wasm-examples",
+    # "errors",
+    "crates/*",
+]
 resolver = "2"
 
 [features]
