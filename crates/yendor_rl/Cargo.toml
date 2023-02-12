@@ -23,7 +23,7 @@ reflect = []
 serialize = ["dep:serde", "bitvec/serde"]
 
 [dependencies]
-bevy = { workspace = true }
+bevy = { workspace = true, version = "0.9" }
 
 bitvec      = { version = "1", optional = true }
 pathfinding = { version = "4", optional = true }

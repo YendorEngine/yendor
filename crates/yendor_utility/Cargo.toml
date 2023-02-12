@@ -6,6 +6,6 @@ name    = "yendor_utility"
 version = "0.1.0"
 
 [dependencies]
-bevy   = { workspace = true }
+bevy   = { workspace = true, version = "0.9" }
 fxhash = "0.2"
 ulid   = { version = "1" }
