@@ -1,5 +1,7 @@
 # Yendor
 
+![rust_version](https://img.shields.io/badge/supports%20rust-1.67+-blue)
+
 ## Yendor is a set of opinionated tools for the bevy engine
 
 Yendor started out to provide tools for building roguelikes and other games with a grid-based design. It is now becoming more of a set of opinionated tools for the bevy engine. It is inspired by the [bracket-lib](https://github.com/amethyst/bracket-lib), and [doryen-rs](https://github.com/jice-nospam/doryen-rs)
