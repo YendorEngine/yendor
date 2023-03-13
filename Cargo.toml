@@ -27,7 +27,7 @@ camera_shake = ["dep:yendor_camera_shake"]
 roguelike    = ["yendor_rl"]
 
 [workspace.dependencies]
-bevy = { version = "0.9", default-features = false, features = [] }
+bevy = { version = "0.10", default-features = false, features = [] }
 ulid = { version = "1", default-features = false }
 
 [dependencies]

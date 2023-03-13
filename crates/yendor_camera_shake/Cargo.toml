@@ -8,7 +8,7 @@ repository  = "https://github.com/YendorEngine/yendor"
 version     = "0.1.0"
 
 [dependencies]
-bevy = { workspace = true, version = "0.9" }
+bevy = { workspace = true, version = "0.10" }
 # For now we are pointing at a git branch `dev` but this should be rectified when a new release is made.
 noise = { git = "https://github.com/Razaekel/noise-rs", branch = "develop" }
 
