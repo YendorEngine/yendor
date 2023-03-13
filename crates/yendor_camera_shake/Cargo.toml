@@ -13,4 +13,4 @@ bevy = { workspace = true, version = "0.9" }
 noise = { git = "https://github.com/Razaekel/noise-rs", branch = "develop" }
 
 [dev-dependencies]
-bevy_core_pipeline = "0.9"
+bevy_core_pipeline = "0.10"
